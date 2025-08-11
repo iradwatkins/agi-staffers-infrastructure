@@ -1,0 +1,173 @@
+# AGI Staffers Cursor Rules - BMAD Method Implementation
+
+## 🎯 Core Development Principles
+
+### BMAD Method Integration
+- **BENCHMARK**: Always measure performance before and after changes
+- **MODEL**: Design with scalability and multi-tenancy in mind
+- **ANALYZE**: Use tools to validate code quality and security
+- **DELIVER**: Deploy with confidence using automated testing
+
+## 📱 PWA Development Rules
+
+### Service Worker Guidelines
+1. **Version Management**
+   - ALWAYS increment version number on changes: `const CACHE_VERSION = 'v2.0.X'`
+   - Use smart caching - skip HTML to prevent stale content
+   - Clear old caches on activation
+   - Show update notifications to users
+
+2. **Testing Requirements**
+   - Test on Samsung Galaxy Fold 6 viewport (344px folded, 884px unfolded)
+   - Verify offline functionality after each change
+   - Test push notifications with real device tokens
+   - Use PWA Studio extension for debugging
+
+3. **Console Logging**
+   - Use Turbo Console Log extension for debugging
+   - Remove console.logs before deployment
+   - Log format: `console.log('🔧 [Component] Action:', data)`
+
+## 🔌 API Development Rules
+
+### Endpoint Testing
+1. **Metrics API (Port 3009)**
+   - Save test collections in Thunder Client
+   - Expected response time: <100ms
+   - Test with: `https://admin.agistaffers.com/api/metrics`
+
+2. **Push API (Port 3011)**
+   - Test subscription endpoints
+   - Validate notification payloads
+   - Monitor delivery success rates
+
+3. **Error Handling**
+   - Always return proper HTTP status codes
+   - Include error messages in response body
+   - Log errors with context
+
+## 🗄️ Database Operations
+
+### PostgreSQL Guidelines
+1. **Query Optimization**
+   - Use indexes for frequently queried columns
+   - Batch operations when possible
+   - Monitor query performance
+
+2. **Historical Data**
+   - Store metrics every 5 minutes
+   - Implement data retention policies
+   - Use partitioning for large tables
+
+3. **Migrations**
+   - Always backup before migrations
+   - Test migrations on development first
+   - Use Prisma for schema management
+
+## 🚀 Deployment Rules
+
+### Pre-Deployment Checklist
+1. **Code Quality**
+   - Run ESLint and fix all errors
+   - Execute Prettier for formatting
+   - Pass all unit tests
+
+2. **Security Checks**
+   - No hardcoded secrets or API keys
+   - Validate all user inputs
+   - Check for SQL injection vulnerabilities
+
+3. **Performance Validation**
+   - Lighthouse score > 90 for PWA
+   - API response times < 200ms
+   - Bundle size optimized
+
+### Docker Container Updates
+```bash
+# Always restart containers after updates
+ssh agi-vps 'docker restart container-name'
+
+# Verify deployment success
+ssh agi-vps 'docker logs container-name --tail 50'
+```
+
+## 🎨 UI/UX Development
+
+### Component Creation
+1. **Use Shadcn/UI Components**
+   - Generate with proper TypeScript types
+   - Follow existing component patterns
+   - Implement proper loading states
+
+2. **Responsive Design**
+   - Mobile-first approach
+   - Test on multiple viewports
+   - Special attention to foldable devices
+
+3. **Accessibility**
+   - ARIA labels on interactive elements
+   - Keyboard navigation support
+   - Color contrast compliance
+
+## 🔧 Tool Usage Priority
+
+### When to Use What
+1. **File Operations**
+   - Single file: Direct edit
+   - Multiple files: filesystem MCP
+   - Search: grep/glob before manual search
+
+2. **Code Analysis**
+   - Real-time: ESLint extension
+   - Deep analysis: serena MCP
+   - Security: semgrep MCP (when available)
+
+3. **Testing**
+   - Unit tests: Jest
+   - E2E tests: Playwright MCP
+   - API tests: Thunder Client + fetch MCP
+
+## 📝 Git Workflow
+
+### Commit Standards
+1. **Message Format**
+   ```
+   type(scope): description
+   
+   - Detailed change 1
+   - Detailed change 2
+   ```
+
+2. **Types**
+   - feat: New feature
+   - fix: Bug fix
+   - perf: Performance improvement
+   - docs: Documentation only
+   - refactor: Code restructuring
+
+3. **Pre-Commit**
+   - Run linters
+   - Execute tests
+   - Check for console.logs
+
+## 🚨 Critical Reminders
+
+1. **NEVER** commit secrets or API keys
+2. **ALWAYS** test on actual devices for PWA features
+3. **CLEAR** browser cache when testing service worker updates
+4. **INCREMENT** service worker version on every change
+5. **VALIDATE** API responses match expected schema
+6. **BACKUP** database before schema changes
+7. **MONITOR** container resources after deployment
+
+## 🎯 Success Metrics
+
+### Phase 3 Goals
+- [ ] Push notifications working on all devices
+- [ ] PWA installable on Samsung Fold 6
+- [ ] Real-time alerts with <5s delay
+- [ ] Historical data charts loading <1s
+- [ ] 100% uptime for critical services
+- [ ] Automated CI/CD pipeline active
+
+Remember: Every line of code should serve the BMAD method and move us closer to a scalable, multi-tenant platform.

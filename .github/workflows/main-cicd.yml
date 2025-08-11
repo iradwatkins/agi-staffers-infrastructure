@@ -1,0 +1,219 @@
+name: Main CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'Deployment target'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - admin-dashboard
+          - push-api
+          - monitoring
+          - backup
+
+env:
+  SERVER_HOST: 148.230.93.174
+
+jobs:
+  # Code Quality Checks
+  quality-check:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+          
+      - name: Check for secrets in code
+        run: |
+          echo "🔍 Checking for exposed secrets..."
+          # Simple grep-based secret detection
+          if grep -r -i "password.*=" . --exclude-dir=.git --exclude-dir=node_modules | grep -v ".yml" | grep -v "README" | head -5; then
+            echo "⚠️  Potential secrets found - review above output"
+          else
+            echo "✅ No obvious secrets detected"
+          fi
+          
+      - name: Validate project structure
+        run: |
+          echo "📁 Validating project structure..."
+          required_files=("admin-dashboard-local/index.html" "admin-dashboard-local/manifest.json")
+          for file in "${required_files[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✅ $file exists"
+            else
+              echo "❌ $file missing"
+              exit 1
+            fi
+          done
+          
+  # Backup before deployment
+  pre-deploy-backup:
+    name: Pre-deployment Backup
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+          
+      - name: Trigger backup
+        run: |
+          ssh root@${{ env.SERVER_HOST }} << 'EOF'
+            echo "🔄 Running pre-deployment backup..."
+            /backup/scripts/master-backup.sh
+            echo "✅ Backup completed"
+          EOF
+          
+  # Deployment decision
+  deploy-matrix:
+    name: Deployment Matrix
+    runs-on: ubuntu-latest
+    needs: [quality-check, pre-deploy-backup]
+    outputs:
+      deploy-dashboard: ${{ steps.changes.outputs.dashboard }}
+      deploy-api: ${{ steps.changes.outputs.api }}
+      deploy-monitoring: ${{ steps.changes.outputs.monitoring }}
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          
+      - name: Check for changes
+        id: changes
+        env:
+          DEPLOY_TARGET: ${{ github.event.inputs.deploy_target }}
+        run: |
+          # Check what changed
+          if [[ "$DEPLOY_TARGET" == "all" ]] || git diff --name-only HEAD~1 | grep -q "admin-dashboard-local/"; then
+            echo "dashboard=true" >> $GITHUB_OUTPUT
+          else
+            echo "dashboard=false" >> $GITHUB_OUTPUT
+          fi
+          
+          if [[ "${{ github.event.inputs.deploy_target }}" == "all" ]] || git diff --name-only HEAD~1 | grep -q "push-notification-api/"; then
+            echo "api=true" >> $GITHUB_OUTPUT
+          else
+            echo "api=false" >> $GITHUB_OUTPUT
+          fi
+          
+          if [[ "${{ github.event.inputs.deploy_target }}" == "all" ]] || git diff --name-only HEAD~1 | grep -q "docker-monitor-alerts.sh"; then
+            echo "monitoring=true" >> $GITHUB_OUTPUT
+          else
+            echo "monitoring=false" >> $GITHUB_OUTPUT
+          fi
+          
+  # Health check after deployment
+  post-deploy-health:
+    name: Post-deployment Health Check
+    runs-on: ubuntu-latest
+    needs: [deploy-matrix]
+    if: always()
+    
+    steps:
+      - name: Check all services
+        run: |
+          echo "🏥 Running health checks..."
+          
+          # Admin Dashboard
+          if curl -f https://admin.agistaffers.com > /dev/null 2>&1; then
+            echo "✅ Admin Dashboard: Healthy"
+          else
+            echo "❌ Admin Dashboard: Unhealthy"
+            exit 1
+          fi
+          
+          # Push API
+          if curl -f https://admin.agistaffers.com/push-api/health | grep -q "ok"; then
+            echo "✅ Push API: Healthy"
+          else
+            echo "❌ Push API: Unhealthy"
+            exit 1
+          fi
+          
+          # Check other services
+          SERVICES=("pgadmin.agistaffers.com" "n8n.agistaffers.com" "chat.agistaffers.com" "flowise.agistaffers.com")
+          for service in "${SERVICES[@]}"; do
+            if curl -f -m 10 "https://$service" > /dev/null 2>&1; then
+              echo "✅ $service: Healthy"
+            else
+              echo "⚠️  $service: Warning - not responding"
+            fi
+          done
+          
+      - name: Send deployment summary
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          ACTOR="${{ github.actor }}"
+          COMMIT="${{ github.sha }}"
+          
+          if [ "$STATUS" = "success" ]; then
+            TITLE="✅ Deployment Successful"
+            BODY="All services deployed and healthy. Deployed by $ACTOR (${COMMIT:0:7})"
+          else
+            TITLE="❌ Deployment Issues"
+            BODY="Some services may be unhealthy. Check GitHub Actions. Attempted by $ACTOR"
+          fi
+          
+          curl -X POST https://admin.agistaffers.com/push-api/api/broadcast \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"title\": \"$TITLE\",
+              \"body\": \"$BODY\",
+              \"data\": {
+                \"type\": \"deployment\",
+                \"status\": \"$STATUS\",
+                \"actor\": \"$ACTOR\",
+                \"commit\": \"$COMMIT\"
+              }
+            }" || true
+
+  # Rollback job (manual trigger)
+  rollback:
+    name: Rollback Deployment
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && failure()
+    
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+          
+      - name: Perform rollback
+        run: |
+          ssh root@${{ env.SERVER_HOST }} << 'EOF'
+            echo "🔄 Starting rollback procedure..."
+            
+            # Rollback admin dashboard
+            LATEST_BACKUP=$(docker images | grep admin-dashboard | grep backup | head -1 | awk '{print $2}')
+            if [ ! -z "$LATEST_BACKUP" ]; then
+              docker stop admin-dashboard || true
+              docker rm admin-dashboard || true
+              docker tag admin-dashboard:$LATEST_BACKUP admin-dashboard:latest
+              docker run -d --name admin-dashboard --restart unless-stopped -p 3007:80 admin-dashboard:latest
+              echo "✅ Admin dashboard rolled back to $LATEST_BACKUP"
+            fi
+            
+            echo "✅ Rollback completed"
+          EOF

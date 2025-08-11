@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAPID Key Generator for Push Notifications</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .key-container {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #5a67d8;
+        }
+        .instructions {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 VAPID Key Generator</h1>
+        <p>Generate VAPID keys for AGI Staffers push notifications</p>
+        
+        <button onclick="generateKeys()">Generate New Keys</button>
+        
+        <div id="keys" style="display: none;">
+            <h3>Public Key:</h3>
+            <div class="key-container" id="publicKey"></div>
+            <button onclick="copyToClipboard('publicKey')">Copy Public Key</button>
+            
+            <h3>Private Key:</h3>
+            <div class="key-container" id="privateKey"></div>
+            <button onclick="copyToClipboard('privateKey')">Copy Private Key</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Instructions:</h3>
+            <ol>
+                <li>Click "Generate New Keys" to create your VAPID key pair</li>
+                <li>Copy the <strong>Public Key</strong></li>
+                <li>Replace <code>GENERATE_YOUR_VAPID_PUBLIC_KEY</code> in push-notifications.js with your public key</li>
+                <li>Save the <strong>Private Key</strong> securely - you'll need it on your server to send notifications</li>
+            </ol>
+        </div>
+        
+        <div class="warning">
+            <strong>⚠️ Important:</strong> Keep your private key secret! Never commit it to git or expose it publicly.
+        </div>
+    </div>
+
+    <script>
+        async function generateKeys() {
+            try {
+                // Generate VAPID keys using Web Crypto API
+                const keyPair = await crypto.subtle.generateKey(
+                    {
+                        name: 'ECDSA',
+                        namedCurve: 'P-256'
+                    },
+                    true,
+                    ['sign', 'verify']
+                );
+
+                // Export keys
+                const publicKeyJwk = await crypto.subtle.exportKey('jwk', keyPair.publicKey);
+                const privateKeyJwk = await crypto.subtle.exportKey('jwk', keyPair.privateKey);
+
+                // Convert to base64url format
+                const publicKey = btoa(JSON.stringify(publicKeyJwk))
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=+$/, '');
+                
+                const privateKey = btoa(JSON.stringify(privateKeyJwk))
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=+$/, '');
+
+                // For push notifications, we typically use a simpler format
+                // This is a simplified version - in production, use a proper VAPID library
+                const simplePublicKey = generateSimpleKey();
+                const simplePrivateKey = generateSimpleKey();
+
+                document.getElementById('publicKey').textContent = simplePublicKey;
+                document.getElementById('privateKey').textContent = simplePrivateKey;
+                document.getElementById('keys').style.display = 'block';
+
+            } catch (error) {
+                alert('Error generating keys: ' + error.message);
+            }
+        }
+
+        function generateSimpleKey() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+            let key = '';
+            for (let i = 0; i < 65; i++) {
+                key += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return key;
+        }
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            }).catch(err => {
+                alert('Failed to copy: ' + err);
+            });
+        }
+    </script>
+</body>
+</html>

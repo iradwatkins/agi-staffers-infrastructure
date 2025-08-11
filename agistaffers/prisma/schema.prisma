@@ -1,0 +1,617 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id                         String    @id @default(uuid()) @db.Uuid
+  userId                     String?   @unique @map("user_id") @db.Uuid
+  fullName                   String?   @map("full_name")
+  username                   String?   @unique
+  avatarUrl                  String?   @map("avatar_url")
+  bio                        String?
+  location                   String?
+  website                    String?
+  socialLinks                Json      @default("{}") @map("social_links") @db.JsonB
+  isSeller                   Boolean   @default(false) @map("is_seller")
+  sellerApplicationStatus    String    @default("not_applied") @map("seller_application_status")
+  commissionRate             Decimal   @default(0.10) @map("commission_rate")
+  stripeAccountId            String?   @map("stripe_account_id")
+  stripeOnboardingComplete   Boolean   @default(false) @map("stripe_onboarding_complete")
+  emailNotifications         Boolean   @default(true) @map("email_notifications")
+  pushNotifications          Boolean   @default(true) @map("push_notifications")
+  privacyLevel               String    @default("public") @map("privacy_level")
+  referralCode               String?   @unique @map("referral_code")
+  totalReferrals             Int       @default(0) @map("total_referrals")
+  totalEarnings              Int       @default(0) @map("total_earnings")
+  createdAt                  DateTime  @default(now()) @map("created_at")
+  updatedAt                  DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  events                     Event[]
+  eventLikes                 EventLike[]
+  followers                  UserFollow[] @relation("Following")
+  following                  UserFollow[] @relation("Follower")
+  pushSubscriptions          PushSubscription[]
+  pushPreferences            PushPreference[]
+  notificationHistory        NotificationHistory[]
+  tickets                    Ticket[]
+  teamMembers                TeamMember[]
+  businessInquiries          BusinessInquiry[]
+
+  @@map("profiles")
+}
+
+model Event {
+  id                  String    @id @default(uuid()) @db.Uuid
+  ownerId             String    @map("owner_id") @db.Uuid
+  title               String
+  description         String?
+  organizationName    String?   @map("organization_name")
+  date                DateTime  @db.Date
+  startTime           DateTime? @map("start_time") @db.Time
+  endTime             DateTime? @map("end_time") @db.Time
+  venueName           String?   @map("venue_name")
+  venueAddress        String?   @map("venue_address")
+  city                String?
+  state               String?
+  zipCode             String?   @map("zip_code")
+  country             String    @default("United States")
+  latitude            Decimal?
+  longitude           Decimal?
+  category            String?
+  tags                String[]  @default([])
+  capacity            Int?
+  isPrivate           Boolean   @default(false) @map("is_private")
+  requiresApproval    Boolean   @default(false) @map("requires_approval")
+  ageRestriction      String?   @map("age_restriction")
+  dressCode           String?   @map("dress_code")
+  parkingInfo         String?   @map("parking_info")
+  accessibilityInfo   String?   @map("accessibility_info")
+  coverImageUrl       String?   @map("cover_image_url")
+  galleryImages       String[]  @default([]) @map("gallery_images")
+  socialMediaLinks    Json      @default("{}") @map("social_media_links") @db.JsonB
+  status              String    @default("draft")
+  isFeatured          Boolean   @default(false) @map("is_featured")
+  featuredUntil       DateTime? @map("featured_until")
+  viewCount           Int       @default(0) @map("view_count")
+  likeCount           Int       @default(0) @map("like_count")
+  shareCount          Int       @default(0) @map("share_count")
+  totalTicketsSold    Int       @default(0) @map("total_tickets_sold")
+  totalRevenue        Int       @default(0) @map("total_revenue")
+  commissionRate      Decimal   @default(0.05) @map("commission_rate")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @default(now()) @updatedAt @map("updated_at")
+  publishedAt         DateTime? @map("published_at")
+  cancelledAt         DateTime? @map("cancelled_at")
+  cancellationReason  String?   @map("cancellation_reason")
+
+  owner               Profile   @relation(fields: [ownerId], references: [id])
+  eventLikes          EventLike[]
+  tickets             Ticket[]
+  ticketTypes         TicketType[]
+  eventAnalytics      EventAnalytic[]
+  sellerAssignments   SellerEventAssignment[]
+  venueLayouts        VenueLayout[]
+
+  @@map("events")
+}
+
+model EventLike {
+  id        String   @id @default(uuid()) @db.Uuid
+  eventId   String   @map("event_id") @db.Uuid
+  profileId String   @map("profile_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  event     Event    @relation(fields: [eventId], references: [id])
+  profile   Profile  @relation(fields: [profileId], references: [id])
+
+  @@unique([eventId, profileId])
+  @@map("event_likes")
+}
+
+model UserFollow {
+  id          String   @id @default(uuid()) @db.Uuid
+  followerId  String   @map("follower_id") @db.Uuid
+  followingId String   @map("following_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  follower    Profile  @relation("Follower", fields: [followerId], references: [id])
+  following   Profile  @relation("Following", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+  @@map("user_follows")
+}
+
+model Ticket {
+  id               String   @id @default(uuid()) @db.Uuid
+  orderId          String   @map("order_id") @db.Uuid
+  eventId          String   @map("event_id") @db.Uuid
+  ticketTypeId     String   @map("ticket_type_id") @db.Uuid
+  profileId        String   @map("profile_id") @db.Uuid
+  ticketNumber     String   @unique @map("ticket_number")
+  qrCode           String   @unique @map("qr_code")
+  status           String   @default("valid")
+  checkedInAt      DateTime? @map("checked_in_at")
+  checkedInBy      String?   @map("checked_in_by") @db.Uuid
+  transferredTo    String?   @map("transferred_to") @db.Uuid
+  transferredAt    DateTime? @map("transferred_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+
+  order            Order    @relation(fields: [orderId], references: [id])
+  event            Event    @relation(fields: [eventId], references: [id])
+  ticketType       TicketType @relation(fields: [ticketTypeId], references: [id])
+  profile          Profile  @relation(fields: [profileId], references: [id])
+  ticketLogs       TicketLog[]
+
+  @@map("tickets")
+}
+
+model TicketType {
+  id                String   @id @default(uuid()) @db.Uuid
+  eventId           String   @map("event_id") @db.Uuid
+  name              String
+  description       String?
+  price             Int
+  earlyBirdPrice    Int?     @map("early_bird_price")
+  earlyBirdEndsAt   DateTime? @map("early_bird_ends_at")
+  quantity          Int
+  maxPerOrder       Int      @default(10) @map("max_per_order")
+  soldCount         Int      @default(0) @map("sold_count")
+  isActive          Boolean  @default(true) @map("is_active")
+  salesStartAt      DateTime? @map("sales_start_at")
+  salesEndAt        DateTime? @map("sales_end_at")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
+
+  event             Event    @relation(fields: [eventId], references: [id])
+  tickets           Ticket[]
+  orderItems        OrderItem[]
+
+  @@map("ticket_types")
+}
+
+model Order {
+  id                String   @id @default(uuid()) @db.Uuid
+  profileId         String   @map("profile_id") @db.Uuid
+  eventId           String   @map("event_id") @db.Uuid
+  orderNumber       String   @unique @map("order_number")
+  status            String   @default("pending")
+  subtotal          Int
+  serviceFee        Int      @map("service_fee")
+  processingFee     Int      @map("processing_fee")
+  total             Int
+  paymentMethod     String?  @map("payment_method")
+  stripePaymentId   String?  @unique @map("stripe_payment_id")
+  refundedAmount    Int      @default(0) @map("refunded_amount")
+  refundedAt        DateTime? @map("refunded_at")
+  refundReason      String?  @map("refund_reason")
+  notes             String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
+
+  orderItems        OrderItem[]
+  tickets           Ticket[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id           String   @id @default(uuid()) @db.Uuid
+  orderId      String   @map("order_id") @db.Uuid
+  ticketTypeId String   @map("ticket_type_id") @db.Uuid
+  quantity     Int
+  unitPrice    Int      @map("unit_price")
+  total        Int
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  order        Order      @relation(fields: [orderId], references: [id])
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id])
+
+  @@map("order_items")
+}
+
+model CommunityBusiness {
+  id               String   @id @default(uuid()) @db.Uuid
+  name             String
+  description      String?
+  category         String
+  subcategory      String?
+  logoUrl          String?  @map("logo_url")
+  coverImageUrl    String?  @map("cover_image_url")
+  galleryImages    String[] @default([]) @map("gallery_images")
+  website          String?
+  email            String?
+  phone            String?
+  address          String?
+  city             String?
+  state            String?
+  zipCode          String?  @map("zip_code")
+  country          String   @default("United States")
+  latitude         Decimal?
+  longitude        Decimal?
+  businessHours    Json?    @map("business_hours") @db.JsonB
+  socialMediaLinks Json     @default("{}") @map("social_media_links") @db.JsonB
+  tags             String[] @default([])
+  isVerified       Boolean  @default(false) @map("is_verified")
+  verifiedAt       DateTime? @map("verified_at")
+  claimedBy        String?  @map("claimed_by") @db.Uuid
+  claimedAt        DateTime? @map("claimed_at")
+  viewCount        Int      @default(0) @map("view_count")
+  rating           Decimal? @db.Decimal(2, 1)
+  reviewCount      Int      @default(0) @map("review_count")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+
+  reviews          BusinessReview[]
+  inquiries        BusinessInquiry[]
+
+  @@map("community_businesses")
+}
+
+model BusinessReview {
+  id         String   @id @default(uuid()) @db.Uuid
+  businessId String   @map("business_id") @db.Uuid
+  profileId  String   @map("profile_id") @db.Uuid
+  rating     Int
+  title      String?
+  comment    String?
+  photos     String[] @default([])
+  helpfulCount Int    @default(0) @map("helpful_count")
+  verifiedPurchase Boolean @default(false) @map("verified_purchase")
+  ownerResponse String? @map("owner_response")
+  ownerRespondedAt DateTime? @map("owner_responded_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  business   CommunityBusiness @relation(fields: [businessId], references: [id])
+
+  @@map("business_reviews")
+}
+
+model BusinessInquiry {
+  id         String   @id @default(uuid()) @db.Uuid
+  businessId String   @map("business_id") @db.Uuid
+  profileId  String   @map("profile_id") @db.Uuid
+  name       String
+  email      String
+  phone      String?
+  subject    String
+  message    String
+  status     String   @default("new")
+  respondedAt DateTime? @map("responded_at")
+  response   String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  business   CommunityBusiness @relation(fields: [businessId], references: [id])
+  profile    Profile @relation(fields: [profileId], references: [id])
+
+  @@map("business_inquiries")
+}
+
+model PushSubscription {
+  id         String   @id @default(uuid()) @db.Uuid
+  profileId  String   @map("profile_id") @db.Uuid
+  endpoint   String   @unique
+  p256dh     String
+  auth       String
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  profile    Profile  @relation(fields: [profileId], references: [id])
+
+  @@map("push_subscriptions")
+}
+
+model PushPreference {
+  id                String   @id @default(uuid()) @db.Uuid
+  profileId         String   @unique @map("profile_id") @db.Uuid
+  eventReminders    Boolean  @default(true) @map("event_reminders")
+  newFollowers      Boolean  @default(true) @map("new_followers")
+  eventLikes        Boolean  @default(true) @map("event_likes")
+  ticketSales       Boolean  @default(true) @map("ticket_sales")
+  marketingUpdates  Boolean  @default(false) @map("marketing_updates")
+  securityAlerts    Boolean  @default(true) @map("security_alerts")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
+
+  profile           Profile  @relation(fields: [profileId], references: [id])
+
+  @@map("push_preferences")
+}
+
+model NotificationHistory {
+  id         String   @id @default(uuid()) @db.Uuid
+  profileId  String   @map("profile_id") @db.Uuid
+  type       String
+  title      String
+  body       String
+  data       Json?    @db.JsonB
+  read       Boolean  @default(false)
+  readAt     DateTime? @map("read_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  profile    Profile  @relation(fields: [profileId], references: [id])
+
+  @@map("notification_history")
+}
+
+model EventAnalytic {
+  id              String   @id @default(uuid()) @db.Uuid
+  eventId         String   @map("event_id") @db.Uuid
+  date            DateTime @db.Date
+  pageViews       Int      @default(0) @map("page_views")
+  uniqueVisitors  Int      @default(0) @map("unique_visitors")
+  ticketViews     Int      @default(0) @map("ticket_views")
+  ticketsSold     Int      @default(0) @map("tickets_sold")
+  revenue         Int      @default(0)
+  conversionRate  Decimal  @default(0) @map("conversion_rate")
+  topTrafficSource String? @map("top_traffic_source")
+  deviceBreakdown Json     @default("{}") @map("device_breakdown") @db.JsonB
+  locationBreakdown Json   @default("{}") @map("location_breakdown") @db.JsonB
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  event           Event    @relation(fields: [eventId], references: [id])
+
+  @@unique([eventId, date])
+  @@map("event_analytics")
+}
+
+model SellerEventAssignment {
+  id         String   @id @default(uuid()) @db.Uuid
+  eventId    String   @map("event_id") @db.Uuid
+  sellerId   String   @map("seller_id") @db.Uuid
+  assignedBy String   @map("assigned_by") @db.Uuid
+  role       String   @default("seller")
+  commissionOverride Decimal? @map("commission_override")
+  permissions Json    @default("{}") @db.JsonB
+  isActive   Boolean  @default(true) @map("is_active")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  event      Event    @relation(fields: [eventId], references: [id])
+
+  @@unique([eventId, sellerId])
+  @@map("seller_event_assignments")
+}
+
+model TeamMember {
+  id         String   @id @default(uuid()) @db.Uuid
+  profileId  String   @map("profile_id") @db.Uuid
+  invitedBy  String   @map("invited_by") @db.Uuid
+  role       String   @default("member")
+  permissions Json    @default("{}") @db.JsonB
+  inviteCode String   @unique @map("invite_code")
+  inviteAcceptedAt DateTime? @map("invite_accepted_at")
+  isActive   Boolean  @default(true) @map("is_active")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  profile    Profile  @relation(fields: [profileId], references: [id])
+
+  @@map("team_members")
+}
+
+model VenueLayout {
+  id         String   @id @default(uuid()) @db.Uuid
+  eventId    String   @map("event_id") @db.Uuid
+  name       String
+  sections   Json     @db.JsonB
+  capacity   Int
+  isDefault  Boolean  @default(false) @map("is_default")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  event      Event    @relation(fields: [eventId], references: [id])
+
+  @@map("venue_layouts")
+}
+
+model TicketLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  ticketId   String   @map("ticket_id") @db.Uuid
+  action     String
+  performedBy String  @map("performed_by") @db.Uuid
+  metadata   Json?    @db.JsonB
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  ticket     Ticket   @relation(fields: [ticketId], references: [id])
+
+  @@map("ticket_logs")
+}
+
+model MagazineCategory {
+  id         String   @id @default(uuid()) @db.Uuid
+  name       String   @unique
+  slug       String   @unique
+  description String?
+  iconUrl    String?  @map("icon_url")
+  sortOrder  Int      @default(0) @map("sort_order")
+  isActive   Boolean  @default(true) @map("is_active")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  articles   MagazineArticle[]
+
+  @@map("magazine_categories")
+}
+
+model MagazineArticle {
+  id           String   @id @default(uuid()) @db.Uuid
+  categoryId   String   @map("category_id") @db.Uuid
+  authorId     String   @map("author_id") @db.Uuid
+  title        String
+  slug         String   @unique
+  excerpt      String?
+  content      String
+  coverImageUrl String? @map("cover_image_url")
+  tags         String[] @default([])
+  status       String   @default("draft")
+  viewCount    Int      @default(0) @map("view_count")
+  likeCount    Int      @default(0) @map("like_count")
+  shareCount   Int      @default(0) @map("share_count")
+  readTime     Int?     @map("read_time")
+  isFeatured   Boolean  @default(false) @map("is_featured")
+  publishedAt  DateTime? @map("published_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  category     MagazineCategory @relation(fields: [categoryId], references: [id])
+
+  @@map("magazine_articles")
+}
+
+model AudienceInsight {
+  id              String   @id @default(uuid()) @db.Uuid
+  profileId       String   @map("profile_id") @db.Uuid
+  totalFollowers  Int      @default(0) @map("total_followers")
+  followersGrowth Int      @default(0) @map("followers_growth")
+  avgEngagementRate Decimal @default(0) @map("avg_engagement_rate")
+  topLocations    Json     @default("[]") @map("top_locations") @db.JsonB
+  topInterests    Json     @default("[]") @map("top_interests") @db.JsonB
+  ageBreakdown    Json     @default("{}") @map("age_breakdown") @db.JsonB
+  genderBreakdown Json     @default("{}") @map("gender_breakdown") @db.JsonB
+  bestPostingTimes Json    @default("[]") @map("best_posting_times") @db.JsonB
+  date            DateTime @db.Date
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@unique([profileId, date])
+  @@map("audience_insights")
+}
+
+model LiveAnalyticsSession {
+  id              String   @id @default(uuid()) @db.Uuid
+  eventId         String   @map("event_id") @db.Uuid
+  sessionId       String   @unique @map("session_id")
+  startTime       DateTime @map("start_time")
+  endTime         DateTime? @map("end_time")
+  peakViewers     Int      @default(0) @map("peak_viewers")
+  totalViewers    Int      @default(0) @map("total_viewers")
+  avgWatchTime    Int      @default(0) @map("avg_watch_time")
+  engagement      Json     @default("{}") @db.JsonB
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("live_analytics_sessions")
+}
+
+model FollowerPromotion {
+  id              String   @id @default(uuid()) @db.Uuid
+  creatorId       String   @map("creator_id") @db.Uuid
+  title           String
+  description     String?
+  discountType    String   @map("discount_type")
+  discountValue   Int      @map("discount_value")
+  minFollowers    Int      @default(0) @map("min_followers")
+  maxUses         Int?     @map("max_uses")
+  usedCount       Int      @default(0) @map("used_count")
+  validFrom       DateTime @map("valid_from")
+  validUntil      DateTime @map("valid_until")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("follower_promotions")
+}
+
+model CommissionTransaction {
+  id              String   @id @default(uuid()) @db.Uuid
+  sellerId        String   @map("seller_id") @db.Uuid
+  eventId         String   @map("event_id") @db.Uuid
+  orderId         String   @map("order_id") @db.Uuid
+  amount          Int
+  commissionRate  Decimal  @map("commission_rate")
+  commissionAmount Int     @map("commission_amount")
+  status          String   @default("pending")
+  payoutId        String?  @map("payout_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("commission_transactions")
+}
+
+model SellerPayout {
+  id              String   @id @default(uuid()) @db.Uuid
+  sellerId        String   @map("seller_id") @db.Uuid
+  amount          Int
+  currency        String   @default("USD")
+  status          String   @default("pending")
+  method          String   @default("stripe")
+  stripeTransferId String? @unique @map("stripe_transfer_id")
+  failureReason   String?  @map("failure_reason")
+  processedAt     DateTime? @map("processed_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("seller_payouts")
+}
+
+model SellerSalesSummary {
+  id              String   @id @default(uuid()) @db.Uuid
+  sellerId        String   @map("seller_id") @db.Uuid
+  period          String
+  totalSales      Int      @default(0) @map("total_sales")
+  totalRevenue    Int      @default(0) @map("total_revenue")
+  totalCommission Int      @default(0) @map("total_commission")
+  ticketsSold     Int      @default(0) @map("tickets_sold")
+  eventsCount     Int      @default(0) @map("events_count")
+  topEvent        String?  @map("top_event")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@unique([sellerId, period])
+  @@map("seller_sales_summary")
+}
+
+// Multi-tenant models for AGI Staffers platform
+model Customer {
+  id          String   @id @default(uuid()) @db.Uuid
+  email       String   @unique @db.VarChar(255)
+  companyName String?  @map("company_name") @db.VarChar(255)
+  plan        String   @default("starter") @db.VarChar(100)
+  status      String?  @default("active") @db.VarChar(50)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  sites       CustomerSite[]
+
+  @@map("customers")
+}
+
+model CustomerSite {
+  id                String   @id @default(uuid()) @db.Uuid
+  customerId        String   @map("customer_id") @db.Uuid
+  siteName          String   @map("site_name") @db.VarChar(255)
+  domain            String   @unique @db.VarChar(255)
+  templateType      String   @map("template_type") @db.VarChar(100)
+  containerId       String?  @map("container_id") @db.VarChar(255)
+  containerStatus   String?  @default("pending") @map("container_status") @db.VarChar(50)
+  sslEnabled        Boolean? @default(false) @map("ssl_enabled")
+  customizationData Json?    @default("{}") @map("customization_data") @db.JsonB
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
+
+  customer          Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@map("customer_sites")
+}
+
+model SiteTemplate {
+  id             String   @id @default(uuid()) @db.Uuid
+  templateName   String   @map("template_name") @db.VarChar(255)
+  templateType   String   @map("template_type") @db.VarChar(100)
+  description    String?
+  templateConfig Json     @map("template_config") @db.JsonB
+  dockerConfig   Json     @map("docker_config") @db.JsonB
+  isActive       Boolean? @default(true) @map("is_active")
+
+  @@map("site_templates")
+}

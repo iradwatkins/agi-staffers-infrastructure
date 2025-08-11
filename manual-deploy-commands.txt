@@ -1,0 +1,126 @@
+# AGI Staffers Homepage Deployment Commands
+# Copy and paste these commands into your terminal after SSHing to the VPS
+
+# 1. SSH to VPS:
+ssh root@72.60.28.175
+# Password: Bobby321&Gloria321Watkins?
+
+# 2. Once connected, run these commands:
+
+# Create deployment directory
+mkdir -p /root/agistaffers-homepage
+cd /root/agistaffers-homepage
+
+# Clone from GitHub
+rm -rf agistaffers-temp
+git clone https://github.com/watkinslabs/agi-staffers.git agistaffers-temp
+
+# Copy Next.js app files
+cp -r agistaffers-temp/agistaffers/* ./
+rm -rf agistaffers-temp
+
+# Create production Dockerfile
+cat > Dockerfile << 'EOF'
+# Production Dockerfile for AGI Staffers Homepage
+FROM node:20-alpine AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Install pnpm
+RUN corepack enable
+RUN corepack prepare pnpm@latest --activate
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+# Builder stage
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# Install pnpm
+RUN corepack enable
+RUN corepack prepare pnpm@latest --activate
+
+# Copy dependencies and source
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build the application
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV production
+
+# Generate Prisma client if needed
+RUN if [ -f "prisma/schema.prisma" ]; then pnpm prisma generate; fi
+
+RUN pnpm build
+
+# Runner stage
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# Copy necessary files
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+EXPOSE 3008
+ENV PORT 3008
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]
+EOF
+
+# Stop existing container
+docker stop agistaffers-homepage 2>/dev/null || true
+docker rm agistaffers-homepage 2>/dev/null || true
+
+# Build new image
+docker build -t agistaffers-homepage:latest .
+
+# Run container
+docker run -d \
+    --name agistaffers-homepage \
+    --restart unless-stopped \
+    --network host \
+    -e DATABASE_URL="postgresql://postgres:postgres@localhost:5432/agistaffers" \
+    -e NEXTAUTH_URL="https://agistaffers.com" \
+    -e NEXTAUTH_SECRET="agistaffers-secret-key-2025" \
+    agistaffers-homepage:latest
+
+# Update Caddy configuration
+mkdir -p /etc/caddy/sites
+cat > /etc/caddy/sites/agistaffers.com << 'EOF'
+agistaffers.com {
+    reverse_proxy localhost:3008
+    
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+    
+    encode gzip
+    
+    handle /_next/static/* {
+        header Cache-Control "public, max-age=31536000, immutable"
+    }
+}
+
+www.agistaffers.com {
+    redir https://agistaffers.com{uri} permanent
+}
+EOF
+
+# Reload Caddy
+docker exec caddy caddy reload --config /etc/caddy/Caddyfile --force
+
+# Check if container is running
+docker ps | grep agistaffers-homepage
+
+# View logs if needed
+docker logs agistaffers-homepage

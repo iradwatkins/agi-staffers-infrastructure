@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Real-Time Monitoring</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .metric {
+            background: #333;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .metric h3 {
+            margin: 0;
+            color: #4CAF50;
+        }
+        .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .status {
+            padding: 10px;
+            background: #222;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .connected {
+            color: #4CAF50;
+        }
+        .disconnected {
+            color: #f44336;
+        }
+        #log {
+            background: #222;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Server Monitoring Test</h1>
+    
+    <div class="status">
+        Connection Status: <span id="status" class="disconnected">Disconnected</span>
+    </div>
+    
+    <div class="metric">
+        <h3>CPU Usage</h3>
+        <span class="value" id="cpu">--%</span>
+    </div>
+    
+    <div class="metric">
+        <h3>Memory</h3>
+        <span class="value" id="memory">-- / -- GB</span>
+    </div>
+    
+    <div class="metric">
+        <h3>Disk</h3>
+        <span class="value" id="disk">-- / -- GB</span>
+    </div>
+    
+    <div class="metric">
+        <h3>Network</h3>
+        <span class="value" id="network">↓ -- KB/s | ↑ -- KB/s</span>
+    </div>
+    
+    <h3>Connection Log:</h3>
+    <div id="log"></div>
+    
+    <script>
+        const ws = new WebSocket('ws://148.230.93.174:3009');
+        const log = document.getElementById('log');
+        
+        function addLog(message) {
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML = `${time}: ${message}<br>` + log.innerHTML;
+        }
+        
+        ws.onopen = () => {
+            document.getElementById('status').textContent = 'Connected';
+            document.getElementById('status').className = 'connected';
+            addLog('Connected to metrics server');
+        };
+        
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === 'metrics' && data.system) {
+                    document.getElementById('cpu').textContent = `${data.system.cpu.usage}%`;
+                    document.getElementById('memory').textContent = 
+                        `${data.system.memory.used} / ${data.system.memory.total} GB`;
+                    document.getElementById('disk').textContent = 
+                        `${data.system.disk.used} / ${data.system.disk.total} GB`;
+                    document.getElementById('network').textContent = 
+                        `↓ ${data.system.network.rx} KB/s | ↑ ${data.system.network.tx} KB/s`;
+                    addLog('Metrics updated');
+                }
+            } catch (error) {
+                addLog('Error parsing data: ' + error.message);
+            }
+        };
+        
+        ws.onerror = (error) => {
+            addLog('WebSocket error');
+            document.getElementById('status').textContent = 'Error';
+            document.getElementById('status').className = 'disconnected';
+        };
+        
+        ws.onclose = () => {
+            document.getElementById('status').textContent = 'Disconnected';
+            document.getElementById('status').className = 'disconnected';
+            addLog('Connection closed');
+        };
+    </script>
+</body>
+</html>

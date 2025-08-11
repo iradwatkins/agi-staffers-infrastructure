@@ -1,0 +1,227 @@
+{
+  "name": "Database Backup Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "backup-trigger/create-backup",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Backup Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.type}}",
+              "operation": "equal",
+              "value2": "database"
+            }
+          ]
+        }
+      },
+      "id": "database-filter",
+      "name": "Database Backup Filter",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "command": "#!/bin/bash\n\n# Database backup script\nBACKUP_ID=\"{{$json.backupId}}\"\nBACKUP_DIR=\"/var/backups/database\"\nTIMESTAMP=$(date +%Y%m%d_%H%M%S)\nBACKUP_FILE=\"${BACKUP_DIR}/postgres_${TIMESTAMP}_${BACKUP_ID}.sql.gz\"\n\n# Create backup directory\nmkdir -p ${BACKUP_DIR}\n\n# Create PostgreSQL backup with compression\necho \"Starting database backup: ${BACKUP_FILE}\"\npg_dumpall -h localhost -U postgres | gzip > ${BACKUP_FILE}\n\n# Check if backup was successful\nif [ ${PIPESTATUS[0]} -eq 0 ] && [ -f ${BACKUP_FILE} ]; then\n  BACKUP_SIZE=$(stat -f%z ${BACKUP_FILE} 2>/dev/null || stat -c%s ${BACKUP_FILE})\n  CHECKSUM=$(sha256sum ${BACKUP_FILE} | cut -d' ' -f1)\n  \n  echo \"Backup completed successfully\"\n  echo \"Size: ${BACKUP_SIZE} bytes\"\n  echo \"Checksum: ${CHECKSUM}\"\n  \n  # Output JSON for n8n\n  echo \"{\\\"status\\\":\\\"success\\\",\\\"file\\\":\\\"${BACKUP_FILE}\\\",\\\"size\\\":${BACKUP_SIZE},\\\"checksum\\\":\\\"${CHECKSUM}\\\"}\"\nelse\n  echo \"Backup failed\"\n  echo \"{\\\"status\\\":\\\"failed\\\",\\\"error\\\":\\\"Database dump failed\\\"}\"\n  exit 1\nfi"
+      },
+      "id": "database-backup-script",
+      "name": "Execute Database Backup",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [680, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.status}}",
+              "operation": "equal", 
+              "value2": "success"
+            }
+          ]
+        }
+      },
+      "id": "backup-success-check",
+      "name": "Backup Success Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:3011/api/broadcast",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"title\": \"✅ Database Backup Complete\",\n  \"body\": \"PostgreSQL backup completed successfully\",\n  \"icon\": \"/icons/icon-192x192.png\",\n  \"data\": {\n    \"type\": \"backup-success\",\n    \"backupId\": \"{{$node['Backup Webhook'].json['backupId']}}\",\n    \"size\": \"{{$json.size}}\",\n    \"url\": \"/?tab=backups\"\n  }\n}",
+        "options": {}
+      },
+      "id": "success-notification",
+      "name": "Send Success Notification", 
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:3011/api/broadcast",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"title\": \"❌ Database Backup Failed\",\n  \"body\": \"PostgreSQL backup encountered an error\",\n  \"icon\": \"/icons/icon-192x192.png\",\n  \"data\": {\n    \"type\": \"backup-failure\",\n    \"backupId\": \"{{$node['Backup Webhook'].json['backupId']}}\",\n    \"error\": \"{{$json.error}}\",\n    \"url\": \"/?tab=backups\"\n  }\n}",
+        "options": {}
+      },
+      "id": "failure-notification",
+      "name": "Send Failure Notification",
+      "type": "n8n-nodes-base.httpRequest", 
+      "typeVersion": 3,
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "command": "#!/bin/bash\n\n# Cleanup old backups based on retention policy\nBACKUP_DIR=\"/var/backups/database\"\nRETENTION_HOURS={{$node['Backup Webhook'].json['retention']['hourly']}}\nRETENTION_DAYS={{$node['Backup Webhook'].json['retention']['daily']}}\n\n# Remove backups older than retention policy\nfind ${BACKUP_DIR} -name '*.sql.gz' -mtime +${RETENTION_DAYS} -delete\n\necho \"Cleanup completed\"\necho \"{\\\"status\\\":\\\"cleanup_complete\\\"}\""
+      },
+      "id": "backup-cleanup",
+      "name": "Cleanup Old Backups",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"backupId\": \"{{$node['Backup Webhook'].json['backupId']}}\",\n  \"status\": \"{{$json.status}}\",\n  \"message\": \"Database backup workflow completed\"\n}"
+      },
+      "id": "response-node",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "Backup Webhook": {
+      "main": [
+        [
+          {
+            "node": "Database Backup Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Database Backup Filter": {
+      "main": [
+        [
+          {
+            "node": "Execute Database Backup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Database Backup": {
+      "main": [
+        [
+          {
+            "node": "Backup Success Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Backup Success Check": {
+      "main": [
+        [
+          {
+            "node": "Send Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Failure Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Success Notification": {
+      "main": [
+        [
+          {
+            "node": "Cleanup Old Backups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Failure Notification": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cleanup Old Backups": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-10T00:00:00.000Z",
+  "id": "database-backup-workflow",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Database Backup Automation",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2025-01-10T00:00:00.000Z",
+      "id": "backup-automation",
+      "name": "backup-automation",
+      "updatedAt": "2025-01-10T00:00:00.000Z"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-10T00:00:00.000Z",
+  "versionId": "1"
+}

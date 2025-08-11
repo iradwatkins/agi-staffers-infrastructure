@@ -1,0 +1,47 @@
+stepperslife.com, www.stepperslife.com {
+    reverse_proxy localhost:3002
+}
+
+admin.agistaffers.com {
+    redir https://agistaffers.com/admin permanent
+}
+
+n8n.agistaffers.com {
+    reverse_proxy localhost:5678
+}
+
+pgadmin.agistaffers.com {
+    reverse_proxy localhost:5050
+}
+
+agistaffers.com, www.agistaffers.com {
+    reverse_proxy localhost:3007
+    
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+    
+    log {
+        output stdout
+        format console
+    }
+}
+
+chat.agistaffers.com {
+    reverse_proxy localhost:3000
+}
+
+flowise.agistaffers.com {
+    reverse_proxy localhost:3001
+}
+
+portainer.agistaffers.com {
+    reverse_proxy localhost:9000
+}
+
+searxng.agistaffers.com {
+    reverse_proxy localhost:8090
+}

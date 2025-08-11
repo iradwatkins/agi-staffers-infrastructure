@@ -1,0 +1,62 @@
+# Node modules
+node_modules/
+*/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.production
+*.env
+
+# Mac files
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build outputs
+dist/
+build/
+*.dist/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# SSH keys (IMPORTANT - never commit these!)
+*.pem
+*.key
+id_rsa*
+github-actions-key*
+
+# Backup files
+*.backup
+*.bak
+
+# Archive files
+*.tar.gz
+*.tar
+*.zip
+*.rar
+*.7z
+
+# Database files
+*.db
+*.sqlite
+
+# Docker volumes
+docker-volumes/
+
+# Sensitive configuration
+secrets/
+credentials/
+
+# Git backups
+.git-old-backup/
+.git-backup/

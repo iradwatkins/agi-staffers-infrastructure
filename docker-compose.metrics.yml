@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  metrics-api:
+    build: ./metrics-api
+    container_name: metrics-api
+    restart: unless-stopped
+    ports:
+      - "3008:3008"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NODE_ENV=production
+      - PORT=3008
+    networks:
+      - agi-network
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+networks:
+  agi-network:
+    external: true

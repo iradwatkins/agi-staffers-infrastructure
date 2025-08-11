@@ -1,0 +1,50 @@
+# Docker Compose override file for memory limits
+# Apply with: docker-compose -f docker-compose.yml -f docker-memory-limits.yml up -d
+
+version: '3.8'
+
+services:
+  open-webui:
+    mem_limit: 1g
+    memswap_limit: 1g
+    mem_reservation: 512m
+
+  neo4j:
+    mem_limit: 768m
+    memswap_limit: 768m
+    mem_reservation: 512m
+    environment:
+      - NEO4J_dbms_memory_heap_max__size=512M
+      - NEO4J_dbms_memory_heap_initial__size=512M
+
+  ollama:
+    mem_limit: 1g
+    memswap_limit: 1g
+    mem_reservation: 512m
+
+  flowise:
+    mem_limit: 512m
+    memswap_limit: 512m
+    mem_reservation: 256m
+
+  n8n:
+    mem_limit: 512m
+    memswap_limit: 512m
+    mem_reservation: 256m
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=512
+
+  stepperslife-storage:
+    mem_limit: 512m
+    memswap_limit: 512m
+    mem_reservation: 256m
+
+  minio:
+    mem_limit: 512m
+    memswap_limit: 512m
+    mem_reservation: 256m
+
+  pgadmin:
+    mem_limit: 384m
+    memswap_limit: 384m
+    mem_reservation: 256m

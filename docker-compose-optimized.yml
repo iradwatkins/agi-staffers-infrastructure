@@ -1,0 +1,219 @@
+# Optimized Docker Compose Configuration with Memory Limits
+# For AGI Staffers VPS Infrastructure
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database - Critical Service
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: your_password_here
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    restart: unless-stopped
+
+  # PgAdmin - Database Management (use sparingly)
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@agistaffers.com
+      PGADMIN_DEFAULT_PASSWORD: your_password_here
+    ports:
+      - "5050:80"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+    restart: unless-stopped
+
+  # Admin Dashboard - PWA (lightweight)
+  admin-dashboard:
+    image: admin-dashboard:latest
+    container_name: admin-dashboard
+    ports:
+      - "3007:80"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+    restart: unless-stopped
+
+  # SteppersLife Website (static, minimal memory)
+  stepperslife:
+    image: stepperslife:latest
+    container_name: stepperslife
+    ports:
+      - "3006:3000"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+    restart: unless-stopped
+
+  # N8N Workflow Automation
+  n8n:
+    image: n8nio/n8n
+    container_name: n8n
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=your_password_here
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    restart: unless-stopped
+
+  # Flowise AI - Largest memory consumer
+  flowise:
+    image: flowiseai/flowise
+    container_name: flowise
+    ports:
+      - "3001:3000"
+    volumes:
+      - flowise_data:/root/.flowise
+    environment:
+      - FLOWISE_USERNAME=admin
+      - FLOWISE_PASSWORD=your_password_here
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    restart: unless-stopped
+
+  # Chat Interface
+  chat:
+    image: chat:latest
+    container_name: chat
+    ports:
+      - "3000:3000"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    restart: unless-stopped
+
+  # Portainer - Container Management
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+    restart: unless-stopped
+
+  # SearXNG Search Engine
+  searxng:
+    image: searxng/searxng
+    container_name: searxng
+    ports:
+      - "8090:8080"
+    volumes:
+      - searxng_data:/etc/searxng
+    environment:
+      - SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    restart: unless-stopped
+
+  # Metrics API - Real-time system monitoring
+  metrics-api:
+    build: ./services/metrics-api
+    container_name: metrics-api
+    ports:
+      - "3008:3008"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /dev:/host/dev:ro
+    environment:
+      - PORT=3008
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+    restart: unless-stopped
+    privileged: true
+
+  # Caddy Reverse Proxy (lightweight)
+  caddy:
+    image: caddy:alpine
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  n8n_data:
+  flowise_data:
+  portainer_data:
+  searxng_data:
+  caddy_data:
+  caddy_config:
+
+# Total Memory Allocation:
+# - PostgreSQL: 1GB
+# - Flowise AI: 1GB  
+# - N8N: 512MB
+# - Chat: 512MB
+# - SearXNG: 512MB
+# - PgAdmin: 256MB
+# - Portainer: 256MB
+# - Admin Dashboard: 256MB
+# - SteppersLife: 256MB
+# - Caddy: 256MB
+# ------------------------
+# TOTAL MAX: ~5GB (leaves 3GB for system on 8GB VPS)

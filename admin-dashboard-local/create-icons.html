@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create PWA Icons</title>
+</head>
+<body>
+    <h1>PWA Icon Generator</h1>
+    <p>This creates placeholder icons for the PWA. Open this file in a browser and save the canvases as images.</p>
+    
+    <h2>192x192 Icon</h2>
+    <canvas id="icon192" width="192" height="192"></canvas>
+    
+    <h2>512x512 Icon</h2>
+    <canvas id="icon512" width="512" height="512"></canvas>
+    
+    <script>
+        function createIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Add text
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size/4}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('AGI', size/2, size/2 - size/8);
+            ctx.font = `${size/6}px Arial`;
+            ctx.fillText('Admin', size/2, size/2 + size/8);
+            
+            // Convert to PNG and trigger download
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `icon-${size}x${size}.png`;
+                document.body.appendChild(a);
+                a.textContent = `Download ${size}x${size} icon`;
+                a.style.display = 'block';
+                a.style.marginTop = '10px';
+            });
+        }
+        
+        // Create both icons
+        createIcon('icon192', 192);
+        createIcon('icon512', 512);
+    </script>
+</body>
+</html>

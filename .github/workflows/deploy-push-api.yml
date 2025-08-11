@@ -1,0 +1,141 @@
+name: Deploy Push Notification API
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'push-notification-api/**'
+      - '.github/workflows/deploy-push-api.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+env:
+  DOCKER_IMAGE: agi-push-api
+  CONTAINER_NAME: push-notification-api
+  SERVER_HOST: 148.230.93.174
+  SERVER_USER: root
+
+jobs:
+  test:
+    name: Test API
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        working-directory: push-notification-api
+        run: |
+          npm install
+          npm install --save-dev jest supertest
+          
+      - name: Run linting
+        working-directory: push-notification-api
+        run: |
+          npm install -g eslint
+          eslint server.js || true
+          
+      - name: Security audit
+        working-directory: push-notification-api
+        run: npm audit --audit-level=high
+
+  build-and-deploy:
+    name: Build and Deploy API
+    runs-on: ubuntu-latest
+    needs: test
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+          
+      - name: Deploy to server
+        run: |
+          # Copy API files to server
+          scp -r push-notification-api ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:/tmp/
+          
+          # Deploy on server
+          ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
+            # Backup current API
+            if [ -d /root/push-notification-api ]; then
+              cp -r /root/push-notification-api /root/push-notification-api.backup-$(date +%Y%m%d-%H%M%S)
+            fi
+            
+            # Update API files
+            rm -rf /root/push-notification-api
+            mv /tmp/push-notification-api /root/
+            
+            # Create environment file with secrets
+            cat > /root/push-notification-api/.env << 'ENVEOF'
+NODE_ENV=production
+PORT=3011
+VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}
+VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}
+VAPID_EMAIL=mailto:admin@agistaffers.com
+ENVEOF
+            
+            # Build new Docker image
+            cd /root/push-notification-api
+            docker build -t agi-push-api:new .
+            
+            # Test new image
+            docker run -d --name push-api-test -p 3099:3011 --env-file .env agi-push-api:new
+            sleep 5
+            
+            if curl -f http://localhost:3099/health | grep -q "AGI Push Notification API"; then
+              echo "✅ New API image tested successfully"
+              docker stop push-api-test && docker rm push-api-test
+              
+              # Deploy new version
+              docker stop push-notification-api || true
+              docker rm push-notification-api || true
+              docker tag agi-push-api:new agi-push-api:latest
+              docker run -d \
+                --name push-notification-api \
+                --restart unless-stopped \
+                --network agi-network \
+                -p 3011:3011 \
+                --env-file .env \
+                agi-push-api:latest
+                
+              # Clean up old backups (keep last 3)
+              ls -dt /root/push-notification-api.backup-* | tail -n +4 | xargs rm -rf
+            else
+              echo "❌ API test failed"
+              docker stop push-api-test && docker rm push-api-test
+              docker rmi agi-push-api:new
+              exit 1
+            fi
+          EOF
+          
+      - name: Verify deployment
+        run: |
+          sleep 10
+          if curl -f https://admin.agistaffers.com/push-api/health; then
+            echo "✅ API is accessible via HTTPS"
+          else
+            echo "❌ API health check failed"
+            exit 1
+          fi

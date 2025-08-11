@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>AGI Staffers - Admin Dashboard</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <link rel="icon" href="/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* Samsung Fold 6 Device Detection and Responsive Design */
+        
+        /* Fold Device Detection Indicator */
+        .fold-status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            z-index: 9999;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Base responsive utilities */
+        .fold-container {
+            transition: all 0.3s ease;
+        }
+        
+        /* Samsung Fold 6 - Folded State (Cover Display) */
+        /* Cover display: 720 x 948 px (6.2") */
+        @media screen and (max-width: 376px) {
+            .fold-status {
+                display: block;
+            }
+            
+            .fold-status::after {
+                content: "📱 Folded Mode";
+            }
+            
+            /* Navigation adjustments */
+            nav {
+                padding: 0;
+            }
+            
+            .nav-title {
+                font-size: 1.25rem;
+            }
+            
+            /* Hide desktop navigation */
+            .desktop-nav {
+                display: none;
+            }
+            
+            /* Mobile menu button */
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            /* Container adjustments */
+            .max-w-7xl {
+                padding: 0 12px;
+            }
+            
+            /* Header adjustments */
+            .dashboard-header h2 {
+                font-size: 1.5rem;
+                line-height: 1.2;
+            }
+            
+            .dashboard-header p {
+                font-size: 0.875rem;
+            }
+            
+            /* Stats cards - Stack vertically */
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            /* Compact card design */
+            .stat-card {
+                padding: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            
+            .stat-icon {
+                width: 40px;
+                height: 40px;
+                padding: 8px;
+            }
+            
+            .stat-icon i {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .stat-info {
+                flex: 1;
+                margin-left: 12px;
+                text-align: right;
+            }
+            
+            .stat-label {
+                font-size: 0.75rem;
+            }
+            
+            .stat-value {
+                font-size: 1.25rem;
+            }
+            
+            /* Website cards - Single column */
+            .website-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            /* Compact website cards */
+            .website-card {
+                padding: 16px;
+            }
+            
+            .website-card h4 {
+                font-size: 0.875rem;
+            }
+            
+            .website-card p {
+                font-size: 0.75rem;
+            }
+            
+            /* Button adjustments */
+            .btn-sm {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+            
+            .btn-sm i {
+                width: 14px;
+                height: 14px;
+            }
+            
+            /* Hide non-essential elements */
+            .hide-on-fold {
+                display: none;
+            }
+            
+            /* Quick action buttons */
+            .quick-actions {
+                position: fixed;
+                bottom: 60px;
+                right: 10px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .quick-action-btn {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #667eea;
+                color: white;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+        }
+        
+        /* Samsung Fold 6 - Transition State */
+        @media screen and (min-width: 377px) and (max-width: 767px) {
+            .fold-status {
+                display: block;
+            }
+            
+            .fold-status::after {
+                content: "📱 Transitioning...";
+            }
+        }
+        
+        /* Samsung Fold 6 - Unfolded State (Main Display) */
+        /* Main display: 2176 x 1812 px (7.6") - Aspect ratio 6:5 */
+        @media screen and (min-width: 768px) and (max-width: 1024px) and (min-aspect-ratio: 1/1) and (max-aspect-ratio: 1.3/1) {
+            .fold-status {
+                display: block;
+            }
+            
+            .fold-status::after {
+                content: "📱 Unfolded Mode (7.6\")";
+            }
+            
+            /* Optimize for square-ish aspect ratio */
+            .max-w-7xl {
+                max-width: 100%;
+                padding: 0 24px;
+            }
+            
+            /* 2-column layout for stats */
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            
+            /* Website grid optimization */
+            .website-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Larger touch targets */
+            button {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            /* Split view layout for unfolded */
+            .split-view {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+                height: calc(100vh - 200px);
+            }
+            
+            .split-panel {
+                overflow-y: auto;
+                padding: 16px;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+        }
+        
+        /* Enhanced animations for fold/unfold */
+        @media (prefers-reduced-motion: no-preference) {
+            .fold-container {
+                animation: fadeIn 0.3s ease-out;
+            }
+            
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+        }
+        
+        /* Mobile menu styles */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 80%;
+            height: 100vh;
+            background: white;
+            z-index: 1000;
+            transition: left 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mobile-menu.active {
+            left: 0;
+        }
+        
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .mobile-menu-overlay.active {
+            display: block;
+        }
+        
+        /* Desktop styles (default) */
+        .mobile-menu-btn {
+            display: none;
+        }
+        
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Status indicators */
+        .status-online { 
+            animation: pulse 2s infinite;
+            background: #10b981;
+        }
+        
+        .status-offline { 
+            background: #ef4444;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Glass effect */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Fold Status Indicator -->
+    <div class="fold-status"></div>
+    
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <div class="p-6 gradient-bg">
+            <h2 class="text-xl font-bold text-white">AGI Staffers</h2>
+        </div>
+        <nav class="p-6">
+            <a href="#dashboard" class="block py-3 text-gray-700 hover:text-purple-600">Dashboard</a>
+            <a href="#websites" class="block py-3 text-gray-700 hover:text-purple-600">Websites</a>
+            <a href="#deploy" class="block py-3 text-gray-700 hover:text-purple-600">Deploy</a>
+            <a href="#monitoring" class="block py-3 text-gray-700 hover:text-purple-600">Monitoring</a>
+        </nav>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <!-- Mobile Menu Button -->
+                    <button onclick="toggleMobileMenu()" class="mobile-menu-btn text-white p-2 rounded-md hover:bg-white hover:bg-opacity-20">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                    
+                    <div class="flex-shrink-0">
+                        <h1 class="nav-title text-2xl font-bold text-white">🤖 AGI Staffers</h1>
+                    </div>
+                    
+                    <!-- Desktop Navigation -->
+                    <div class="desktop-nav hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="#dashboard" class="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                            <a href="#websites" class="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium">Websites</a>
+                            <a href="#deploy" class="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium">Deploy</a>
+                            <a href="#monitoring" class="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium">Monitoring</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-white text-sm hide-on-fold">🌟 Server: agistaffers.com</span>
+                    <div class="relative">
+                        <button class="bg-white bg-opacity-20 text-white p-2 rounded-full hover:bg-opacity-30 transition-all">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="fold-container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Header Stats -->
+        <div class="dashboard-header mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Website Management Dashboard</h2>
+            <p class="text-gray-600">Monitor and manage all your websites from one place</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="stat-card bg-white rounded-xl shadow-sm p-6 card-hover border">
+                <div class="flex items-center">
+                    <div class="stat-icon p-3 bg-green-100 rounded-full">
+                        <i data-lucide="globe" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                    <div class="stat-info ml-4">
+                        <p class="stat-label text-sm font-medium text-gray-600">Active Websites</p>
+                        <p class="stat-value text-2xl font-semibold text-gray-900">1</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card bg-white rounded-xl shadow-sm p-6 card-hover border">
+                <div class="flex items-center">
+                    <div class="stat-icon p-3 bg-blue-100 rounded-full">
+                        <i data-lucide="server" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div class="stat-info ml-4">
+                        <p class="stat-label text-sm font-medium text-gray-600">Running Containers</p>
+                        <p class="stat-value text-2xl font-semibold text-gray-900">10</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card bg-white rounded-xl shadow-sm p-6 card-hover border">
+                <div class="flex items-center">
+                    <div class="stat-icon p-3 bg-purple-100 rounded-full">
+                        <i data-lucide="database" class="w-6 h-6 text-purple-600"></i>
+                    </div>
+                    <div class="stat-info ml-4">
+                        <p class="stat-label text-sm font-medium text-gray-600">Database Records</p>
+                        <p class="stat-value text-2xl font-semibold text-gray-900">64</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card bg-white rounded-xl shadow-sm p-6 card-hover border">
+                <div class="flex items-center">
+                    <div class="stat-icon p-3 bg-orange-100 rounded-full">
+                        <i data-lucide="hard-drive" class="w-6 h-6 text-orange-600"></i>
+                    </div>
+                    <div class="stat-info ml-4">
+                        <p class="stat-label text-sm font-medium text-gray-600">Disk Usage</p>
+                        <p class="stat-value text-2xl font-semibold text-gray-900">32%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Website Status Grid -->
+        <div class="website-grid grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Deployed Websites -->
+            <div class="website-card bg-white rounded-xl shadow-sm border">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="check-circle" class="w-5 h-5 mr-2 text-green-500"></i>
+                        Deployed Websites
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <!-- SteppersLife.com -->
+                    <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg mb-4">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full status-online mr-3"></div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">stepperslife.com</h4>
+                                <p class="text-sm text-gray-600">Port 3002 • Database: ✅ • SSL: ✅</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="btn-sm px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-sm hover:bg-blue-200 transition-colors">
+                                <i data-lucide="external-link" class="w-4 h-4 inline mr-1"></i>
+                                <span class="hide-on-fold">Visit</span>
+                            </button>
+                            <button class="btn-sm px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200 transition-colors">
+                                <i data-lucide="settings" class="w-4 h-4 inline mr-1"></i>
+                                <span class="hide-on-fold">Manage</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Websites -->
+            <div class="website-card bg-white rounded-xl shadow-sm border">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="clock" class="w-5 h-5 mr-2 text-orange-500"></i>
+                        Pending Deployment
+                    </h3>
+                </div>
+                <div class="p-6 space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full status-offline mr-3"></div>
+                            <span class="font-medium text-gray-700">gangrunprinting.com</span>
+                        </div>
+                        <button onclick="deployWebsite('gangrunprinting')" class="btn-sm px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors">
+                            <i data-lucide="play" class="w-4 h-4 inline mr-1"></i>
+                            Deploy
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full status-offline mr-3"></div>
+                            <span class="font-medium text-gray-700">uvcoatedclubflyers.com</span>
+                        </div>
+                        <button onclick="deployWebsite('uvcoatedclubflyers')" class="btn-sm px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors">
+                            <i data-lucide="play" class="w-4 h-4 inline mr-1"></i>
+                            Deploy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions (Mobile) -->
+        <div class="quick-actions">
+            <button class="quick-action-btn">
+                <i data-lucide="plus" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Service Management Grid -->
+        <div class="mb-8">
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">Service Management</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- Service cards will be dynamically populated -->
+                <div id="services-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.mobile-menu');
+            const overlay = document.querySelector('.mobile-menu-overlay');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        
+        // Detect Samsung Fold device
+        function detectFoldDevice() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const aspectRatio = width / height;
+            
+            // Update fold status indicator
+            const statusEl = document.querySelector('.fold-status');
+            if (width <= 376) {
+                statusEl.style.display = 'block';
+                document.body.classList.add('folded');
+                document.body.classList.remove('unfolded');
+            } else if (width >= 768 && width <= 1024 && aspectRatio >= 1 && aspectRatio <= 1.3) {
+                statusEl.style.display = 'block';
+                document.body.classList.add('unfolded');
+                document.body.classList.remove('folded');
+            } else {
+                statusEl.style.display = 'none';
+                document.body.classList.remove('folded', 'unfolded');
+            }
+        }
+        
+        // Deploy website function
+        function deployWebsite(siteName) {
+            alert(`Deploying ${siteName}...`);
+            // Add deployment logic here
+        }
+        
+        // Service data
+        const services = [
+            { name: 'PostgreSQL', icon: 'database', status: 'online', url: 'pgadmin.agistaffers.com' },
+            { name: 'n8n Automation', icon: 'git-branch', status: 'online', url: 'n8n.agistaffers.com' },
+            { name: 'AI Chat', icon: 'message-square', status: 'online', url: 'chat.agistaffers.com' },
+            { name: 'Flowise AI', icon: 'cpu', status: 'online', url: 'flowise.agistaffers.com' },
+            { name: 'Portainer', icon: 'box', status: 'online', url: 'portainer.agistaffers.com' },
+            { name: 'SearXNG', icon: 'search', status: 'online', url: 'searxng.agistaffers.com' }
+        ];
+        
+        // Populate services
+        function populateServices() {
+            const container = document.getElementById('services-container');
+            services.forEach(service => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg shadow-sm border p-4 card-hover';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="${service.icon}" class="w-5 h-5 text-purple-600"></i>
+                        <div class="w-2 h-2 rounded-full ${service.status === 'online' ? 'status-online' : 'status-offline'}"></div>
+                    </div>
+                    <h4 class="font-medium text-gray-900 text-sm mb-1">${service.name}</h4>
+                    <a href="https://${service.url}" target="_blank" class="text-xs text-blue-600 hover:text-blue-800">
+                        ${service.url}
+                    </a>
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            detectFoldDevice();
+            populateServices();
+        });
+        
+        // Detect orientation changes
+        window.addEventListener('resize', detectFoldDevice);
+        window.addEventListener('orientationchange', detectFoldDevice);
+        
+        // Service Worker Registration for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.error('Service Worker registration failed:', err));
+        }
+    </script>
+</body>
+</html>

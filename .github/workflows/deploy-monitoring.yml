@@ -1,0 +1,67 @@
+name: Deploy Docker Monitoring
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docker-monitor-alerts.sh'
+      - '.github/workflows/deploy-monitoring.yml'
+  workflow_dispatch:
+
+env:
+  SERVER_HOST: 148.230.93.174
+  SERVER_USER: root
+  SERVICE_NAME: docker-monitor-alerts
+
+jobs:
+  deploy:
+    name: Deploy Monitoring Service
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Validate script
+        run: |
+          # Check bash syntax
+          bash -n docker-monitor-alerts.sh
+          
+          # Check for common issues
+          shellcheck docker-monitor-alerts.sh || true
+          
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+          
+      - name: Deploy monitoring script
+        run: |
+          # Copy script to server
+          scp docker-monitor-alerts.sh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:/root/
+          
+          # Deploy on server
+          ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
+            # Fix line endings
+            tr -d '\r' < /root/docker-monitor-alerts.sh > /root/docker-monitor-alerts.sh.fixed
+            mv /root/docker-monitor-alerts.sh.fixed /root/docker-monitor-alerts.sh
+            chmod +x /root/docker-monitor-alerts.sh
+            
+            # Restart service
+            systemctl restart docker-monitor-alerts
+            
+            # Check status
+            sleep 2
+            if systemctl is-active --quiet docker-monitor-alerts; then
+              echo "✅ Monitoring service restarted successfully"
+              systemctl status docker-monitor-alerts --no-pager
+            else
+              echo "❌ Monitoring service failed to start"
+              journalctl -u docker-monitor-alerts --no-pager -n 20
+              exit 1
+            fi
+          EOF

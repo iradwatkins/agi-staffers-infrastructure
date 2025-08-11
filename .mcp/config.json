@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/test", "--config=mcp-config"],
+      "description": "Playwright browser testing and performance analysis",
+      "capabilities": ["browser_testing", "performance_analysis", "screenshot", "automation"]
+    },
+    "semgrep": {
+      "command": "semgrep",
+      "args": ["--config=auto", "--json"],
+      "description": "Security vulnerability scanning and code analysis",
+      "capabilities": ["security_scan", "vulnerability_detection", "code_quality"]
+    },
+    "firecrawl": {
+      "enabled": true,
+      "description": "Web scraping and content extraction (already available)",
+      "capabilities": ["web_scraping", "content_extraction", "site_mapping"]
+    },
+    "exa": {
+      "enabled": true,
+      "description": "Intelligent web search and research (already available)",
+      "capabilities": ["web_search", "research", "competitive_analysis"]
+    }
+  },
+  "bmadWorkflow": {
+    "benchmark": {
+      "agents": ["playwright", "exa", "firecrawl"],
+      "description": "Performance testing, competitive analysis, and data extraction"
+    },
+    "model": {
+      "agents": ["shadcn-ui", "context7", "pieces", "ref-tools"],
+      "description": "Component design, documentation lookup, and code patterns"
+    },
+    "analyze": {
+      "agents": ["semgrep", "playwright", "serena"],
+      "description": "Security scanning, testing, and code quality analysis"
+    },
+    "deliver": {
+      "agents": ["semgrep", "playwright"],
+      "description": "Final security checks and deployment testing"
+    }
+  }
+}

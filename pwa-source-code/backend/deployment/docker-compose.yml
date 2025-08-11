@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  push-api:
+    build: ../push-api
+    container_name: pwa-push-api
+    restart: unless-stopped
+    ports:
+      - "3011:3011"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ../push-api/.env
+    networks:
+      - pwa-network
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    user: "1000:1000"
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3011/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Optional: PostgreSQL for persistent storage
+  postgres:
+    image: postgres:15-alpine
+    container_name: pwa-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pwa_notifications
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - pwa-network
+    security_opt:
+      - no-new-privileges:true
+    user: "70:70"
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - FSETID
+      - SETGID
+      - SETUID
+
+  # Optional: Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: pwa-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - pwa-network
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    user: "999:1000"
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+
+  # Optional: Monitoring with Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: pwa-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - pwa-network
+    security_opt:
+      - no-new-privileges:true
+    user: "65534:65534"
+    cap_drop:
+      - ALL
+
+networks:
+  pwa-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  prometheus_data:

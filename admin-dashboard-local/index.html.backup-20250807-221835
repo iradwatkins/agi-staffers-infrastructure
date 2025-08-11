@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGI Staffers - Admin Dashboard</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <link rel="icon" href="/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* Samsung Fold 6 Detection Classes */
+        .fold-device-indicator {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 9999;
+            display: none;
+        }
+        
+        body.fold-device .fold-device-indicator {
+            display: block;
+        }
+        
+        /* Samsung Fold 6 Specific Breakpoints */
+        /* Folded State (Cover Display) */
+        @media screen and (max-width: 320px) {
+            .max-w-7xl {
+                padding: 0 10px;
+            }
+            
+            .grid-cols-1 {
+                gap: 10px;
+            }
+            
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+            
+            .p-6 {
+                padding: 1rem;
+            }
+            
+            /* Hide non-essential elements on cover display */
+            .hidden-on-fold {
+                display: none;
+            }
+            
+            /* Adjust button sizes */
+            .rounded-lg {
+                padding: 0.5rem;
+            }
+        }
+        
+        /* Unfolded State (Main Display) */
+        @media screen and (min-width: 768px) and (max-width: 904px) {
+            /* Optimized for 904px width when unfolded */
+            .max-w-7xl {
+                max-width: 100%;
+                padding: 0 20px;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            /* Make better use of the square aspect ratio */
+            .rounded-xl {
+                border-radius: 1rem;
+            }
+        }
+        
+        /* Fold Detection for Dynamic Adjustments */
+        @media screen and (device-width: 904px) and (device-height: 2316px) {
+            /* Samsung Fold 6 Closed */
+            body::before {
+                content: "Samsung Fold 6 - Cover Display";
+                position: fixed;
+                bottom: 5px;
+                right: 5px;
+                background: #667eea;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 4px;
+                font-size: 10px;
+                z-index: 9999;
+            }
+        }
+        
+        @media screen and (device-width: 2176px) and (device-height: 1812px) {
+            /* Samsung Fold 6 Open */
+            body::before {
+                content: "Samsung Fold 6 - Main Display";
+                position: fixed;
+                bottom: 5px;
+                right: 5px;
+                background: #667eea;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 4px;
+                font-size: 10px;
+                z-index: 9999;
+            }
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .status-online { 
+            animation: pulse 2s infinite;
+            background: #10b981;
+        }
+        
+        .status-offline { 
+            background: #ef4444;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-white">🤖 AGI Staffers</h1>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="#dashboard" class="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                            <a href="#websites" class="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium">Websites</a>
+                            <a href="#deploy" class="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium">Deploy</a>
+                            <a href="#monitoring" class="text-white hover:text-gray-200 px-3 py-2 rounded-md text-sm font-medium">Monitoring</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-white text-sm">🌟 Server: agistaffers.com</span>
+                    <div class="relative">
+                        <button class="bg-white bg-opacity-20 text-white p-2 rounded-full hover:bg-opacity-30 transition-all">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Header Stats -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Website Management Dashboard</h2>
+            <p class="text-gray-600">Monitor and manage all your websites from one place</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover border">
+                <div class="flex items-center">
+                    <div class="p-3 bg-green-100 rounded-full">
+                        <i data-lucide="globe" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Active Websites</p>
+                        <p class="text-2xl font-semibold text-gray-900">1</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover border">
+                <div class="flex items-center">
+                    <div class="p-3 bg-blue-100 rounded-full">
+                        <i data-lucide="server" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Running Containers</p>
+                        <p class="text-2xl font-semibold text-gray-900">10</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover border">
+                <div class="flex items-center">
+                    <div class="p-3 bg-purple-100 rounded-full">
+                        <i data-lucide="database" class="w-6 h-6 text-purple-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Database Records</p>
+                        <p class="text-2xl font-semibold text-gray-900">64</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover border">
+                <div class="flex items-center">
+                    <div class="p-3 bg-orange-100 rounded-full">
+                        <i data-lucide="hard-drive" class="w-6 h-6 text-orange-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Disk Usage</p>
+                        <p class="text-2xl font-semibold text-gray-900">32%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Website Status Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Deployed Websites -->
+            <div class="bg-white rounded-xl shadow-sm border">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="check-circle" class="w-5 h-5 mr-2 text-green-500"></i>
+                        Deployed Websites
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <!-- SteppersLife.com -->
+                    <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg mb-4">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full status-online mr-3"></div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">stepperslife.com</h4>
+                                <p class="text-sm text-gray-600">Port 3002 • Database: ✅ • SSL: ✅</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-sm hover:bg-blue-200 transition-colors">
+                                <i data-lucide="external-link" class="w-4 h-4 inline mr-1"></i>
+                                Visit
+                            </button>
+                            <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200 transition-colors">
+                                <i data-lucide="settings" class="w-4 h-4 inline mr-1"></i>
+                                Manage
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Websites -->
+            <div class="bg-white rounded-xl shadow-sm border">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="clock" class="w-5 h-5 mr-2 text-orange-500"></i>
+                        Pending Deployment
+                    </h3>
+                </div>
+                <div class="p-6 space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full status-offline mr-3"></div>
+                            <span class="font-medium text-gray-700">gangrunprinting.com</span>
+                        </div>
+                        <button onclick="deployWebsite('gangrunprinting')" class="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors">
+                            <i data-lucide="play" class="w-4 h-4 inline mr-1"></i>
+                            Deploy
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full status-offline mr-3"></div>
+                            <span class="font-medium text-gray-700">uvcoatedclubflyers.com</span>
+                        </div>
+                        <button onclick="deployWebsite('uvcoatedclubflyers')" class="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors">
+                            <i data-lucide="play" class="w-4 h-4 inline mr-1"></i>
+                            Deploy
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full status-offline mr-3"></div>
+                            <span class="font-medium text-gray-700">vaina.com.do</span>
+                        </div>
+                        <button onclick="deployWebsite('vaina')" class="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors">
+                            <i data-lucide="play" class="w-4 h-4 inline mr-1"></i>
+                            Deploy
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full status-offline mr-3"></div>
+                            <span class="font-medium text-gray-700">elarmario.com.do</span>
+                        </div>
+                        <button onclick="deployWebsite('elarmario')" class="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors">
+                            <i data-lucide="play" class="w-4 h-4 inline mr-1"></i>
+                            Deploy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-xl shadow-sm border mb-8">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i data-lucide="zap" class="w-5 h-5 mr-2 text-yellow-500"></i>
+                    Quick Actions
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <button onclick="runSafetyCheck()" class="flex items-center justify-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-blue-600 mr-3"></i>
+                        <div class="text-left">
+                            <p class="font-medium text-blue-900">Safety Check</p>
+                            <p class="text-sm text-blue-600">Scan for conflicts</p>
+                        </div>
+                    </button>
+                      
+                      <button onclick="testPushNotification()" class="flex items-center justify-center p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors group">
+                          <div class="flex items-center">
+                              <i data-lucide="bell" class="w-6 h-6 text-yellow-600 mr-3"></i>
+                              <div class="text-left">
+                                  <p class="font-medium text-yellow-900">Test Notifications</p>
+                                  <p class="text-sm text-yellow-600">Test PWA alerts</p>
+                              </div>
+                          </div>
+                    </button>
+                      
+                    <button onclick="showWebsiteStatus()" class="flex items-center justify-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors group">
+                        <i data-lucide="activity" class="w-6 h-6 text-green-600 mr-3"></i>
+                        <div class="text-left">
+                            <p class="font-medium text-green-900">Status Check</p>
+                            <p class="text-sm text-green-600">View all websites</p>
+                        </div>
+                    </button>
+                    
+                    <button onclick="openDeployModal()" class="flex items-center justify-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors group">
+                        <i data-lucide="plus-circle" class="w-6 h-6 text-purple-600 mr-3"></i>
+                        <div class="text-left">
+                            <p class="font-medium text-purple-900">New Website</p>
+                            <p class="text-sm text-purple-600">Deploy safely</p>
+                        </div>
+                    </button>
+                    
+                    <button onclick="showSystemResources()" class="flex items-center justify-center p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors group">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6 text-orange-600 mr-3"></i>
+                        <div class="text-left">
+                            <p class="font-medium text-orange-900">Resources</p>
+                            <p class="text-sm text-orange-600">System metrics</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Health -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-xl shadow-sm border">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="clock" class="w-5 h-5 mr-2 text-gray-500"></i>
+                        Recent Activity
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">SteppersLife.com deployed successfully</p>
+                                <p class="text-xs text-gray-500">64 database records migrated • 2 hours ago</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">SSL certificate obtained for stepperslife.com</p>
+                                <p class="text-xs text-gray-500">Auto-renewal enabled • 2 hours ago</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Safety tools installed</p>
+                                <p class="text-xs text-gray-500">7 safety scripts deployed • 3 hours ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Resources -->
+            <div class="bg-white rounded-xl shadow-sm border">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="cpu" class="w-5 h-5 mr-2 text-gray-500"></i>
+                        System Resources
+                    </h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <!-- Memory Usage -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600">Memory Usage</span>
+                            <span class="text-gray-900">3.0GB / 15GB</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Disk Usage -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600">Disk Usage</span>
+                            <span class="text-gray-900">32%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 32%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- CPU Load -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600">CPU Load</span>
+                            <span class="text-gray-900">Low</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 15%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deploy Modal -->
+    <div id="deployModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Deploy New Website</h3>
+                <button onclick="closeDeployModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <form id="deployForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Website Name</label>
+                    <input type="text" id="websiteName" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="gangrunprinting">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">App Port</label>
+                    <input type="number" id="appPort" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="3003">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Database Port</label>
+                    <input type="number" id="dbPort" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="5433">
+                </div>
+                
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" onclick="closeDeployModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                        Deploy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Status Modal -->
+    <div id="statusModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-2xl mx-4 max-h-96 overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">System Status</h3>
+                <button onclick="closeStatusModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div id="statusContent" class="text-sm font-mono bg-gray-50 p-4 rounded-md">
+                Loading system status...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+
+          function testPushNotification() {
+              console.log('testPushNotification called');
+              
+              if (!("Notification" in window)) {
+                  alert("This browser does not support notifications.");
+                  return;
+              }
+              
+              console.log('Current permission:', Notification.permission);
+              
+              if (Notification.permission === "granted") {
+                  // Permission already granted, show notification
+                  try {
+                      const notification = new Notification("AGI Staffers Admin", {
+                          body: "Push notifications are working! 🎉",
+                          icon: "/favicon.ico",
+                          badge: "/favicon.ico",
+                          vibrate: [200, 100, 200],
+                          tag: "test-notification",
+                          requireInteraction: false
+                      });
+                      
+                      notification.onclick = function() {
+                          console.log('Notification clicked');
+                          window.focus();
+                          notification.close();
+                      };
+                      
+                      console.log('Notification created successfully');
+                  } catch (error) {
+                      console.error('Error creating notification:', error);
+                      alert('Error creating notification: ' + error.message);
+                  }
+              } else if (Notification.permission === "default") {
+                  // Need to request permission
+                  console.log('Requesting notification permission...');
+                  Notification.requestPermission().then(function(permission) {
+                      console.log('Permission result:', permission);
+                      if (permission === "granted") {
+                          // Retry the notification now that we have permission
+                          testPushNotification();
+                      } else {
+                          alert("Notification permission denied. You won't receive push notifications.");
+                      }
+                  }).catch(function(error) {
+                      console.error('Error requesting permission:', error);
+                      alert('Error requesting permission: ' + error.message);
+                  });
+              } else {
+                  // Permission denied
+                  alert("Notifications are blocked. Please enable them in your browser settings:\n\n" +
+                        "1. Click the lock icon in the address bar\n" +
+                        "2. Find 'Notifications' and set to 'Allow'\n" +
+                        "3. Refresh the page and try again");
+              }
+          }
+          
+          // Make function globally accessible
+          window.testPushNotification = testPushNotification;
+
+          // Service Worker Registration with error handling
+          if ("serviceWorker" in navigator) {
+              navigator.serviceWorker.register("/sw.js")
+                  .then(function(registration) {
+                      console.log('Service Worker registered with scope:', registration.scope);
+                  })
+                  .catch(function(error) {
+                      console.error('Service Worker registration failed:', error);
+                  });
+          } else {
+              console.log('Service Workers not supported in this browser');
+          }
+
+        lucide.createIcons();
+
+        // Modal functions
+        function openDeployModal() {
+            document.getElementById('deployModal').classList.remove('hidden');
+            document.getElementById('deployModal').classList.add('flex');
+        }
+
+        function closeDeployModal() {
+            document.getElementById('deployModal').classList.add('hidden');
+            document.getElementById('deployModal').classList.remove('flex');
+        }
+
+        function closeStatusModal() {
+            document.getElementById('statusModal').classList.add('hidden');
+            document.getElementById('statusModal').classList.remove('flex');
+        }
+
+        // Deployment functions
+        function deployWebsite(websiteName) {
+            const ports = {
+                'gangrunprinting': { app: 3003, db: 5433 },
+                'uvcoatedclubflyers': { app: 3004, db: 5434 },
+                'vaina': { app: 3005, db: 5435 },
+                'elarmario': { app: 3006, db: 5436 }
+            };
+            
+            if (ports[websiteName]) {
+                document.getElementById('websiteName').value = websiteName;
+                document.getElementById('appPort').value = ports[websiteName].app;
+                document.getElementById('dbPort').value = ports[websiteName].db;
+                openDeployModal();
+            }
+        }
+
+        // Safety check functions
+        function runSafetyCheck() {
+            alert('🔍 Safety check would run:\n\n• Scan for port conflicts\n• Check container names\n• Verify directory conflicts\n• Validate configurations\n\nIn the real implementation, this would call your safety scripts!');
+        }
+
+        function showWebsiteStatus() {
+            document.getElementById('statusModal').classList.remove('hidden');
+            document.getElementById('statusModal').classList.add('flex');
+            
+            // Simulate loading website status
+            document.getElementById('statusContent').innerHTML = `
+🌐 AGI STAFFERS WEBSITE STATUS DASHBOARD
+========================================
+
+📊 stepperslife:
+  📁 Directory: ✅ EXISTS
+  📦 Container: ✅ RUNNING
+  🔌 Port: 3002
+  🗄️ Database: ✅ RUNNING
+  🌐 Caddy Config: ✅ CONFIGURED
+
+📊 gangrunprinting:
+  📁 Directory: ❌ MISSING  
+  📦 Container: ❌ STOPPED
+  🗄️ Database: ❌ STOPPED
+  🌐 Caddy Config: ❌ MISSING
+
+📊 uvcoatedclubflyers:
+  📁 Directory: ❌ MISSING
+  📦 Container: ❌ STOPPED
+  🗄️ Database: ❌ STOPPED
+  🌐 Caddy Config: ❌ MISSING
+
+🔧 SYSTEM RESOURCES:
+  💾 Disk Usage: 32% used
+  🧠 Memory: 3.0Gi/15Gi
+  📦 Docker Containers: 10 running`;
+        }
+
+        function showSystemResources() {
+            alert('📊 System Resources:\n\n• Memory: 3.0GB / 15GB (20%)\n• Disk: 32% used\n• CPU: Low load\n• Docker Containers: 10 running\n• Network: Healthy\n\nAll systems operational! 🚀');
+        }
+
+        // Form submission
+        document.getElementById('deployForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const websiteName = document.getElementById('websiteName').value;
+            const appPort = document.getElementById('appPort').value;
+            const dbPort = document.getElementById('dbPort').value;
+            
+            if (websiteName && appPort && dbPort) {
+                alert(`🚀 Deployment initiated!\n\nWebsite: ${websiteName}\nApp Port: ${appPort}\nDB Port: ${dbPort}\n\nIn the real implementation, this would:\n1. Run pre-flight safety checks\n2. Create isolated environment\n3. Deploy containers\n4. Configure SSL\n5. Update Caddy configuration`);
+                closeDeployModal();
+            } else {
+                alert('Please fill in all fields!');
+            }
+        });
+
+        // Auto-refresh status every 30 seconds
+        setInterval(function() {
+            // In real implementation, this would fetch actual status
+            console.log('Refreshing website status...');
+        }, 30000);
+    </script>
+</body>
+</html>

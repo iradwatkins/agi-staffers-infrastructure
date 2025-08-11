@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>AGI Staffers - Admin Dashboard (CI/CD Active!)</title>
+    
+    <!-- Cache Control to prevent stale content -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <link rel="icon" href="/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Legacy Scripts -->
+    <script src="/push-notifications.js"></script>
+    <!-- Legacy monitoring disabled to prevent conflicts -->
+    <!-- <script src="/monitoring.js?v=20250808-1950"></script> -->
+    <!-- <script src="/monitoring-enhanced.js?v=20250808-1926"></script> -->
+    <script src="/alerts-config.js"></script>
+    <script src="/app-installer.js"></script>
+    <script src="/fold-detection.js"></script>
+    
+    <!-- AI-Generated Components with dynamic versioning -->
+    <script>
+        // Dynamic version for cache busting
+        const version = new Date().getTime();
+        const scripts = [
+            '/components/FoldAwareLayout.js',
+            '/components/PushNotificationUI.js',
+            '/components/DashboardMetrics.js',
+            '/components/BackupManagerV2.js',
+            '/components/AlertsSystem.js',
+            '/components/HistoricalData.js',
+            '/components/ComponentIntegrator.js'
+        ];
+        
+        scripts.forEach(src => {
+            const script = document.createElement('script');
+            script.src = src + '?v=' + version;
+            document.head.appendChild(script);
+        });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        /* CSS Environment Variables for Fold Detection */
+        :root {
+            /* Safe area insets */
+            --safe-area-inset-top: env(safe-area-inset-top, 0px);
+            --safe-area-inset-right: env(safe-area-inset-right, 0px);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-area-inset-left: env(safe-area-inset-left, 0px);
+            
+            /* Viewport segments for foldable devices */
+            --fold-posture: single;
+            --fold-angle: 180deg;
+            --fold-screen-width: 100vw;
+            --fold-screen-height: 100vh;
+        }
+        
+        /* Detect horizontal fold (book mode) */
+        @media (horizontal-viewport-segments: 2) {
+            :root {
+                --fold-posture: dual-horizontal;
+            }
+        }
+        
+        /* Detect vertical fold (tent mode) */
+        @media (vertical-viewport-segments: 2) {
+            :root {
+                --fold-posture: dual-vertical;
+            }
+        }
+        
+        /* Apply safe areas globally */
+        body { 
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            padding-top: var(--safe-area-inset-top);
+            padding-bottom: var(--safe-area-inset-bottom);
+            padding-left: var(--safe-area-inset-left);
+            padding-right: var(--safe-area-inset-right);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* Beautiful gradients for service cards */
+        .gradient-postgresql { background: linear-gradient(135deg, #336791 0%, #4A90E2 100%); }
+        .gradient-n8n { background: linear-gradient(135deg, #FF6B6B 0%, #FF8787 100%); }
+        .gradient-chat { background: linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%); }
+        .gradient-flowise { background: linear-gradient(135deg, #10B981 0%, #34D399 100%); }
+        .gradient-portainer { background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); }
+        .gradient-searxng { background: linear-gradient(135deg, #F59E0B 0%, #FCD34D 100%); }
+        
+        /* Glassmorphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Smooth animations */
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        /* Service card hover effects */
+        .service-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Status indicator animations */
+        .status-pulse {
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+        
+        /* Skeleton loading effect */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Samsung Fold 6 Device Detection and Responsive Design */
+        
+        /* Fold Device Detection Indicator */
+        .fold-status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            z-index: 9999;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Base responsive utilities */
+        .fold-container {
+            transition: all 0.3s ease;
+        }
+        
+        /* Samsung Fold 6 - Folded State (Cover Display) */
+        /* Cover display: 720 x 948 px (6.2") */
+        @media screen and (max-width: 376px) {
+            .fold-status {
+                display: block;
+            }
+            
+            .fold-status::after {
+                content: "📱 Folded Mode";
+            }
+            
+            /* Remove all margins and padding */
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                overflow-x: hidden;
+            }
+            
+            /* Navigation adjustments - full width */
+            nav {
+                padding: 0;
+                margin: 0;
+                width: 100%;
+            }
+            
+            nav > div {
+                padding: 0 4px;
+                margin: 0;
+            }
+            
+            .nav-title {
+                font-size: 1.25rem;
+            }
+            
+            /* Hide desktop navigation */
+            .desktop-nav {
+                display: none;
+            }
+            
+            /* Mobile menu button */
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            /* Container adjustments - edge to edge */
+            .max-w-7xl {
+                padding: 0 4px;
+                max-width: 100%;
+                margin: 0;
+            }
+            
+            /* Main content container - minimal padding */
+            .fold-container {
+                padding: 8px 4px;
+                max-width: 100%;
+                margin: 0;
+            }
+            
+            /* Header adjustments */
+            .dashboard-header h2 {
+                font-size: 1.5rem;
+                line-height: 1.2;
+            }
+            
+            .dashboard-header p {
+                font-size: 0.875rem;
+            }
+            
+            /* Stats cards - Stack vertically */
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                margin: 0;
+                padding: 0;
+            }
+            
+            /* Compact card design - full width */
+            .stat-card {
+                padding: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 0;
+                border-radius: 8px;
+            }
+            
+            .stat-icon {
+                width: 40px;
+                height: 40px;
+                padding: 8px;
+            }
+            
+            .stat-icon i {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .stat-info {
+                flex: 1;
+                margin-left: 12px;
+                text-align: right;
+            }
+            
+            .stat-label {
+                font-size: 0.75rem;
+            }
+            
+            .stat-value {
+                font-size: 1.25rem;
+            }
+            
+            /* Website cards - Single column */
+            .website-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                margin: 0;
+                padding: 0;
+            }
+            
+            /* Compact website cards - full width */
+            .website-card {
+                margin: 0;
+                border-radius: 8px;
+            }
+            
+            .website-card > div {
+                padding: 12px;
+            }
+            
+            .website-card h4 {
+                font-size: 0.875rem;
+            }
+            
+            .website-card p {
+                font-size: 0.75rem;
+            }
+            
+            /* Button adjustments */
+            .btn-sm {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+            
+            .btn-sm i {
+                width: 14px;
+                height: 14px;
+            }
+            
+            /* Hide non-essential elements */
+            .hide-on-fold {
+                display: none;
+            }
+            
+            /* Quick action buttons */
+            .quick-actions {
+                position: fixed;
+                bottom: 20px;
+                right: 8px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            /* Service grid adjustments */
+            #services-container {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            /* Ensure all cards stretch full width */
+            .bg-white {
+                width: 100%;
+            }
+            
+            /* Monitoring cards - single column on fold */
+            .grid-cols-4 {
+                grid-template-columns: 1fr !important;
+            }
+            
+            /* Smaller charts on fold */
+            canvas {
+                max-height: 80px !important;
+                display: block !important;
+                width: 100% !important;
+            }
+            
+            /* Compact monitoring cards */
+            .bg-white.rounded-xl {
+                padding: 12px;
+            }
+            
+            /* Hide chart legends on small screens */
+            .chartjs-legend {
+                display: none !important;
+            }
+            
+            /* Remove all possible margins */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            /* Specific overrides for any remaining spacing */
+            .mb-8, .mb-4, .mb-2 {
+                margin-bottom: 8px !important;
+            }
+            
+            .px-4, .px-6 {
+                padding-left: 4px !important;
+                padding-right: 4px !important;
+            }
+            
+            .py-4, .py-6 {
+                padding-top: 8px !important;
+                padding-bottom: 8px !important;
+            }
+            
+            .quick-action-btn {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #667eea;
+                color: white;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+        }
+        
+        /* Samsung Fold 6 - Transition State */
+        @media screen and (min-width: 377px) and (max-width: 767px) {
+            .fold-status {
+                display: block;
+            }
+            
+            .fold-status::after {
+                content: "📱 Transitioning...";
+            }
+        }
+        
+        /* Samsung Fold 6 - Unfolded State (Main Display) */
+        /* Main display: 2176 x 1812 px (7.6") - Aspect ratio 6:5 */
+        @media screen and (min-width: 768px) and (max-width: 1024px) and (min-aspect-ratio: 1/1) and (max-aspect-ratio: 1.3/1) {
+            .fold-status {
+                display: block;
+            }
+            
+            .fold-status::after {
+                content: "📱 Unfolded Mode (7.6\")";
+            }
+            
+            /* Optimize for square-ish aspect ratio */
+            .max-w-7xl {
+                max-width: 100%;
+                padding: 0 24px;
+            }
+            
+            /* 2-column layout for stats */
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            
+            /* Website grid optimization */
+            .website-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Larger touch targets */
+            button {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            /* Split view layout for unfolded */
+            .split-view {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+                height: calc(100vh - 200px);
+            }
+            
+            .split-panel {
+                overflow-y: auto;
+                padding: 16px;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+        }
+        
+        /* Enhanced animations for fold/unfold */
+        @media (prefers-reduced-motion: no-preference) {
+            .fold-container {
+                animation: fadeIn 0.3s ease-out;
+            }
+            
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+        }
+        
+        /* Fold-aware layouts */
+        
+        /* Folded state - compact layouts */
+        body.fold-folded {
+            /* Reduce padding and margins */
+            --container-padding: 12px;
+            --card-padding: 12px;
+            --section-margin: 16px;
+        }
+        
+        body.fold-folded .service-card {
+            padding: 8px;
+            min-height: auto;
+        }
+        
+        body.fold-folded .service-card h3 {
+            font-size: 14px;
+        }
+        
+        body.fold-folded .service-card .text-sm {
+            font-size: 11px;
+        }
+        
+        body.fold-folded .optional-on-fold {
+            display: none !important;
+        }
+        
+        /* Unfolded state - dual-pane layouts */
+        body.fold-unfolded .split-view-enabled {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            padding: 24px;
+        }
+        
+        /* Dual-screen aware layout */
+        @media (horizontal-viewport-segments: 2) {
+            body.fold-unfolded .split-view-enabled {
+                /* Account for hinge/fold area */
+                grid-template-columns: 1fr env(viewport-segment-width 0 0, 0) 1fr;
+                gap: 0;
+            }
+            
+            /* Place primary content on left screen */
+            body.fold-unfolded .primary-pane {
+                grid-column: 1;
+            }
+            
+            /* Place secondary content on right screen */
+            body.fold-unfolded .secondary-pane {
+                grid-column: 3;
+            }
+        }
+        
+        /* Service card compact mode */
+        .service-card.compact {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            min-height: auto;
+        }
+        
+        .service-card.compact .service-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+        }
+        
+        .service-card.compact .service-content {
+            flex: 1;
+        }
+        
+        .service-card.compact h3 {
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        
+        .service-card.compact .status-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+        }
+        
+        /* Mobile menu styles */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 80%;
+            height: 100vh;
+            background: white;
+            z-index: 1000;
+            transition: left 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mobile-menu.active {
+            left: 0;
+        }
+        
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .mobile-menu-overlay.active {
+            display: block;
+        }
+        
+        /* Desktop styles (default) */
+        .mobile-menu-btn {
+            display: none;
+        }
+        
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Status indicators */
+        .status-online { 
+            animation: pulse 2s infinite;
+            background: #10b981;
+        }
+        
+        .status-offline { 
+            background: #ef4444;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Glass effect */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Resource metrics styles - Fixed spacing */
+        .resource-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .metric-item {
+            text-align: center;
+            padding: 12px 8px;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 8px;
+        }
+        
+        .metric-item .flex {
+            margin-bottom: 8px;
+        }
+        
+        .metric-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        
+        .metric-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: #e5e7eb;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        
+        .metric-subtext {
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .metric-bar-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .metric-bar-fill.low {
+            background: #10b981;
+        }
+        
+        .metric-bar-fill.medium {
+            background: #f59e0b;
+        }
+        
+        .metric-bar-fill.high {
+            background: #ef4444;
+        }
+        
+        /* Samsung Fold 6 specific styles for metrics */
+        @media screen and (max-width: 376px) {
+            .resource-metrics {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+            
+            .metric-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                text-align: left;
+                padding: 6px 8px;
+                background: rgba(0, 0, 0, 0.02);
+                border-radius: 4px;
+            }
+            
+            .metric-item .metric-label {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            
+            .metric-item .metric-value {
+                text-align: right;
+            }
+            
+            .metric-bar {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Fold Status Indicator -->
+    <div class="fold-status"></div>
+    
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <div class="p-6 gradient-bg">
+            <h2 class="text-xl font-bold text-white">AGI Staffers</h2>
+        </div>
+        <nav class="p-6">
+            <span class="block py-3 text-gray-700 font-medium">Admin Dashboard</span>
+        </nav>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <!-- Mobile Menu Button -->
+                    <button onclick="toggleMobileMenu()" class="mobile-menu-btn text-white p-2 rounded-md hover:bg-white hover:bg-opacity-20">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                    
+                    <div class="flex-shrink-0">
+                        <h1 class="nav-title text-2xl font-bold text-white">🤖 AGI Staffers</h1>
+                    </div>
+                    
+                    <!-- Desktop Navigation -->
+                    <div class="desktop-nav hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <span class="text-white px-3 py-2 rounded-md text-sm font-medium">Admin Dashboard</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-white text-sm hide-on-fold">🌟 Server: agistaffers.com</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- AI-Generated Component Containers -->
+    <div id="notification-container" class="fixed top-0 right-0 z-50 p-4"></div>
+    
+    <div class="fold-container fold-aware-container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Header Stats -->
+        <div class="dashboard-header mb-4">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Website Management Dashboard</h2>
+            <p class="text-gray-600">Monitor and manage all your websites from one place</p>
+        </div>
+
+        <!-- Compact Stats Bar -->
+        <div class="mb-4 glass rounded-xl p-4">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-2">
+                        <div class="p-2 bg-green-500 bg-opacity-20 rounded-lg">
+                            <i data-lucide="globe" class="w-4 h-4 text-green-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Websites</p>
+                            <p class="text-lg font-semibold text-gray-900">2 Active</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <div class="p-2 bg-blue-500 bg-opacity-20 rounded-lg">
+                            <i data-lucide="server" class="w-4 h-4 text-blue-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Containers</p>
+                            <p class="text-lg font-semibold text-gray-900">19 Running</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <div class="p-2 bg-purple-500 bg-opacity-20 rounded-lg">
+                            <i data-lucide="database" class="w-4 h-4 text-purple-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Database</p>
+                            <p class="text-lg font-semibold text-gray-900">64 Records</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <div class="p-2 bg-orange-500 bg-opacity-20 rounded-lg">
+                            <i data-lucide="hard-drive" class="w-4 h-4 text-orange-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Storage</p>
+                            <p class="text-lg font-semibold text-gray-900">18% Used</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <span class="text-xs text-gray-500">System Health</span>
+                    <div class="flex space-x-1">
+                        <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse-slow"></div>
+                        <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse-slow" style="animation-delay: 0.2s"></div>
+                        <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse-slow" style="animation-delay: 0.4s"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Website Status Grid -->
+        <div class="website-grid grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+            <!-- Deployed Websites -->
+            <div class="website-card bg-white rounded-xl shadow-sm border">
+                <div class="px-4 py-3 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="check-circle" class="w-5 h-5 mr-2 text-green-500"></i>
+                        Deployed Websites
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <!-- SteppersLife.com -->
+                    <div class="p-4 bg-green-50 rounded-lg mb-4" data-website="stepperslife">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full status-online mr-3"></div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">stepperslife.com</h4>
+                                    <p class="text-sm text-gray-600">Port 3002 • Database: ✅ • SSL: ✅</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="btn-sm px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-sm hover:bg-blue-200 transition-colors">
+                                    <i data-lucide="external-link" class="w-4 h-4 inline mr-1"></i>
+                                    <span class="hide-on-fold">Visit</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Resource Usage Metrics -->
+                        <div class="resource-metrics">
+                            <!-- CPU Usage -->
+                            <div class="metric-item metric-cpu">
+                                <div class="flex items-center justify-center mb-1">
+                                    <i data-lucide="cpu" class="w-4 h-4 text-gray-600 mr-1"></i>
+                                    <span class="text-xs text-gray-600">CPU</span>
+                                </div>
+                                <div class="relative">
+                                    <div class="metric-value text-lg font-semibold text-gray-900">12%</div>
+                                    <div class="metric-bar mt-1 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                        <div class="metric-bar-fill bg-green-500 h-full transition-all duration-500" style="width: 12%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Memory Usage -->
+                            <div class="metric-item metric-memory">
+                                <div class="flex items-center justify-center mb-1">
+                                    <i data-lucide="zap" class="w-4 h-4 text-gray-600 mr-1"></i>
+                                    <span class="text-xs text-gray-600">Memory</span>
+                                </div>
+                                <div class="relative">
+                                    <div class="metric-value text-lg font-semibold text-gray-900">256MB</div>
+                                    <div class="metric-bar mt-1 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                        <div class="metric-bar-fill bg-blue-500 h-full transition-all duration-500" style="width: 35%"></div>
+                                    </div>
+                                    <p class="metric-subtext text-xs text-gray-500 mt-0.5">of 768MB</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Disk Usage -->
+                            <div class="metric-item metric-disk">
+                                <div class="flex items-center justify-center mb-1">
+                                    <i data-lucide="hard-drive" class="w-4 h-4 text-gray-600 mr-1"></i>
+                                    <span class="text-xs text-gray-600">Disk</span>
+                                </div>
+                                <div class="relative">
+                                    <div class="metric-value text-lg font-semibold text-gray-900">1.2GB</div>
+                                    <div class="metric-bar mt-1 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                        <div class="metric-bar-fill bg-yellow-500 h-full transition-all duration-500" style="width: 48%"></div>
+                                    </div>
+                                    <p class="metric-subtext text-xs text-gray-500 mt-0.5">of 2.5GB</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Example: Admin Dashboard (for demonstration) -->
+                    <div class="p-4 bg-blue-50 rounded-lg" data-website="admin">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full status-online mr-3"></div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">admin.agistaffers.com</h4>
+                                    <p class="text-sm text-gray-600">Port 3007 • PWA Dashboard • SSL: ✅</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="btn-sm px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-sm hover:bg-blue-200 transition-colors">
+                                    <i data-lucide="external-link" class="w-4 h-4 inline mr-1"></i>
+                                    <span class="hide-on-fold">Visit</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Resource Usage Metrics -->
+                        <div class="resource-metrics">
+                            <!-- CPU Usage -->
+                            <div class="metric-item metric-cpu">
+                                <div class="flex items-center justify-center mb-1">
+                                    <i data-lucide="cpu" class="w-4 h-4 text-gray-600 mr-1"></i>
+                                    <span class="text-xs text-gray-600">CPU</span>
+                                </div>
+                                <div class="relative">
+                                    <div class="metric-value text-lg font-semibold text-gray-900">8%</div>
+                                    <div class="metric-bar mt-1 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                        <div class="metric-bar-fill bg-green-500 h-full transition-all duration-500" style="width: 8%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Memory Usage -->
+                            <div class="metric-item metric-memory">
+                                <div class="flex items-center justify-center mb-1">
+                                    <i data-lucide="zap" class="w-4 h-4 text-gray-600 mr-1"></i>
+                                    <span class="text-xs text-gray-600">Memory</span>
+                                </div>
+                                <div class="relative">
+                                    <div class="metric-value text-lg font-semibold text-gray-900">128MB</div>
+                                    <div class="metric-bar mt-1 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                        <div class="metric-bar-fill bg-green-500 h-full transition-all duration-500" style="width: 0.03%"></div>
+                                    </div>
+                                    <p class="metric-subtext text-xs text-gray-500 mt-0.5">of 512MB</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Disk Usage -->
+                            <div class="metric-item metric-disk">
+                                <div class="flex items-center justify-center mb-1">
+                                    <i data-lucide="hard-drive" class="w-4 h-4 text-gray-600 mr-1"></i>
+                                    <span class="text-xs text-gray-600">Disk</span>
+                                </div>
+                                <div class="relative">
+                                    <div class="metric-value text-lg font-semibold text-gray-900">0.8GB</div>
+                                    <div class="metric-bar mt-1 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                        <div class="metric-bar-fill bg-green-500 h-full transition-all duration-500" style="width: 32%"></div>
+                                    </div>
+                                    <p class="metric-subtext text-xs text-gray-500 mt-0.5">of 2.5GB</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Websites -->
+            <div class="website-card bg-white rounded-xl shadow-sm border">
+                <div class="px-4 py-3 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="clock" class="w-5 h-5 mr-2 text-orange-500"></i>
+                        Pending Deployment
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="max-h-64 overflow-y-auto space-y-3 custom-scrollbar">
+                        <!-- Pending Site 1 -->
+                        <div class="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="relative">
+                                        <div class="w-3 h-3 rounded-full bg-gray-400"></div>
+                                        <div class="w-3 h-3 rounded-full bg-gray-400 absolute top-0 left-0 animate-ping"></div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">gangrunprinting.com</h4>
+                                        <p class="text-xs text-gray-500">Print Services • Est. deployment: 15 min</p>
+                                    </div>
+                                </div>
+                                <span class="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg text-sm inline-flex items-center">
+                                    <i data-lucide="clock" class="w-4 h-4 inline mr-1"></i>
+                                    Pending
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Pending Site 2 -->
+                        <div class="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="relative">
+                                        <div class="w-3 h-3 rounded-full bg-gray-400"></div>
+                                        <div class="w-3 h-3 rounded-full bg-gray-400 absolute top-0 left-0 animate-ping"></div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">uvcoatedclubflyers.com</h4>
+                                        <p class="text-xs text-gray-500">Marketing Materials • Est. deployment: 20 min</p>
+                                    </div>
+                                </div>
+                                <span class="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg text-sm inline-flex items-center">
+                                    <i data-lucide="clock" class="w-4 h-4 inline mr-1"></i>
+                                    Pending
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Pending Site 3 -->
+                        <div class="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="relative">
+                                        <div class="w-3 h-3 rounded-full bg-gray-400"></div>
+                                        <div class="w-3 h-3 rounded-full bg-gray-400 absolute top-0 left-0 animate-ping"></div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">taxgenius.pro</h4>
+                                        <p class="text-xs text-gray-500">Tax Consulting • Est. deployment: 25 min</p>
+                                    </div>
+                                </div>
+                                <span class="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg text-sm inline-flex items-center">
+                                    <i data-lucide="clock" class="w-4 h-4 inline mr-1"></i>
+                                    Pending
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Pending Site 4 -->
+                        <div class="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="relative">
+                                        <div class="w-3 h-3 rounded-full bg-gray-400"></div>
+                                        <div class="w-3 h-3 rounded-full bg-gray-400 absolute top-0 left-0 animate-ping"></div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">techsolutions.io</h4>
+                                        <p class="text-xs text-gray-500">IT Services • Est. deployment: 30 min</p>
+                                    </div>
+                                </div>
+                                <span class="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg text-sm inline-flex items-center">
+                                    <i data-lucide="clock" class="w-4 h-4 inline mr-1"></i>
+                                    Pending
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Pending Site 5 -->
+                        <div class="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="relative">
+                                        <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                        <div class="w-3 h-3 rounded-full bg-yellow-400 absolute top-0 left-0 animate-ping"></div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">creativeagency.design</h4>
+                                        <p class="text-xs text-gray-500">Design Studio • In Queue</p>
+                                    </div>
+                                </div>
+                                <span class="px-4 py-2 bg-yellow-200 text-yellow-700 rounded-lg text-sm inline-flex items-center">
+                                    <i data-lucide="zap" class="w-4 h-4 inline mr-1"></i>
+                                    Coming Soon
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backup Management Section -->
+        <div class="mb-4">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="archive" class="w-6 h-6 mr-2 text-blue-600"></i>
+                        Backup Management
+                    </h3>
+                    <p class="text-sm text-gray-600">Download and manage server backups</p>
+                </div>
+            </div>
+
+            <!-- Backup Container -->
+            <div id="backup-container" class="mb-4"></div>
+        </div>
+
+        <!-- Real-time Monitoring Section -->
+        <div id="monitoring-section" class="mb-4">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="activity" class="w-6 h-6 mr-2 text-purple-600"></i>
+                        Real-time Server Monitoring
+                    </h3>
+                    <div class="text-sm text-gray-500">
+                        Status: <span id="monitor-status" class="text-gray-500">Connecting...</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="openAlertsConfig()" 
+                            class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                        <i data-lucide="bell" class="w-4 h-4 mr-2"></i>
+                        Alert Settings
+                    </button>
+                </div>
+            </div>
+
+            <!-- Alerts Container -->
+            <div id="alerts-container" class="mb-4 max-h-60 overflow-y-auto"></div>
+
+            <!-- AI-Generated Metrics Container -->
+            <div id="metrics-container" class="mb-4 fold-adaptive-grid" style="margin-top: 16px;"></div>
+            
+            <!-- Legacy Metrics Grid (Disabled - using DashboardMetrics instead) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 legacy-metrics" style="margin-top: 16px; display: none !important;">
+                <!-- CPU Usage -->
+                <div class="bg-white rounded-xl shadow-sm border p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="text-sm font-medium text-gray-600">CPU Usage</h4>
+                        <i data-lucide="cpu" class="w-4 h-4 text-red-500"></i>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900" id="cpu-value">--</p>
+                    <div class="h-32 mt-2">
+                        <canvas id="cpuChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Memory Usage -->
+                <div class="bg-white rounded-xl shadow-sm border p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="text-sm font-medium text-gray-600">Memory Usage</h4>
+                        <i data-lucide="zap" class="w-4 h-4 text-blue-500"></i>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900" id="memory-value">--</p>
+                    <div class="h-32 mt-2">
+                        <canvas id="memoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Disk Usage -->
+                <div class="bg-white rounded-xl shadow-sm border p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="text-sm font-medium text-gray-600">Disk Usage</h4>
+                        <i data-lucide="hard-drive" class="w-4 h-4 text-yellow-500"></i>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900" id="disk-value">--</p>
+                    <div class="h-32 mt-2">
+                        <canvas id="diskChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Network Traffic -->
+                <div class="bg-white rounded-xl shadow-sm border p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="text-sm font-medium text-gray-600">Network I/O</h4>
+                        <i data-lucide="wifi" class="w-4 h-4 text-green-500"></i>
+                    </div>
+                    <div class="text-sm">
+                        <p>↓ <span id="network-in-value">--</span></p>
+                        <p>↑ <span id="network-out-value">--</span></p>
+                    </div>
+                    <div class="h-24 mt-2">
+                        <canvas id="networkChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Container Status -->
+            <div class="bg-white rounded-xl shadow-sm border">
+                <div class="px-4 py-3 border-b border-gray-200">
+                    <h4 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="box" class="w-5 h-5 mr-2 text-purple-600"></i>
+                        Container Status
+                    </h4>
+                </div>
+                <div class="p-6 space-y-3" id="container-list">
+                    <!-- Container list will be populated dynamically -->
+                    <div class="text-center text-gray-500">Loading container status...</div>
+                </div>
+            </div>
+
+            <!-- Memory Optimization Dashboard -->
+            <div class="bg-gray-50 rounded-xl shadow-sm border mt-4 p-4" id="memory-optimization-section">
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 flex items-center">
+                        <i data-lucide="gauge" class="w-6 h-6 mr-2 text-green-600"></i>
+                        Memory Optimization Status
+                    </h3>
+                </div>
+                
+                <!-- Optimization Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h4 class="text-sm text-gray-500">Models Unloaded</h4>
+                        <p class="text-2xl font-bold text-gray-900" id="models-unloaded">0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h4 class="text-sm text-gray-500">Memory Saved</h4>
+                        <p class="text-2xl font-bold text-gray-900" id="memory-saved">0MB</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h4 class="text-sm text-gray-500">Auto-Optimizations</h4>
+                        <p class="text-2xl font-bold text-green-600" id="auto-optimizations">4</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h4 class="text-sm text-gray-500">Last Cleanup</h4>
+                        <p class="text-sm text-gray-900" id="last-cleanup">Never</p>
+                    </div>
+                </div>
+
+                <!-- Automated Systems Status -->
+                <div class="bg-white rounded-lg border p-4">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">Automated Optimization Systems</h4>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Ollama Model Auto-Unload:</span>
+                            <span class="text-green-600 font-medium">✓ Active (30min)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Dynamic Memory Manager:</span>
+                            <span class="text-green-600 font-medium">✓ Active (15min)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Docker Cleanup:</span>
+                            <span class="text-green-600 font-medium">✓ Active (6hr)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Neo4j Optimization:</span>
+                            <span class="text-green-600 font-medium">✓ Active (daily)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="mt-4 flex gap-3">
+                    <button onclick="clearSystemCache()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                        Clear Cache
+                    </button>
+                    <button onclick="unloadOllamaModels()" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm">
+                        Unload AI Models
+                    </button>
+                    <button onclick="restartLowPriorityServices()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm">
+                        Restart Non-Critical
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Management Grid -->
+        <div class="mb-4">
+            <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                <i data-lucide="layers" class="w-6 h-6 mr-2 text-purple-600"></i>
+                Service Management
+            </h3>
+            <!-- Service cards will be dynamically populated -->
+            <div id="services-container"></div>
+        </div>
+        
+        <!-- Enhanced Push Notifications Section -->
+        <div class="mt-12 mb-4">
+            <div class="glass rounded-lg">
+                <!-- Header -->
+                <div class="p-4 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="bell" class="w-6 h-6 text-purple-600"></i>
+                            <h3 class="text-lg font-semibold text-gray-900">Push Notifications</h3>
+                            <span id="push-status" class="text-sm text-gray-500">• Checking...</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button id="push-notification-btn" onclick="pushManager.toggle()" class="px-4 py-2 bg-purple-600 text-white rounded-md text-sm hover:bg-purple-700 transition-colors">
+                                Enable
+                            </button>
+                            <button onclick="testNotification()" class="px-3 py-2 bg-gray-600 text-white rounded-md text-sm hover:bg-gray-700 transition-colors">
+                                Test
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notification Preferences (shown when notifications are enabled) -->
+                <div id="notification-preferences" class="p-4 hidden">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Notification Preferences</h4>
+                    <div class="space-y-3">
+                        <!-- Container Status -->
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="notify-container-down" class="mr-3 rounded text-purple-600" checked>
+                                <span class="text-sm text-gray-700">Container Down Alerts</span>
+                            </label>
+                            <span class="text-xs text-gray-500">When services stop unexpectedly</span>
+                        </div>
+                        
+                        <!-- High CPU -->
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="notify-high-cpu" class="mr-3 rounded text-purple-600" checked>
+                                <span class="text-sm text-gray-700">High CPU Usage</span>
+                            </label>
+                            <span class="text-xs text-gray-500">CPU > 80% for 5+ minutes</span>
+                        </div>
+                        
+                        <!-- Low Memory -->
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="notify-low-memory" class="mr-3 rounded text-purple-600" checked>
+                                <span class="text-sm text-gray-700">Low Memory Warnings</span>
+                            </label>
+                            <span class="text-xs text-gray-500">Memory > 85% usage</span>
+                        </div>
+                        
+                        <!-- Low Disk Space -->
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="notify-low-disk" class="mr-3 rounded text-purple-600" checked>
+                                <span class="text-sm text-gray-700">Low Disk Space</span>
+                            </label>
+                            <span class="text-xs text-gray-500">Disk space < 10GB</span>
+                        </div>
+                        
+                        <!-- Deployment Status -->
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="notify-deployments" class="mr-3 rounded text-purple-600">
+                                <span class="text-sm text-gray-700">Deployment Updates</span>
+                            </label>
+                            <span class="text-xs text-gray-500">Success/failure notifications</span>
+                        </div>
+                        
+                        <!-- Security Alerts -->
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="notify-security" class="mr-3 rounded text-purple-600" checked>
+                                <span class="text-sm text-gray-700">Security Alerts</span>
+                            </label>
+                            <span class="text-xs text-gray-500">Failed login attempts, suspicious activity</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Save Preferences Button -->
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <button onclick="saveNotificationPreferences()" class="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors">
+                            Save Preferences
+                        </button>
+                        <span id="pref-save-status" class="ml-3 text-sm text-gray-500 hidden">Saved!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.mobile-menu');
+            const overlay = document.querySelector('.mobile-menu-overlay');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        
+        // Enhanced fold device detection
+        function detectFoldDevice() {
+            // Use the enhanced fold detector if available
+            if (window.foldDetector) {
+                const state = window.foldDetector.getCurrentState();
+                console.log('Fold state:', state);
+                
+                // Subscribe to fold state changes
+                if (!window.foldDetectorInitialized) {
+                    window.foldDetectorInitialized = true;
+                    window.foldDetector.onChange((data) => {
+                        console.log('Fold state changed:', data);
+                        
+                        // Adapt UI based on fold state
+                        if (data.state === 'folded') {
+                            adaptUIForFolded();
+                        } else if (data.state === 'unfolded') {
+                            adaptUIForUnfolded();
+                        }
+                    });
+                }
+            } else {
+                // Fallback to basic detection
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                const aspectRatio = width / height;
+                
+                const statusEl = document.querySelector('.fold-status');
+                if (width <= 376) {
+                    statusEl.style.display = 'block';
+                    document.body.classList.add('folded');
+                    document.body.classList.remove('unfolded');
+                } else if (width >= 768 && width <= 1024 && aspectRatio >= 1 && aspectRatio <= 1.3) {
+                    statusEl.style.display = 'block';
+                    document.body.classList.add('unfolded');
+                    document.body.classList.remove('folded');
+                } else {
+                    statusEl.style.display = 'none';
+                    document.body.classList.remove('folded', 'unfolded');
+                }
+            }
+        }
+        
+        // Adapt UI for folded state
+        function adaptUIForFolded() {
+            // Compact mode optimizations
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.add('compact');
+            });
+            
+            // Hide non-essential elements
+            document.querySelectorAll('.optional-on-fold').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+        
+        // Adapt UI for unfolded state
+        function adaptUIForUnfolded() {
+            // Expanded mode optimizations
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.remove('compact');
+            });
+            
+            // Show all elements
+            document.querySelectorAll('.optional-on-fold').forEach(el => {
+                el.style.display = '';
+            });
+            
+            // Enable split-view if available
+            if (window.foldDetector && window.foldDetector.screenSegments) {
+                enableSplitView();
+            }
+        }
+        
+        // Enable split view for dual-screen mode
+        function enableSplitView() {
+            const mainContent = document.querySelector('.max-w-7xl');
+            if (mainContent && !mainContent.classList.contains('split-view-enabled')) {
+                mainContent.classList.add('split-view-enabled');
+                console.log('Split view enabled for dual-screen mode');
+            }
+        }
+        
+        
+        // Update website metrics (simulate real-time updates)
+        function updateWebsiteMetrics() {
+            // Get all website cards with metrics
+            const websiteCards = document.querySelectorAll('[data-website]');
+            
+            websiteCards.forEach(card => {
+                // This would normally fetch real data from your server based on the website
+                const websiteName = card.getAttribute('data-website');
+                
+                // Simulate different metrics for different websites
+                const baseMetrics = websiteName === 'admin' ? 
+                    { cpuBase: 5, memBase: 100, diskBase: 0.5 } : 
+                    { cpuBase: 10, memBase: 200, diskBase: 1.0 };
+                
+                const metrics = {
+                    cpu: Math.floor(Math.random() * 20) + baseMetrics.cpuBase,
+                    memory: {
+                        used: Math.floor(Math.random() * 200) + baseMetrics.memBase,
+                        total: websiteName === 'admin' ? 512 : 768
+                    },
+                    disk: {
+                        used: (Math.random() * 1 + baseMetrics.diskBase).toFixed(1),
+                        total: 2.5
+                    }
+                };
+                
+                // Update CPU
+                const cpuElement = card.querySelector('.metric-cpu');
+                if (cpuElement) {
+                    cpuElement.querySelector('.metric-value').textContent = `${metrics.cpu}%`;
+                    const bar = cpuElement.querySelector('.metric-bar-fill');
+                    bar.style.width = `${metrics.cpu}%`;
+                    bar.className = 'metric-bar-fill ' + (metrics.cpu < 50 ? 'low' : metrics.cpu < 80 ? 'medium' : 'high');
+                }
+                
+                // Update Memory
+                const memElement = card.querySelector('.metric-memory');
+                if (memElement) {
+                    memElement.querySelector('.metric-value').textContent = `${metrics.memory.used}MB`;
+                    memElement.querySelector('.metric-subtext').textContent = `of ${metrics.memory.total}MB`;
+                    const bar = memElement.querySelector('.metric-bar-fill');
+                    const memPercent = (metrics.memory.used / metrics.memory.total) * 100;
+                    bar.style.width = `${memPercent}%`;
+                    bar.className = 'metric-bar-fill ' + (memPercent < 50 ? 'low' : memPercent < 80 ? 'medium' : 'high');
+                }
+                
+                // Update Disk
+                const diskElement = card.querySelector('.metric-disk');
+                if (diskElement) {
+                    diskElement.querySelector('.metric-value').textContent = `${metrics.disk.used}GB`;
+                    diskElement.querySelector('.metric-subtext').textContent = `of ${metrics.disk.total}GB`;
+                    const bar = diskElement.querySelector('.metric-bar-fill');
+                    const diskPercent = (metrics.disk.used / metrics.disk.total) * 100;
+                    bar.style.width = `${diskPercent}%`;
+                    bar.className = 'metric-bar-fill ' + (diskPercent < 50 ? 'low' : diskPercent < 80 ? 'medium' : 'high');
+                }
+            });
+        }
+        
+        // Service data with real container stats
+        const services = [
+            { 
+                name: 'PgAdmin', 
+                icon: 'database', 
+                status: 'online', 
+                url: 'pgadmin.agistaffers.com',
+                memory: '215MB',
+                cpu: '0.07%',
+                description: 'Database Management'
+            },
+            { 
+                name: 'n8n Automation', 
+                icon: 'git-branch', 
+                status: 'online', 
+                url: 'n8n.agistaffers.com',
+                memory: '210MB',
+                cpu: '0.09%',
+                description: 'Workflow Automation'
+            },
+            { 
+                name: 'AI Chat', 
+                icon: 'message-square', 
+                status: 'online', 
+                url: 'chat.agistaffers.com',
+                memory: '606MB',
+                cpu: '0.22%',
+                description: 'Open WebUI Chat'
+            },
+            { 
+                name: 'Flowise AI', 
+                icon: 'cpu', 
+                status: 'online', 
+                url: 'flowise.agistaffers.com',
+                memory: '351MB',
+                cpu: '0.00%',
+                description: 'AI Workflow Builder'
+            },
+            { 
+                name: 'Portainer', 
+                icon: 'box', 
+                status: 'online', 
+                url: 'portainer.agistaffers.com',
+                memory: '28MB',
+                cpu: '0.00%',
+                description: 'Container Management'
+            },
+            { 
+                name: 'SearXNG', 
+                icon: 'search', 
+                status: 'online', 
+                url: 'searxng.agistaffers.com',
+                memory: '115MB',
+                cpu: '0.00%',
+                description: 'Privacy Search Engine'
+            }
+        ];
+        
+        // Populate services with clean cards matching monitoring style
+        function populateServices() {
+            const container = document.getElementById('services-container');
+            container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+            
+            services.forEach((service, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-sm border p-6';
+                
+                const cpuPercent = parseInt(service.cpu);
+                const memoryValue = parseInt(service.memory);
+                const memoryMax = service.memory.includes('GB') ? parseInt(service.memory) * 1024 : parseInt(service.memory);
+                const memoryPercent = service.memory.includes('GB') ? 45 : 35; // Estimated percentages
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-purple-100 rounded-lg mr-3">
+                                <i data-lucide="${service.icon}" class="w-5 h-5 text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">${service.name}</h4>
+                                <p class="text-sm text-gray-500">${service.description}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                            <span class="text-sm text-green-600">Online</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-sm text-gray-600">CPU Usage</span>
+                                <span class="text-sm font-medium text-gray-900">${service.cpu}</span>
+                            </div>
+                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full ${cpuPercent < 50 ? 'bg-green-500' : cpuPercent < 80 ? 'bg-yellow-500' : 'bg-red-500'} rounded-full transition-all duration-500" style="width: ${service.cpu}"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-sm text-gray-600">Memory</span>
+                                <span class="text-sm font-medium text-gray-900">${service.memory}</span>
+                            </div>
+                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full ${memoryPercent < 50 ? 'bg-blue-500' : memoryPercent < 80 ? 'bg-yellow-500' : 'bg-red-500'} rounded-full transition-all duration-500" style="width: ${memoryPercent}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <a href="https://${service.url}" target="_blank" class="text-sm text-purple-600 hover:text-purple-700 inline-flex items-center">
+                            <i data-lucide="external-link" class="w-4 h-4 mr-1"></i>
+                            ${service.url}
+                        </a>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            lucide.createIcons();
+        }
+        
+        // Test notification function
+        async function testNotification() {
+            // Check if notifications are enabled
+            if (Notification.permission !== 'granted') {
+                alert('Please enable notifications first by clicking the "Enable Notifications" button');
+                return;
+            }
+            
+            const notifications = [
+                { title: '🚨 Alert', body: 'nginx container is down!' },
+                { title: '✅ Deployment Complete', body: 'stepperslife.com deployed successfully' },
+                { title: '⚠️ High CPU Usage', body: 'Server CPU at 85%' },
+                { title: '🔄 Container Restarted', body: 'admin-dashboard container restarted' }
+            ];
+            
+            const random = notifications[Math.floor(Math.random() * notifications.length)];
+            
+            try {
+                // Try to send via API first
+                const sent = await pushManager.sendTestNotificationViaAPI(random.title, random.body);
+                if (!sent) {
+                    // Fallback to local notification
+                    await pushManager.sendCustomNotification(random.title, random.body);
+                }
+            } catch (error) {
+                console.error('Test notification failed:', error);
+                alert('Failed to send test notification. Please try again.');
+            }
+        }
+        
+        // Save notification preferences
+        function saveNotificationPreferences() {
+            if (pushManager) {
+                pushManager.savePreferences();
+            }
+        }
+        
+        // Memory optimization functions
+        async function clearSystemCache() {
+            if (!confirm('Clear system cache to free up memory?')) return;
+            
+            try {
+                const response = await fetch(`${window.serverMonitor?.metricsUrl || 'http://148.230.93.174:3009'}/api/optimize/clear-cache`, {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    alert('Cache cleared successfully!');
+                    updateOptimizationStats();
+                } else {
+                    alert('Failed to clear cache. Please try again.');
+                }
+            } catch (error) {
+                console.error('Cache clear error:', error);
+                alert('Error clearing cache. Please check server connection.');
+            }
+        }
+        
+        async function unloadOllamaModels() {
+            if (!confirm('Unload all Ollama AI models to free memory?')) return;
+            
+            try {
+                const response = await fetch(`${window.serverMonitor?.metricsUrl || 'http://148.230.93.174:3009'}/api/optimize/ollama-unload`, {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`Successfully unloaded ${result.unloaded || 0} models!`);
+                    updateOptimizationStats();
+                } else {
+                    alert('Failed to unload models. Please try again.');
+                }
+            } catch (error) {
+                console.error('Model unload error:', error);
+                alert('Error unloading models. Please check server connection.');
+            }
+        }
+        
+        async function restartLowPriorityServices() {
+            if (!confirm('Restart non-critical services (PgAdmin, Portainer)?')) return;
+            
+            try {
+                const response = await fetch(`${window.serverMonitor?.metricsUrl || 'http://148.230.93.174:3009'}/api/optimize/restart-noncritical`, {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    alert('Non-critical services restarted successfully!');
+                    updateOptimizationStats();
+                } else {
+                    alert('Failed to restart services. Please try again.');
+                }
+            } catch (error) {
+                console.error('Service restart error:', error);
+                alert('Error restarting services. Please check server connection.');
+            }
+        }
+        
+        async function updateOptimizationStats() {
+            // This would fetch actual stats from the server
+            // For now, just update the display
+            const lastCleanup = document.getElementById('last-cleanup');
+            if (lastCleanup) {
+                lastCleanup.textContent = new Date().toLocaleTimeString();
+            }
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            detectFoldDevice();
+            populateServices();
+            
+            // Initialize push notifications
+            if (window.pushManager) {
+                pushManager.init();
+            }
+            
+            // Initialize server monitoring
+            if (window.serverMonitor) {
+                serverMonitor.init();
+            }
+            
+            // Initialize enhanced monitoring with debug logging
+            if (window.enhancedMonitor) {
+                console.log('Starting enhanced monitoring initialization...');
+                enhancedMonitor.init().then(() => {
+                    console.log('Enhanced monitoring initialization completed');
+                }).catch((error) => {
+                    console.error('Enhanced monitoring initialization failed:', error);
+                    // Try to show enhanced UI even if initialization partially fails
+                    setTimeout(() => {
+                        if (window.enhancedMonitor && !window.enhancedMonitor.initialized) {
+                            console.log('Attempting fallback enhanced UI creation...');
+                            window.enhancedMonitor.createEnhancedUI();
+                        }
+                    }, 2000);
+                });
+            } else {
+                console.error('Enhanced monitor not found on window object');
+            }
+            
+            // Start updating website metrics
+            updateWebsiteMetrics();
+            setInterval(updateWebsiteMetrics, 5000); // Update every 5 seconds
+            
+            // Update optimization stats
+            updateOptimizationStats();
+            setInterval(updateOptimizationStats, 30000); // Update every 30 seconds
+        });
+        
+        // Detect orientation changes
+        window.addEventListener('resize', detectFoldDevice);
+        window.addEventListener('orientationchange', detectFoldDevice);
+        
+        // Service Worker Registration for PWA with Update Detection
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => {
+                    console.log('Service Worker registered successfully');
+                    
+                    // Check for updates periodically
+                    setInterval(() => {
+                        reg.update();
+                    }, 60000); // Check every minute
+                    
+                    // Listen for new service worker installation
+                    reg.addEventListener('updatefound', () => {
+                        const newWorker = reg.installing;
+                        console.log('New service worker found, installing...');
+                        
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // New service worker installed, show update notification
+                                showUpdateNotification();
+                            }
+                        });
+                    });
+                    
+                    // Initialize push after service worker is ready
+                    if (window.pushManager) {
+                        setTimeout(() => {
+                            pushManager.init();
+                        }, 1000);
+                    }
+                    // Initialize app installer
+                    if (window.appInstaller) {
+                        appInstaller.init();
+                    }
+                })
+                .catch(err => {
+                    console.error('Service Worker registration failed:', err);
+                    // Still try to initialize features
+                    if (window.pushManager) {
+                        pushManager.init();
+                    }
+                });
+        }
+        
+        function showUpdateNotification() {
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="position: fixed; bottom: 20px; right: 20px; background: #4CAF50; color: white; padding: 16px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999; max-width: 400px;">
+                    <h4 style="margin: 0 0 8px 0;">Update Available!</h4>
+                    <p style="margin: 0 0 12px 0;">A new version of the dashboard is available. Click refresh to update.</p>
+                    <button onclick="window.location.reload(true)" style="background: white; color: #4CAF50; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Refresh Now</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+        }
+
+        // Initialize AI-Generated Components
+        async function initializeAIComponents() {
+            try {
+                console.log('🤖 Initializing AI-generated components...');
+                
+                // Set global flag to prevent auto-initialization
+                window.autoInitializeComponents = false;
+                
+                // Wait a bit for all scripts to load
+                let attempts = 0;
+                while (!window.ComponentIntegrator && attempts < 20) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
+                // Create and initialize component integrator
+                if (window.ComponentIntegrator) {
+                    window.componentIntegrator = new ComponentIntegrator({
+                        loadOrder: ['FoldAwareLayout', 'PushNotificationUI', 'DashboardMetrics', 'AlertsSystem', 'HistoricalData'],
+                        errorHandling: 'graceful',
+                        performanceMonitoring: true
+                    });
+                    
+                    await window.componentIntegrator.init();
+                    console.log('✅ AI components initialized successfully');
+                    
+                    // Test notification after successful initialization
+                    setTimeout(() => {
+                        const notifications = window.componentIntegrator.getComponent('PushNotificationUI');
+                        if (notifications) {
+                            notifications.success(
+                                'Dashboard Enhanced', 
+                                'AI-powered components are now active with fold-aware responsive design',
+                                {
+                                    duration: 8000,
+                                    actions: [
+                                        { 
+                                            label: 'Learn More', 
+                                            handler: () => console.log('User wants to learn more'),
+                                            primary: true 
+                                        }
+                                    ]
+                                }
+                            );
+                        }
+                    }, 2000);
+                    
+                } else {
+                    console.warn('⚠️ ComponentIntegrator not available, initializing components directly');
+                    // Initialize components directly if ComponentIntegrator fails
+                    if (window.DashboardMetrics) {
+                        window.dashboardMetricsInstance = new DashboardMetrics();
+                        await window.dashboardMetricsInstance.init();
+                        console.log('✅ DashboardMetrics initialized directly');
+                    }
+                    if (window.BackupManagerV2) {
+                        window.backupManagerInstance = new BackupManagerV2();
+                        await window.backupManagerInstance.init();
+                        console.log('✅ BackupManagerV2 initialized directly');
+                    }
+                    if (window.FoldAwareLayout) {
+                        window.foldAwareLayoutInstance = new FoldAwareLayout();
+                        window.foldAwareLayoutInstance.init();
+                    }
+                    if (window.PushNotificationUI) {
+                        window.pushNotificationUIInstance = new PushNotificationUI();
+                        window.pushNotificationUIInstance.init();
+                    }
+                    if (window.AlertsSystem) {
+                        window.alertsSystem = new AlertsSystem();
+                        await window.alertsSystem.init();
+                        console.log('✅ AlertsSystem initialized directly');
+                    }
+                    if (window.HistoricalData) {
+                        window.historicalData = new HistoricalData();
+                        await window.historicalData.init();
+                        console.log('✅ HistoricalData initialized directly');
+                    }
+                }
+                
+            } catch (error) {
+                console.error('❌ Failed to initialize AI components:', error);
+                // Show legacy interface
+                document.querySelector('.legacy-metrics').style.display = 'grid';
+            }
+        }
+        
+        // Initialize AI components after DOM is fully loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeAIComponents);
+        } else {
+            initializeAIComponents();
+        }
+        
+    </script>
+</body>
+</html>

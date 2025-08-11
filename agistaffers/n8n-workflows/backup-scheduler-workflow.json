@@ -1,0 +1,283 @@
+{
+  "name": "Backup Scheduler",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "hourly-trigger",
+      "name": "Hourly Database Backup",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [240, 200]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression", 
+              "expression": "0 2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "daily-trigger",
+      "name": "Daily Container Backup",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [240, 400]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * 0"
+            }
+          ]
+        }
+      },
+      "id": "weekly-trigger",
+      "name": "Weekly Full Backup",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [240, 600]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate backup job details for database backup\nconst backupId = `backup_database_${Date.now()}`;\nconst timestamp = new Date().toISOString();\n\nreturn {\n  type: 'database',\n  backupId,\n  timestamp,\n  retention: {\n    hourly: 48,\n    daily: 30,\n    weekly: 12,\n    monthly: 12\n  },\n  priority: 'critical'\n};"
+      },
+      "id": "database-job-generator",
+      "name": "Generate Database Job",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate backup job details for container backup\nconst backupId = `backup_container_${Date.now()}`;\nconst timestamp = new Date().toISOString();\n\nreturn {\n  type: 'container',\n  backupId,\n  timestamp,\n  retention: {\n    daily: 30,\n    weekly: 12,\n    monthly: 6\n  },\n  priority: 'normal'\n};"
+      },
+      "id": "container-job-generator", 
+      "name": "Generate Container Job",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate backup job details for full backup\nconst backupId = `backup_full_${Date.now()}`;\nconst timestamp = new Date().toISOString();\n\nreturn {\n  type: 'full',\n  backupId,\n  timestamp,\n  retention: {\n    daily: 7,\n    weekly: 4,\n    monthly: 12\n  },\n  priority: 'critical'\n};"
+      },
+      "id": "full-job-generator",
+      "name": "Generate Full Job",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 600]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:3007/api/backup/create",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"type\": \"{{$json.type}}\",\n  \"backupId\": \"{{$json.backupId}}\",\n  \"scheduled\": true,\n  \"priority\": \"{{$json.priority}}\"\n}",
+        "options": {}
+      },
+      "id": "trigger-backup-api",
+      "name": "Trigger Backup API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.status}}",
+              "operation": "equal",
+              "value2": "initiated"
+            }
+          ]
+        }
+      },
+      "id": "backup-status-check",
+      "name": "Check Backup Status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "minutes"
+      },
+      "id": "wait-for-completion",
+      "name": "Wait for Backup",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:3007/api/backup/status/{{$node['Generate Database Job'].json['backupId'] || $node['Generate Container Job'].json['backupId'] || $node['Generate Full Job'].json['backupId']}}",
+        "options": {}
+      },
+      "id": "check-final-status",
+      "name": "Check Final Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1340, 400]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:3011/api/broadcast",
+        "sendBody": true,
+        "specifyBody": "json", 
+        "jsonBody": "{\n  \"title\": \"📅 Scheduled Backup Failed\",\n  \"body\": \"Failed to initiate scheduled {{$node['Generate Database Job'].json['type'] || $node['Generate Container Job'].json['type'] || $node['Generate Full Job'].json['type']}} backup\",\n  \"icon\": \"/icons/icon-192x192.png\",\n  \"data\": {\n    \"type\": \"scheduled-backup-failure\",\n    \"backupType\": \"{{$node['Generate Database Job'].json['type'] || $node['Generate Container Job'].json['type'] || $node['Generate Full Job'].json['type']}}\",\n    \"url\": \"/?tab=backups\"\n  }\n}",
+        "options": {}
+      },
+      "id": "failure-alert",
+      "name": "Send Failure Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1120, 500]
+    }
+  ],
+  "connections": {
+    "Hourly Database Backup": {
+      "main": [
+        [
+          {
+            "node": "Generate Database Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Container Backup": {
+      "main": [
+        [
+          {
+            "node": "Generate Container Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Full Backup": {
+      "main": [
+        [
+          {
+            "node": "Generate Full Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Database Job": {
+      "main": [
+        [
+          {
+            "node": "Trigger Backup API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Container Job": {
+      "main": [
+        [
+          {
+            "node": "Trigger Backup API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Full Job": {
+      "main": [
+        [
+          {
+            "node": "Trigger Backup API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Backup API": {
+      "main": [
+        [
+          {
+            "node": "Check Backup Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Backup Status": {
+      "main": [
+        [
+          {
+            "node": "Wait for Backup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Failure Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Backup": {
+      "main": [
+        [
+          {
+            "node": "Check Final Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-10T00:00:00.000Z",
+  "id": "backup-scheduler-workflow",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Backup Scheduler",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2025-01-10T00:00:00.000Z", 
+      "id": "backup-automation",
+      "name": "backup-automation",
+      "updatedAt": "2025-01-10T00:00:00.000Z"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-10T00:00:00.000Z",
+  "versionId": "1"
+}

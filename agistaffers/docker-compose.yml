@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  agistaffers-web:
+    container_name: agistaffers-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@localhost:5432/stepperslife
+      - NEXTAUTH_URL=https://agistaffers.com
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-your-secret-key-replace-this-in-production-deploy}
+      - METRICS_API_URL=http://localhost:3009/metrics
+      - BACKUP_API_URL=http://localhost:3008/backup
+      - PUSH_API_URL=http://localhost:3011/push
+      - NEXT_PUBLIC_VAPID_PUBLIC_KEY=${NEXT_PUBLIC_VAPID_PUBLIC_KEY:-placeholder}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY:-placeholder}
+      - VAPID_EMAIL=mailto:admin@agistaffers.com
+      - PORT=3000
