@@ -27,7 +27,7 @@ export default function LoginPage() {
       const result = await signIn('gmail-magic-link', {
         email,
         redirect: false,
-        callbackUrl: '/admin',
+        callbackUrl: '/dashboard',
       })
 
       if (result?.error) {
@@ -48,7 +48,7 @@ export default function LoginPage() {
     
     try {
       await signIn('google', {
-        callbackUrl: '/admin',
+        callbackUrl: '/dashboard',
       })
     } catch (err) {
       setError('Failed to sign in with Google. Please try again.')

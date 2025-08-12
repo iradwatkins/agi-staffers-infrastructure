@@ -1,3 +1,4 @@
+
 FROM nginx:alpine
 
 # Copy static files to nginx html directory

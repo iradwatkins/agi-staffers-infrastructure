@@ -1,22 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { 
   ArrowRight, 
-  Bot, 
-  Globe, 
   Rocket, 
   Search, 
   Shield, 
   Zap, 
-  Moon, 
-  Sun,
-  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Play,
   Sparkles,
   Brain,
@@ -25,30 +22,93 @@ import {
   Palette,
   BarChart3,
   Lock,
-  Languages
+  Users,
+  Workflow,
+  Lightbulb,
+  Handshake,
+  Globe
 } from 'lucide-react'
-import { useTheme } from 'next-themes'
 import { useLanguage } from '@/hooks/useLanguage'
+import Link from 'next/link'
 
 export default function AGIStaffersHomepage() {
-  const { theme, setTheme } = useTheme()
   const { language, setLanguage, t } = useLanguage()
   const [mounted, setMounted] = useState(false)
   const [activeFeature, setActiveFeature] = useState(0)
+  const [currentBanner, setCurrentBanner] = useState(0)
   const { scrollYProgress } = useScroll()
   
   const heroY = useTransform(scrollYProgress, [0, 1], [0, -100])
   const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0])
 
+  const heroBanners = [
+    {
+      title: t.heroBanners.aiAssistants.title,
+      subtitle: t.heroBanners.aiAssistants.subtitle,
+      description: t.heroBanners.aiAssistants.description,
+      cta: t.heroBanners.aiAssistants.cta,
+      link: "/ai-assistants",
+      icon: Users,
+      gradient: "from-blue-500 to-cyan-500",
+    },
+    {
+      title: t.heroBanners.workflowAutomation.title,
+      subtitle: t.heroBanners.workflowAutomation.subtitle,
+      description: t.heroBanners.workflowAutomation.description,
+      cta: t.heroBanners.workflowAutomation.cta,
+      link: "/workflow-automation",
+      icon: Workflow,
+      gradient: "from-purple-500 to-pink-500",
+    },
+    {
+      title: t.heroBanners.seo.title,
+      subtitle: t.heroBanners.seo.subtitle,
+      description: t.heroBanners.seo.description,
+      cta: t.heroBanners.seo.cta,
+      link: "/seo",
+      icon: Search,
+      gradient: "from-green-500 to-emerald-500",
+    },
+    {
+      title: t.heroBanners.promptEngineering.title,
+      subtitle: t.heroBanners.promptEngineering.subtitle,
+      description: t.heroBanners.promptEngineering.description,
+      cta: t.heroBanners.promptEngineering.cta,
+      link: "/prompt-engineering",
+      icon: Brain,
+      gradient: "from-orange-500 to-red-500",
+    },
+    {
+      title: t.heroBanners.websites.title,
+      subtitle: t.heroBanners.websites.subtitle,
+      description: t.heroBanners.websites.description,
+      cta: t.heroBanners.websites.cta,
+      link: "/websites/pre-built",
+      icon: Globe,
+      gradient: "from-indigo-500 to-purple-500",
+    },
+  ]
+
   useEffect(() => {
     setMounted(true)
-    const interval = setInterval(() => {
+    // Auto-rotate hero banners
+    const heroInterval = setInterval(() => {
+      setCurrentBanner((prev) => (prev + 1) % heroBanners.length)
+    }, 8000) // 8 seconds
+    // Auto-rotate features
+    const featureInterval = setInterval(() => {
       setActiveFeature((prev) => (prev + 1) % 3)
     }, 3000)
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(heroInterval)
+      clearInterval(featureInterval)
+    }
   }, [])
 
   if (!mounted) return null
+
+  const goToNext = () => setCurrentBanner((prev) => (prev + 1) % heroBanners.length)
+  const goToPrev = () => setCurrentBanner((prev) => (prev - 1 + heroBanners.length) % heroBanners.length)
 
   const features = [
     {
@@ -73,179 +133,154 @@ export default function AGIStaffersHomepage() {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">
-      {/* Floating Navigation */}
-      <motion.header 
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"
-      >
-        <nav className={cn(
-          "flex items-center space-x-6 px-6 py-3 rounded-full",
-          "backdrop-blur-md bg-background/80 border border-border/50",
-          "shadow-lg shadow-black/5 dark:shadow-black/20"
-        )}>
-          <div className="flex items-center space-x-2">
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 360 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Bot className="h-6 w-6 text-primary" />
-            </motion.div>
-            <span className="font-bold text-lg">AGI Staffers</span>
-          </div>
-          
-          <div className="hidden md:flex items-center space-x-6">
-            <a href="#services" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              {t.nav.services}
-            </a>
-            <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              {t.nav.features}
-            </a>
-            <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              {t.nav.pricing}
-            </a>
-          </div>
 
-          <div className="flex items-center space-x-2">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
-              className={cn(
-                "p-2 rounded-lg transition-colors",
-                "hover:bg-accent hover:text-accent-foreground"
-              )}
-              title={language === 'en' ? 'Cambiar a Español' : 'Switch to English'}
-            >
-              <Languages className="h-4 w-4" />
-              <span className="ml-1 text-xs font-medium">
-                {language === 'en' ? 'ES' : 'EN'}
-              </span>
-            </motion.button>
-            
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className={cn(
-                "p-2 rounded-lg transition-colors",
-                "hover:bg-accent hover:text-accent-foreground"
-              )}
-            >
-              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </motion.button>
-            
-            <Button size="sm" className="rounded-full px-4" asChild>
-              <a href="/admin">{t.nav.dashboard}</a>
-            </Button>
-          </div>
-        </nav>
-      </motion.header>
-
-      {/* Hero Section with Parallax */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
+      {/* Hero Section with Rotating Banners */}
+      <section className="relative min-h-[600px] flex items-center px-4 overflow-hidden pt-20">
         {/* Animated Background */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
 
-        <motion.div 
-          style={{ y: heroY, opacity: heroOpacity }}
-          className="text-center z-10 max-w-6xl mx-auto"
-        >
+        <AnimatePresence mode="wait">
           <motion.div
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            key={currentBanner}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.5 }}
+            className="container mx-auto relative z-10"
           >
-            <Badge className={cn(
-              "mb-6 px-6 py-2 text-sm font-medium rounded-full",
-              "bg-gradient-to-r from-primary/10 to-purple-500/10",
-              "border border-primary/20 text-primary",
-              "shadow-lg shadow-primary/10"
-            )}>
-              <Sparkles className="w-4 h-4 mr-2" />
-              {t.hero.badge}
-            </Badge>
-          </motion.div>
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-8">
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                >
+                  <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight">
+                    <span className={cn(
+                      "bg-gradient-to-r bg-clip-text text-transparent",
+                      heroBanners[currentBanner].gradient
+                    )}>
+                      {heroBanners[currentBanner].title}
+                    </span>
+                  </h1>
+                </motion.div>
 
-          <motion.h1 
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 leading-none"
-          >
-            <span className="block">{t.hero.title.part1}</span>
-            <span className="block bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
-              {t.hero.title.part2}
-            </span>
-          </motion.h1>
+                <motion.p
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-xl md:text-2xl font-semibold text-foreground/90"
+                >
+                  {heroBanners[currentBanner].subtitle}
+                </motion.p>
 
-          <motion.p 
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed"
-          >
-            {t.hero.description}
-          </motion.p>
+                <motion.p
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-base md:text-lg text-muted-foreground leading-relaxed"
+                >
+                  {heroBanners[currentBanner].description}
+                </motion.p>
 
-          <motion.div 
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-          >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button 
-                size="lg" 
-                className={cn(
-                  "px-12 py-6 text-lg font-semibold rounded-2xl",
-                  "shadow-2xl shadow-primary/25 hover:shadow-primary/40",
-                  "bg-gradient-to-r from-primary to-primary/80",
-                  "hover:from-primary/90 hover:to-primary/70",
-                  "transition-all duration-300"
-                )}
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="flex flex-col sm:flex-row gap-4"
+                >
+                  <Button
+                    size="lg"
+                    asChild
+                    className={cn(
+                      "bg-gradient-to-r hover:opacity-90 transition-all duration-300",
+                      "shadow-xl hover:shadow-2xl transform hover:scale-105",
+                      "text-lg px-8 py-6",
+                      heroBanners[currentBanner].gradient
+                    )}
+                  >
+                    <Link href={heroBanners[currentBanner].link}>
+                      {heroBanners[currentBanner].cta} 
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    asChild
+                    className="text-lg px-8 py-6"
+                  >
+                    <Link href="/contact">
+                      <Play className="mr-2 h-5 w-5" />
+                      Watch Demo
+                    </Link>
+                  </Button>
+                </motion.div>
+              </div>
+
+              {/* Icon Display */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.5, type: "spring" }}
+                className="hidden lg:flex items-center justify-center"
               >
-                {t.hero.primaryButton}
-                <ArrowRight className="ml-3 h-5 w-5" />
-              </Button>
-            </motion.div>
-            
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className={cn(
-                  "px-12 py-6 text-lg font-semibold rounded-2xl",
-                  "border-2 backdrop-blur-sm",
-                  "hover:bg-accent/50 transition-all duration-300"
-                )}
-              >
-                <Play className="mr-3 h-5 w-5" />
-                {t.hero.secondaryButton}
-              </Button>
-            </motion.div>
+                <div className={cn(
+                  "p-12 rounded-full bg-gradient-to-br",
+                  heroBanners[currentBanner].gradient,
+                  "opacity-10"
+                )}>
+                  {(() => {
+                    const Icon = heroBanners[currentBanner].icon
+                    return <Icon className="h-48 w-48 text-foreground/20" />
+                  })()}
+                </div>
+              </motion.div>
+            </div>
           </motion.div>
-        </motion.div>
+        </AnimatePresence>
 
-        {/* Scroll Indicator */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="flex flex-col items-center text-muted-foreground"
+        {/* Navigation Arrows */}
+        <div className="absolute inset-y-0 left-4 flex items-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={goToPrev}
+            className="text-muted-foreground hover:text-foreground transition-colors"
           >
-            <span className="text-sm mb-2">{t.hero.scrollText}</span>
-            <ChevronDown className="h-6 w-6" />
-          </motion.div>
-        </motion.div>
+            <ChevronLeft className="h-8 w-8" />
+          </Button>
+        </div>
+        <div className="absolute inset-y-0 right-4 flex items-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={goToNext}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ChevronRight className="h-8 w-8" />
+          </Button>
+        </div>
+
+        {/* Banner Indicators */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          {heroBanners.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentBanner(index)}
+              className={cn(
+                "w-2 h-2 rounded-full transition-all duration-300",
+                currentBanner === index
+                  ? "w-8 bg-primary"
+                  : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+              )}
+            />
+          ))}
+        </div>
       </section>
 
       {/* Interactive Features Showcase */}

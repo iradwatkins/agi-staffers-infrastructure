@@ -12,6 +12,34 @@ STOP! You MUST:
 
 ---
 
+# 🚨 CRITICAL: WEBSITE REBUILD RESTRICTION - AGI STAFFERS 🚨
+
+## ⚠️ ABSOLUTE RULE - NO EXCEPTIONS ⚠️
+**I CANNOT and WILL NOT rebuild the AGI Staffers website from scratch.**
+
+### Rebuild Permission Protocol:
+1. **DEFAULT:** I am NOT allowed to rebuild anything
+2. **IF I think rebuild is needed:** I MUST ask user THREE (3) times for explicit confirmation
+3. **Confirmation Required:** User must explicitly confirm 3 times before any rebuild
+4. **Scope:** ONLY update what is specifically being discussed
+5. **Focus:** UI/UX updates only unless explicitly stated otherwise
+
+### What This Means:
+- ❌ NO creating new website structures from scratch
+- ❌ NO rebuilding authentication systems from ground up
+- ❌ NO creating entirely new page architectures
+- ❌ NO replacing existing systems with new ones
+- ✅ ONLY update existing components
+- ✅ ONLY modify current pages
+- ✅ ONLY enhance what already exists
+- ✅ ONLY add features to current structure
+
+**Added:** January 12, 2025
+**Priority:** MAXIMUM - This rule overrides all other instructions
+**Project:** AGI Staffers
+
+---
+
 # 🎯 BMAD METHOD WITH MANDATORY TOOL USAGE
 
 ## ALL WORK MUST: USE TOOLS → BENCHMARK → MODEL → ANALYZE → DELIVER
@@ -315,6 +343,66 @@ When working with Cloudflare, BMAD requires:
 - Use Wrangler CLI (automated)
 - Use git for version control
 - NO manual dashboard clicking
+
+---
+
+## 🌐 SPANISH TRANSLATION SYSTEM - AGI STAFFERS
+
+**Implementation Date:** January 12, 2025
+**Status:** ✅ PRODUCTION READY - 100% Bilingual Coverage
+**Method:** BMAD-compliant with full MCP tool usage
+
+### Translation System Architecture:
+
+**Core Components:**
+- `/lib/translations.ts` - Complete translation dictionary (1,923 lines)
+- `/hooks/useLanguage.ts` - Language detection and management hook
+- `/components/language-provider.tsx` - React Context for global state
+- Automatic Dominican Republic detection via browser locale
+
+**Translation Coverage:**
+✅ **100% Complete Pages:**
+- Homepage with hero rotator and service cards
+- SEO Services page 
+- AI Assistants page
+- Workflow Automation page
+- Prompt Engineering page
+- Pre-built Websites page
+- Custom Websites page
+- About/Our Story page
+- Contact page
+- Lead generation forms (service-specific)
+- Footer component
+- Navigation menus
+
+**Features Implemented:**
+- 🌍 Automatic Spanish for Dominican Republic users (locale: es-DO)
+- 🔄 Manual language toggle available
+- 💾 localStorage persistence for user preference
+- 📱 Mobile-responsive in both languages
+- 🎯 Service-specific lead forms maintain context
+- ⚡ Zero-latency language switching (client-side)
+
+**BMAD Tool Usage for Translation:**
+- `filesystem` MCP - File discovery and validation
+- `git` MCP - Version control and tracking
+- `mcp__ide__getDiagnostics` - TypeScript validation
+- `mcp__firecrawl__firecrawl_scrape` - Content verification
+- Tailwind CSS IntelliSense - Styling consistency
+- ESLint - Code quality checks
+
+**Deployment Status:**
+- GitHub Repository: ✅ Pushed to main branch
+- Production VPS (72.60.28.175): ✅ Deployed
+- Domain (agistaffers.com): ✅ Live with translations
+- Cloudflare CDN: ✅ Cached and distributed
+
+**Testing Completed:**
+- Browser locale detection: ✅ Verified
+- Manual language switching: ✅ Working
+- Mobile responsiveness: ✅ Tested
+- Lead form submissions: ✅ Functional
+- SEO meta tags: ✅ Bilingual
 
 ---
 

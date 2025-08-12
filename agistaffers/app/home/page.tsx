@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import Link from 'next/link'
 import { 
   ArrowRight, 
   Bot, 
@@ -527,9 +528,12 @@ export default function AGIStaffersHomepage() {
                     "bg-gradient-to-r from-primary to-primary/80",
                     "transition-all duration-300"
                   )}
+                  asChild
                 >
-                  Get Started Today
-                  <ArrowRight className="ml-3 h-5 w-5" />
+                  <Link href="/leads">
+                    Start a Project
+                    <ArrowRight className="ml-3 h-5 w-5" />
+                  </Link>
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

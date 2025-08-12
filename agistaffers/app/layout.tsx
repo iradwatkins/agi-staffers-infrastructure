@@ -4,6 +4,8 @@ import "./globals.css";
 import { Providers } from "@/lib/providers";
 import { Toaster } from "@/components/ui/sonner";
 import { PWAInstallBanner } from "@/components/pwa-install-banner";
+import MainNav from "@/components/navigation/MainNav";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,7 +35,13 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
-        <Providers>{children}</Providers>
+        <Providers>
+          <div className="min-h-screen flex flex-col">
+            <MainNav />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+        </Providers>
         <Toaster />
         <PWAInstallBanner />
       </body>

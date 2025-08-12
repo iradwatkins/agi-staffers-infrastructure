@@ -25,12 +25,18 @@ export function useLanguageState() {
   const [language, setLanguageState] = useState<Language>('en')
 
   useEffect(() => {
-    // Get language from localStorage, default to English
+    // First check localStorage for saved preference
     const savedLanguage = localStorage.getItem('language') as Language
     if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'es')) {
       setLanguageState(savedLanguage)
+      return
     }
-    // Default to English - no browser language detection
+
+    // Detect browser/system language
+    const browserLang = navigator.language || (navigator as any).userLanguage || 'en'
+    const detectedLang = browserLang.toLowerCase().startsWith('es') ? 'es' : 'en'
+    setLanguageState(detectedLang)
+    localStorage.setItem('language', detectedLang)
   }, [])
 
   const setLanguage = (lang: Language) => {
