@@ -15,30 +15,30 @@ export async function GET(request: NextRequest) {
         
         const where = search ? {
             OR: [
-                { company_name: { contains: search, mode: 'insensitive' } },
-                { contact_email: { contains: search, mode: 'insensitive' } },
-                { contact_name: { contains: search, mode: 'insensitive' } }
+                { companyName: { contains: search, mode: 'insensitive' } },
+                { email: { contains: search, mode: 'insensitive' } },
+                { contactName: { contains: search, mode: 'insensitive' } }
             ]
         } : {};
 
         const [customers, total] = await Promise.all([
-            prisma.customers.findMany({
+            prisma.customer.findMany({
                 where,
                 skip,
                 take: limit,
                 include: {
-                    customer_sites: {
+                    sites: {
                         select: {
                             id: true,
                             domain: true,
                             status: true,
-                            created_at: true
+                            createdAt: true
                         }
                     }
                 },
-                orderBy: { created_at: 'desc' }
+                orderBy: { createdAt: 'desc' }
             }),
-            prisma.customers.count({ where })
+            prisma.customer.count({ where })
         ]);
 
         return NextResponse.json({
@@ -68,18 +68,18 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         
         // Validate required fields
-        const { company_name, contact_name, contact_email, plan_tier } = body;
+        const { companyName, contactName, email, plan } = body;
         
-        if (!company_name || !contact_name || !contact_email) {
+        if (!companyName || !contactName || !email) {
             return NextResponse.json(
-                { success: false, error: 'Missing required fields: company_name, contact_name, contact_email' },
+                { success: false, error: 'Missing required fields: companyName, contactName, email' },
                 { status: 400 }
             );
         }
 
         // Check if email already exists
-        const existingCustomer = await prisma.customers.findUnique({
-            where: { contact_email }
+        const existingCustomer = await prisma.customer.findUnique({
+            where: { email }
         });
 
         if (existingCustomer) {
@@ -89,24 +89,15 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Generate customer subdomain
-        const subdomain = company_name
-            .toLowerCase()
-            .replace(/[^a-z0-9]/g, '')
-            .substring(0, 20);
-
-        const customer = await prisma.customers.create({
+        const customer = await prisma.customer.create({
             data: {
-                company_name,
-                contact_name,
-                contact_email,
-                phone: body.phone || null,
-                plan_tier: plan_tier || 'basic',
+                companyName,
+                contactName,
+                email,
+                contactPhone: body.contactPhone || null,
+                plan: plan || 'starter',
                 status: 'active',
-                subdomain,
-                billing_email: body.billing_email || contact_email,
-                notes: body.notes || null,
-                metadata: body.metadata || {}
+                billingEmail: body.billingEmail || email
             }
         });
 
@@ -138,7 +129,7 @@ export async function PUT(request: NextRequest) {
         }
 
         // Check if customer exists
-        const existingCustomer = await prisma.customers.findUnique({
+        const existingCustomer = await prisma.customer.findUnique({
             where: { id }
         });
 
@@ -149,11 +140,11 @@ export async function PUT(request: NextRequest) {
             );
         }
 
-        const customer = await prisma.customers.update({
+        const customer = await prisma.customer.update({
             where: { id },
             data: {
                 ...updateData,
-                updated_at: new Date()
+                updatedAt: new Date()
             }
         });
 

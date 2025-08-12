@@ -1,0 +1,18 @@
+name = "agi-staffers-push-router"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+workers_dev = false
+account_id = "e7282949b69e1fe1237754ae983a4900"
+
+# KV Namespace for push subscriptions
+kv_namespaces = [
+  { binding = "PUSH_SUBSCRIPTIONS", id = "7f63f27d178a4d4a84f5b4c911ca4cea", preview_id = "7f63f27d178a4d4a84f5b4c911ca4cea" }
+]
+
+# Routes will be set up in Cloudflare dashboard
+# routes = [
+#   { pattern = "api.agistaffers.com/api/push*", zone_name = "agistaffers.com" }
+# ]
+
+[vars]
+ORIGIN_URL = "https://admin.agistaffers.com"

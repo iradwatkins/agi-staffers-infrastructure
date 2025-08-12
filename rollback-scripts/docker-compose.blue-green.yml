@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # Blue deployment - Current JavaScript admin dashboard
+  admin-dashboard-blue:
+    image: admin-dashboard:js-stable
+    container_name: admin-dashboard-blue
+    ports:
+      - "8080:80"
+    environment:
+      - TZ=America/Chicago
+      - NODE_ENV=production
+      - DEPLOYMENT=blue
+    volumes:
+      - /root/admin-dashboard-local:/usr/share/nginx/html:ro
+    networks:
+      - agi-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "deployment=blue"
+      - "version=javascript"
+      - "com.agistaffers.description=JavaScript Admin Dashboard"
+
+  # Green deployment - New React/Next.js admin dashboard
+  admin-dashboard-green:
+    build:
+      context: /root/agistaffers
+      dockerfile: Dockerfile
+    image: admin-dashboard:react-latest
+    container_name: admin-dashboard-green
+    ports:
+      - "8081:3000"
+    environment:
+      - TZ=America/Chicago
+      - NODE_ENV=production
+      - DEPLOYMENT=green
+      - DATABASE_URL=postgresql://agistaffers:${DB_PASSWORD}@postgres:5432/agistaffers
+      - NEXTAUTH_URL=https://admin.agistaffers.com
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+    networks:
+      - agi-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "deployment=green"
+      - "version=react-nextjs"
+      - "com.agistaffers.description=React Next.js Admin Dashboard"
+
+  # Load balancer for blue-green switching
+  admin-lb:
+    image: nginx:alpine
+    container_name: admin-lb
+    ports:
+      - "8082:80"
+    volumes:
+      - ./nginx-blue-green.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - agi-network
+    restart: unless-stopped
+    depends_on:
+      - admin-dashboard-blue
+      - admin-dashboard-green
+
+networks:
+  agi-network:
+    external: true

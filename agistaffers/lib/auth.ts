@@ -26,10 +26,10 @@ export const {
         // For now, use mock user
         const mockUser = {
           id: '1',
-          email: 'admin@agistaffers.com',
-          name: 'Admin User',
+          email: 'iradwatkins@gmail.com',
+          name: 'Ira D. Watkins',
           // In production, password would be hashed
-          password: 'admin123',
+          password: 'Iw2006js!321',
         }
         
         if (credentials.email === mockUser.email && 

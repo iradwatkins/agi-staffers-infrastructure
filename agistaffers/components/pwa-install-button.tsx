@@ -1,37 +1,22 @@
 'use client'
 
-import { Download, Check, Info } from 'lucide-react'
+import { Smartphone, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePWAInstall } from '@/hooks/use-pwa-install'
 
 export function PWAInstallButton() {
-  const { isInstalled, isInstallable, platform, install } = usePWAInstall()
+  const { isInstalled, isInstallable, install } = usePWAInstall()
 
   if (isInstalled) {
     return (
       <Button
-        variant="ghost"
-        size="icon"
-        className="relative"
+        variant="outline"
+        size="sm"
         disabled
-        title="App Installed"
+        className="gap-2"
       >
         <Check className="h-4 w-4 text-green-600" />
-      </Button>
-    )
-  }
-
-  if (platform === 'ios' || platform === 'samsung') {
-    return (
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={install}
-        className="relative"
-        title="Click to see installation instructions"
-      >
-        <Info className="h-4 w-4" />
-        <span className="absolute -top-1 -right-1 h-2 w-2 bg-blue-600 rounded-full animate-pulse" />
+        <span>Installed</span>
       </Button>
     )
   }
@@ -42,14 +27,13 @@ export function PWAInstallButton() {
 
   return (
     <Button
-      variant="ghost"
-      size="icon"
+      variant="outline"
+      size="sm"
       onClick={install}
-      className="relative"
-      title="Install App"
+      className="gap-2"
     >
-      <Download className="h-4 w-4" />
-      <span className="absolute -top-1 -right-1 h-2 w-2 bg-blue-600 rounded-full animate-pulse" />
+      <Smartphone className="h-4 w-4" />
+      <span>Install App</span>
     </Button>
   )
 }

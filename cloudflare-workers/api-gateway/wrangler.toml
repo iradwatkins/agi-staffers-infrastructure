@@ -1,0 +1,29 @@
+name = "agi-staffers-api-gateway"
+main = "src/index-simple.js"
+compatibility_date = "2024-01-01"
+workers_dev = false
+account_id = "e7282949b69e1fe1237754ae983a4900"
+
+# KV Namespaces
+kv_namespaces = [
+  { binding = "RATE_LIMIT", id = "ac55d63ca3d34ef99f6cf2b3da032064", preview_id = "ac55d63ca3d34ef99f6cf2b3da032064" },
+  { binding = "AUTH_TOKENS", id = "01bb60e7832f4faf9170780fe502f6fa", preview_id = "01bb60e7832f4faf9170780fe502f6fa" }
+]
+
+# Custom domain routing
+routes = [
+  { pattern = "api.agistaffers.com/*", zone_name = "agistaffers.com" }
+]
+
+# Environment variables
+[vars]
+ORIGIN_URL = "https://admin.agistaffers.com"
+
+# Caching rules
+[[rules]]
+type = "Text"
+globs = ["**/*.js", "**/*.css", "**/*.html"]
+fallthrough = true
+
+[rules.headers]
+cache-control = "max-age=3600"

@@ -19,28 +19,29 @@ export async function GET(request: NextRequest) {
         if (status) where.status = status;
 
         const [sites, total] = await Promise.all([
-            prisma.customer_sites.findMany({
+            prisma.customerSite.findMany({
                 where,
                 skip,
                 take: limit,
                 include: {
-                    customers: {
+                    customer: {
                         select: {
-                            company_name: true,
-                            contact_name: true,
-                            contact_email: true
+                            companyName: true,
+                            contactName: true,
+                            email: true
                         }
                     },
-                    site_templates: {
+                    template: {
                         select: {
-                            template_name: true,
-                            template_type: true
+                            templateName: true,
+                            displayName: true,
+                            category: true
                         }
                     }
                 },
-                orderBy: { created_at: 'desc' }
+                orderBy: { createdAt: 'desc' }
             }),
-            prisma.customer_sites.count({ where })
+            prisma.customerSite.count({ where })
         ]);
 
         return NextResponse.json({
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Check if domain already exists
-        const existingSite = await prisma.customer_sites.findFirst({
+        const existingSite = await prisma.customerSite.findFirst({
             where: { domain }
         });
 
@@ -116,7 +117,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Create site record
-        const site = await prisma.customer_sites.create({
+        const site = await prisma.customerSite.create({
             data: {
                 customer_id,
                 domain,

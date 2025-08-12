@@ -1,0 +1,27 @@
+{
+  "name": "agi-staffers-cloudflare-workers",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers for AGI Staffers edge computing",
+  "scripts": {
+    "deploy": "./deploy-all.sh",
+    "create-kv": "./create-kv-namespaces.sh",
+    "deploy:api-gateway": "cd api-gateway && wrangler deploy",
+    "deploy:metrics-cache": "cd metrics-cache && wrangler deploy",
+    "deploy:push-router": "cd push-router && wrangler deploy",
+    "dev:api-gateway": "cd api-gateway && wrangler dev",
+    "dev:metrics-cache": "cd metrics-cache && wrangler dev",
+    "dev:push-router": "cd push-router && wrangler dev"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "edge-computing",
+    "api-gateway",
+    "caching"
+  ],
+  "author": "AGI Staffers",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

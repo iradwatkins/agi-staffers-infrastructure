@@ -3,46 +3,42 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// GET /api/templates - List all available templates
+// GET /api/templates - List all site templates
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
-        const type = searchParams.get('type');
-        const active_only = searchParams.get('active_only') === 'true';
+        const category = searchParams.get('category');
+        const active = searchParams.get('active');
+        const page = parseInt(searchParams.get('page') || '1');
+        const limit = parseInt(searchParams.get('limit') || '10');
+        
+        const skip = (page - 1) * limit;
         
         const where: any = {};
-        if (type) where.template_type = type;
-        if (active_only) where.is_active = true;
+        if (category) where.category = category;
+        if (active !== null) where.isActive = active === 'true';
 
-        const templates = await prisma.site_templates.findMany({
-            where,
-            include: {
-                customer_sites: {
-                    select: {
-                        id: true,
-                        domain: true,
-                        status: true
-                    }
-                },
-                _count: {
-                    select: {
-                        customer_sites: true
-                    }
-                }
-            },
-            orderBy: { created_at: 'desc' }
-        });
-
-        // Add usage statistics
-        const templatesWithStats = templates.map(template => ({
-            ...template,
-            usage_count: template._count.customer_sites,
-            active_sites: template.customer_sites.filter(site => site.status === 'active').length
-        }));
+        const [templates, total] = await Promise.all([
+            prisma.siteTemplate.findMany({
+                where,
+                skip,
+                take: limit,
+                orderBy: { usageCount: 'desc' }
+            }),
+            prisma.siteTemplate.count({ where })
+        ]);
 
         return NextResponse.json({
             success: true,
-            data: templatesWithStats
+            data: {
+                templates,
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    pages: Math.ceil(total / limit)
+                }
+            }
         });
     } catch (error) {
         console.error('Error fetching templates:', error);
@@ -59,38 +55,42 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         
         // Validate required fields
-        const { template_name, template_type, source_path } = body;
+        const { templateName, displayName, description, category, sourcePath } = body;
         
-        if (!template_name || !template_type || !source_path) {
+        if (!templateName || !displayName || !description || !category || !sourcePath) {
             return NextResponse.json(
-                { success: false, error: 'Missing required fields: template_name, template_type, source_path' },
+                { success: false, error: 'Missing required fields: templateName, displayName, description, category, sourcePath' },
                 { status: 400 }
             );
         }
 
         // Check if template name already exists
-        const existingTemplate = await prisma.site_templates.findFirst({
-            where: { template_name }
+        const existingTemplate = await prisma.siteTemplate.findUnique({
+            where: { templateName }
         });
 
         if (existingTemplate) {
             return NextResponse.json(
-                { success: false, error: 'Template name already exists' },
+                { success: false, error: 'Template with this name already exists' },
                 { status: 409 }
             );
         }
 
-        const template = await prisma.site_templates.create({
+        const template = await prisma.siteTemplate.create({
             data: {
-                template_name,
-                template_type,
-                description: body.description || null,
-                source_path,
-                default_config: body.default_config || {},
+                templateName,
+                displayName,
+                description,
+                category,
+                sourcePath,
+                thumbnailUrl: body.thumbnailUrl || null,
+                previewUrl: body.previewUrl || null,
+                dockerImage: body.dockerImage || null,
+                defaultConfig: body.defaultConfig || {},
                 features: body.features || [],
-                preview_url: body.preview_url || null,
-                is_active: body.is_active ?? true,
-                version: body.version || '1.0.0'
+                requiredEnvVars: body.requiredEnvVars || [],
+                version: body.version || '1.0.0',
+                isActive: body.isActive !== undefined ? body.isActive : true
             }
         });
 
@@ -122,7 +122,7 @@ export async function PUT(request: NextRequest) {
         }
 
         // Check if template exists
-        const existingTemplate = await prisma.site_templates.findUnique({
+        const existingTemplate = await prisma.siteTemplate.findUnique({
             where: { id }
         });
 
@@ -133,11 +133,11 @@ export async function PUT(request: NextRequest) {
             );
         }
 
-        const template = await prisma.site_templates.update({
+        const template = await prisma.siteTemplate.update({
             where: { id },
             data: {
                 ...updateData,
-                updated_at: new Date()
+                updatedAt: new Date()
             }
         });
 
@@ -150,6 +150,62 @@ export async function PUT(request: NextRequest) {
         console.error('Error updating template:', error);
         return NextResponse.json(
             { success: false, error: 'Failed to update template' },
+            { status: 500 }
+        );
+    }
+}
+
+// DELETE /api/templates - Delete template
+export async function DELETE(request: NextRequest) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+        
+        if (!id) {
+            return NextResponse.json(
+                { success: false, error: 'Template ID is required' },
+                { status: 400 }
+            );
+        }
+
+        // Check if template exists
+        const existingTemplate = await prisma.siteTemplate.findUnique({
+            where: { id },
+            include: {
+                sites: { select: { id: true } }
+            }
+        });
+
+        if (!existingTemplate) {
+            return NextResponse.json(
+                { success: false, error: 'Template not found' },
+                { status: 404 }
+            );
+        }
+
+        // Check if template is in use
+        if (existingTemplate.sites.length > 0) {
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    error: `Cannot delete template. It is currently used by ${existingTemplate.sites.length} site(s)` 
+                },
+                { status: 409 }
+            );
+        }
+
+        await prisma.siteTemplate.delete({
+            where: { id }
+        });
+
+        return NextResponse.json({
+            success: true,
+            message: 'Template deleted successfully'
+        });
+    } catch (error) {
+        console.error('Error deleting template:', error);
+        return NextResponse.json(
+            { success: false, error: 'Failed to delete template' },
             { status: 500 }
         );
     }

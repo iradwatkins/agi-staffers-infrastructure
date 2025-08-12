@@ -2,7 +2,7 @@
 class PushNotificationManager {
     constructor() {
         // Production VAPID key for AGI Staffers Push Notifications
-        this.vapidPublicKey = 'BCQLKtKr-hK9kVXSXoMX_8NPMZhTLfQzZGMFQdkC8sWJOVf-uu8sCwBIMz_Kwjow4HywIDjnAa5J4AwnJR7eli8';
+        this.vapidPublicKey = 'BEs3xU7S5tmysUPqGvc7Y7ixokn-UHf9IHBaEgZ-e-Y0Oo_E7N1JWQhK1aLCo6lFjkY0SJPw-1R-o6U0ubr4kg8';
         this.subscribed = false;
         this.subscription = null;
         this.apiUrl = 'https://admin.agistaffers.com/push-api';

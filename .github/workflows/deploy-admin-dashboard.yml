@@ -21,7 +21,7 @@ on:
 env:
   DOCKER_IMAGE: admin-dashboard
   CONTAINER_NAME: admin-dashboard
-  SERVER_HOST: 148.230.93.174
+  SERVER_HOST: 72.60.28.175
   SERVER_USER: root
 
 jobs:

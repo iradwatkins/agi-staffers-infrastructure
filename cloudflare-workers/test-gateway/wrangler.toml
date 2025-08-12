@@ -1,0 +1,12 @@
+name = "agi-staffers-api-gateway"
+main = "index.js"
+compatibility_date = "2024-01-01"
+workers_dev = false
+account_id = "e7282949b69e1fe1237754ae983a4900"
+
+routes = [
+  { pattern = "api.agistaffers.com/*", zone_name = "agistaffers.com" }
+]
+
+[vars]
+ORIGIN_URL = "https://origin.agistaffers.com"

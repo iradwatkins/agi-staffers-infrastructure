@@ -1,0 +1,88 @@
+# Public website - Marketing/Landing page
+agistaffers.com {
+    # SECURITY: Block all admin routes on public domain
+    handle /admin* {
+        respond "Access Denied" 403
+    }
+    
+    # Serve public website
+    reverse_proxy localhost:3000
+}
+
+# Admin Dashboard - Subdomain for administration
+admin.agistaffers.com {
+    # API routes for metrics
+    handle /api/metrics {
+        reverse_proxy localhost:3009
+    }
+    
+    # API routes for push notifications
+    handle /api/push* {
+        reverse_proxy localhost:3011
+    }
+    
+    # Serve admin dashboard (FIXED: Route to correct port 8080)
+    handle {
+        reverse_proxy localhost:8080
+    }
+}
+
+# Database Management
+pgadmin.agistaffers.com {
+    reverse_proxy localhost:5050
+}
+
+# Workflow Automation
+n8n.agistaffers.com {
+    reverse_proxy localhost:5678
+}
+
+# Container Management
+portainer.agistaffers.com {
+    reverse_proxy localhost:9000
+}
+
+# AI Chat Interface
+chat.agistaffers.com {
+    reverse_proxy localhost:3002
+}
+
+# AI Workflow Builder
+flowise.agistaffers.com {
+    reverse_proxy localhost:3001
+}
+
+# Privacy Search Engine
+searxng.agistaffers.com {
+    reverse_proxy localhost:8090
+}
+
+# Grafana Monitoring
+grafana.agistaffers.com {
+    reverse_proxy localhost:3003
+}
+
+# Prometheus Metrics
+prometheus.agistaffers.com {
+    reverse_proxy localhost:9090
+}
+
+# Uptime Monitoring
+uptime.agistaffers.com {
+    reverse_proxy localhost:3004
+}
+
+# MinIO Object Storage
+minio.agistaffers.com {
+    reverse_proxy localhost:9001
+}
+
+# Vault Secrets Management
+vault.agistaffers.com {
+    reverse_proxy localhost:8200
+}
+
+# Jaeger Tracing
+jaeger.agistaffers.com {
+    reverse_proxy localhost:16686
+}
