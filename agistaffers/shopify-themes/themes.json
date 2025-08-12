@@ -1,0 +1,151 @@
+{
+  "themes": [
+    {
+      "id": "dawn",
+      "name": "Dawn",
+      "description": "Shopify's flagship theme - Clean, flexible, and fast",
+      "type": "ecommerce",
+      "version": "15.3.0",
+      "author": "AGI Staffers",
+      "preview": "/themes/dawn/preview.png",
+      "features": [
+        "Product filtering",
+        "Quick add to cart",
+        "Mega menu",
+        "Predictive search",
+        "Color swatches",
+        "Size chart",
+        "Product recommendations",
+        "Currency converter"
+      ],
+      "industries": ["fashion", "electronics", "home", "beauty", "sports"],
+      "pricing": {
+        "USD": 0,
+        "DOP": 0
+      }
+    },
+    {
+      "id": "service-business",
+      "name": "Service Pro",
+      "description": "Professional service business website - Perfect for consultants, agencies, and service providers",
+      "type": "service",
+      "version": "1.0.0",
+      "author": "AGI Staffers",
+      "preview": "/themes/service/preview.png",
+      "features": [
+        "Service showcase",
+        "Team profiles",
+        "Testimonials",
+        "Contact forms",
+        "Appointment booking",
+        "Portfolio gallery",
+        "Pricing tables",
+        "FAQ section"
+      ],
+      "industries": ["consulting", "agency", "legal", "medical", "education"],
+      "pricing": {
+        "USD": 0,
+        "DOP": 0
+      }
+    },
+    {
+      "id": "landing-page",
+      "name": "Conversion",
+      "description": "High-converting landing page - Optimized for leads and conversions",
+      "type": "landing",
+      "version": "1.0.0",
+      "author": "AGI Staffers",
+      "preview": "/themes/landing/preview.png",
+      "features": [
+        "Hero with CTA",
+        "Benefits section",
+        "Social proof",
+        "Lead capture forms",
+        "A/B testing ready",
+        "Countdown timers",
+        "Video backgrounds",
+        "Exit intent popups"
+      ],
+      "industries": ["saas", "course", "event", "product-launch", "lead-generation"],
+      "pricing": {
+        "USD": 0,
+        "DOP": 0
+      }
+    },
+    {
+      "id": "blog",
+      "name": "Publisher",
+      "description": "Content-focused blog theme - Perfect for bloggers and content creators",
+      "type": "blog",
+      "version": "1.0.0",
+      "author": "AGI Staffers",
+      "preview": "/themes/blog/preview.png",
+      "features": [
+        "Article layouts",
+        "Category pages",
+        "Author profiles",
+        "Comments system",
+        "Newsletter signup",
+        "Related posts",
+        "Search functionality",
+        "Social sharing"
+      ],
+      "industries": ["news", "magazine", "personal", "corporate-blog", "content"],
+      "pricing": {
+        "USD": 0,
+        "DOP": 0
+      }
+    },
+    {
+      "id": "brochure",
+      "name": "Corporate",
+      "description": "Professional informational website - Ideal for corporate presence",
+      "type": "brochure",
+      "version": "1.0.0",
+      "author": "AGI Staffers",
+      "preview": "/themes/brochure/preview.png",
+      "features": [
+        "About us section",
+        "Services overview",
+        "Company history",
+        "Leadership team",
+        "Career opportunities",
+        "Press releases",
+        "Contact information",
+        "Location maps"
+      ],
+      "industries": ["corporate", "nonprofit", "government", "institution", "organization"],
+      "pricing": {
+        "USD": 0,
+        "DOP": 0
+      }
+    }
+  ],
+  "categories": {
+    "ecommerce": {
+      "name": "E-commerce",
+      "description": "Online stores and product selling",
+      "icon": "shopping-cart"
+    },
+    "service": {
+      "name": "Service Business",
+      "description": "Service providers and consultants",
+      "icon": "briefcase"
+    },
+    "landing": {
+      "name": "Landing Pages",
+      "description": "Single-page conversion focused",
+      "icon": "target"
+    },
+    "blog": {
+      "name": "Blog & Content",
+      "description": "Publishing and content platforms",
+      "icon": "edit"
+    },
+    "brochure": {
+      "name": "Informational",
+      "description": "Company and organization websites",
+      "icon": "info"
+    }
+  }
+}
