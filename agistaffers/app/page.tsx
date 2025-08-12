@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { 
   ArrowRight, 
+  Bot,
   Rocket, 
   Search, 
   Shield, 
