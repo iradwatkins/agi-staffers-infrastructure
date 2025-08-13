@@ -3,6 +3,9 @@ import { PrismaClient } from '@prisma/client'
 import { multiTenantThemeService } from '@/lib/multi-tenant-theme-service'
 import { auth } from '@/lib/auth'
 
+// Force dynamic rendering for routes that use auth and request.url
+export const dynamic = 'force-dynamic'
+
 const prisma = new PrismaClient()
 
 export async function GET(request: NextRequest) {

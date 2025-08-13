@@ -3,6 +3,9 @@ import { getPaymentManager } from '@/lib/payment/payment-manager'
 import { BankDepositProvider } from '@/lib/payment/bank-deposit-provider'
 import { auth } from '@/auth'
 
+// Force dynamic rendering for routes that use auth and request.url
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   try {
     // Check authentication

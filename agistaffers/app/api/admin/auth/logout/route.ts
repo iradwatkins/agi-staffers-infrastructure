@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { clearAdminSession, getAdminSession } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 
+// Force dynamic rendering for routes that use cookies
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   try {
     // Get current session to clear it from database
