@@ -21,6 +21,10 @@ module.exports = withPWA({
     // Allow build to complete with ESLint errors for now
     ignoreDuringBuilds: true,
   },
+  // Skip static generation for pages that use client-only features
+  experimental: {
+    appDir: true,
+  },
   images: {
     domains: ['agistaffers.com', 'admin.agistaffers.com'],
   },
