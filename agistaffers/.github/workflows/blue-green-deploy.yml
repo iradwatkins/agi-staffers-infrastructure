@@ -1,0 +1,208 @@
+name: Blue-Green Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy to which environment?'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      auto_switch:
+        description: 'Automatically switch traffic after health check?'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    name: Blue-Green Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: agistaffers/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: ./agistaffers
+      run: npm ci
+    
+    - name: Build application
+      working-directory: ./agistaffers
+      run: |
+        # Create minimal .env for build
+        echo "NEXT_PUBLIC_API_URL=" > .env.local
+        echo "DATABASE_URL=" >> .env.local
+        npm run build
+      continue-on-error: false
+    
+    - name: Create deployment package
+      run: |
+        cd agistaffers
+        tar -czf ../deploy-package.tar.gz \
+          --exclude='node_modules' \
+          --exclude='.next/cache' \
+          --exclude='.git' \
+          --exclude='*.log' \
+          .
+        echo "✅ Deployment package created successfully"
+    
+    - name: Setup SSH Connection
+      env:
+        VPS_HOST: ${{ secrets.VPS_HOST }}
+        VPS_USER: ${{ secrets.VPS_USER }}
+        VPS_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+      run: |
+        # Install sshpass for password authentication
+        sudo apt-get update
+        sudo apt-get install -y sshpass
+        
+        # Test connection
+        sshpass -p "$VPS_PASSWORD" ssh -o StrictHostKeyChecking=no \
+          $VPS_USER@$VPS_HOST "echo '✅ SSH connection established'"
+    
+    - name: Deploy to VPS (Blue-Green)
+      env:
+        VPS_HOST: ${{ secrets.VPS_HOST }}
+        VPS_USER: ${{ secrets.VPS_USER }}
+        VPS_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+      run: |
+        # Get current environment
+        CURRENT_ENV=$(sshpass -p "$VPS_PASSWORD" ssh -o StrictHostKeyChecking=no \
+          $VPS_USER@$VPS_HOST "cat /var/www/current_env 2>/dev/null || echo 'blue'")
+        
+        # Determine standby
+        if [ "$CURRENT_ENV" = "blue" ]; then
+          STANDBY="green"
+          STANDBY_PORT="3001"
+        else
+          STANDBY="blue"
+          STANDBY_PORT="3000"
+        fi
+        
+        echo "📦 Deploying to $STANDBY environment (port $STANDBY_PORT)"
+        
+        # Transfer package
+        sshpass -p "$VPS_PASSWORD" scp -o StrictHostKeyChecking=no \
+          deploy-package.tar.gz $VPS_USER@$VPS_HOST:/tmp/
+        
+        # Deploy to standby
+        sshpass -p "$VPS_PASSWORD" ssh -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << 'DEPLOY_SCRIPT'
+          set -e
+          
+          # Get environment variables
+          CURRENT_ENV=$(cat /var/www/current_env 2>/dev/null || echo 'blue')
+          if [ "$CURRENT_ENV" = "blue" ]; then
+            STANDBY="green"
+            STANDBY_PORT="3001"
+          else
+            STANDBY="blue"
+            STANDBY_PORT="3000"
+          fi
+          
+          echo "🚀 Deploying to $STANDBY environment"
+          
+          # Create standby directory
+          mkdir -p /var/www/agistaffers-$STANDBY
+          
+          # Extract new version
+          cd /var/www/agistaffers-$STANDBY
+          tar -xzf /tmp/deploy-package.tar.gz
+          
+          # Install dependencies
+          echo "📦 Installing dependencies..."
+          npm ci --production
+          
+          # Set port
+          echo "PORT=$STANDBY_PORT" > .env.local
+          echo "NODE_ENV=production" >> .env.local
+          
+          # Start with PM2
+          echo "🔄 Starting application with PM2..."
+          pm2 delete agistaffers-$STANDBY 2>/dev/null || true
+          pm2 start npm --name agistaffers-$STANDBY -- start
+          
+          # Wait for startup
+          echo "⏳ Waiting for application to start..."
+          sleep 15
+          
+          # Health check
+          echo "🏥 Running health check..."
+          if curl -f http://localhost:$STANDBY_PORT; then
+            echo "✅ Health check passed!"
+          else
+            echo "❌ Health check failed!"
+            pm2 logs agistaffers-$STANDBY --lines 50
+            exit 1
+          fi
+          
+          # Save PM2 state
+          pm2 save
+        DEPLOY_SCRIPT
+    
+    - name: Switch Traffic (if requested)
+      if: ${{ inputs.auto_switch }}
+      env:
+        VPS_HOST: ${{ secrets.VPS_HOST }}
+        VPS_USER: ${{ secrets.VPS_USER }}
+        VPS_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+      run: |
+        sshpass -p "$VPS_PASSWORD" ssh -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << 'SWITCH_SCRIPT'
+          set -e
+          
+          # Get standby info
+          CURRENT_ENV=$(cat /var/www/current_env 2>/dev/null || echo 'blue')
+          if [ "$CURRENT_ENV" = "blue" ]; then
+            NEW_ENV="green"
+            NEW_PORT="3001"
+            OLD_PORT="3000"
+          else
+            NEW_ENV="blue"
+            NEW_PORT="3000"
+            OLD_PORT="3001"
+          fi
+          
+          echo "🔄 Switching traffic from $CURRENT_ENV to $NEW_ENV"
+          
+          # Update Caddy configuration (if using Caddy)
+          if [ -f /etc/caddy/Caddyfile ]; then
+            sed -i "s/localhost:$OLD_PORT/localhost:$NEW_PORT/" /etc/caddy/Caddyfile
+            caddy reload --config /etc/caddy/Caddyfile
+          fi
+          
+          # Update NGINX configuration (if using NGINX)
+          if [ -f /etc/nginx/sites-available/agistaffers ]; then
+            sed -i "s/localhost:$OLD_PORT/localhost:$NEW_PORT/" /etc/nginx/sites-available/agistaffers
+            nginx -s reload
+          fi
+          
+          # Update marker
+          echo "$NEW_ENV" > /var/www/current_env
+          
+          echo "✅ Traffic switched to $NEW_ENV environment"
+          
+          # Stop old environment after successful switch
+          sleep 5
+          pm2 stop agistaffers-$CURRENT_ENV 2>/dev/null || true
+          echo "🛑 Stopped old $CURRENT_ENV environment"
+        SWITCH_SCRIPT
+    
+    - name: Deployment Summary
+      if: always()
+      run: |
+        echo "🎉 Deployment Status:"
+        echo "Environment: ${{ inputs.environment }}"
+        echo "Auto-switch: ${{ inputs.auto_switch }}"
+        echo "Repository: ${{ github.repository }}"
+        echo "Commit: ${{ github.sha }}"
+        echo "Actor: ${{ github.actor }}"
+        echo "Time: $(date)
