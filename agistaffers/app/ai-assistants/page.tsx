@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -22,11 +24,12 @@ import {
   Cpu
 } from 'lucide-react'
 import { useLanguage } from '@/hooks/useLanguage'
+import ClientOnly from '@/components/ClientOnly'
 
 export default function AIAssistantsPage() {
   const { language, t } = useLanguage()
   
-  if (!t || !t.aiAssistantsExtended) {
+  if (!t || !t.aiAssistantsExtended || !t.aiAssistantsExtended.hero) {
     return null // Wait for translations to load
   }
   const assistantTypes = [
@@ -79,15 +82,16 @@ export default function AIAssistantsPage() {
     }
   ]
 
-  const stats = [
-    { label: t.aiAssistantsExtended.stats.responseTime.label, value: t.aiAssistantsExtended.stats.responseTime.value, description: t.aiAssistantsExtended.stats.responseTime.description },
-    { label: t.aiAssistantsExtended.stats.satisfaction.label, value: t.aiAssistantsExtended.stats.satisfaction.value, description: t.aiAssistantsExtended.stats.satisfaction.description },
-    { label: t.aiAssistantsExtended.stats.costReduction.label, value: t.aiAssistantsExtended.stats.costReduction.value, description: t.aiAssistantsExtended.stats.costReduction.description },
-    { label: t.aiAssistantsExtended.stats.conversations.label, value: t.aiAssistantsExtended.stats.conversations.value, description: t.aiAssistantsExtended.stats.conversations.description }
-  ]
+  const stats = t.aiAssistantsExtended?.stats ? [
+    { label: t.aiAssistantsExtended.stats.responseTime?.label || '', value: t.aiAssistantsExtended.stats.responseTime?.value || '', description: t.aiAssistantsExtended.stats.responseTime?.description || '' },
+    { label: t.aiAssistantsExtended.stats.satisfaction?.label || '', value: t.aiAssistantsExtended.stats.satisfaction?.value || '', description: t.aiAssistantsExtended.stats.satisfaction?.description || '' },
+    { label: t.aiAssistantsExtended.stats.costReduction?.label || '', value: t.aiAssistantsExtended.stats.costReduction?.value || '', description: t.aiAssistantsExtended.stats.costReduction?.description || '' },
+    { label: t.aiAssistantsExtended.stats.conversations?.label || '', value: t.aiAssistantsExtended.stats.conversations?.value || '', description: t.aiAssistantsExtended.stats.conversations?.description || '' }
+  ] : []
 
   return (
-    <div className="min-h-screen bg-background">
+    <ClientOnly fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
+      <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4">
         <div className="absolute inset-0">
@@ -378,6 +382,7 @@ export default function AIAssistantsPage() {
           </motion.div>
         </div>
       </section>
-    </div>
+      </div>
+    </ClientOnly>
   )
 }

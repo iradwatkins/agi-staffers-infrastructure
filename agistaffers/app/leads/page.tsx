@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+export const dynamic = 'force-dynamic'
+
+import { useState, useEffect, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -21,8 +23,9 @@ import {
 } from 'lucide-react'
 import { useLanguage } from '@/hooks/useLanguage'
 import { useSearchParams } from 'next/navigation'
+import ClientOnly from '@/components/ClientOnly'
 
-export default function LeadsPage() {
+function LeadsPageContent() {
   const { language, t } = useLanguage()
   const searchParams = useSearchParams()
   const serviceParam = searchParams.get('service')
@@ -98,7 +101,8 @@ export default function LeadsPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
+    <ClientOnly fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
+      <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-primary/5 to-purple-500/5">
         <div className="container mx-auto max-w-4xl">
@@ -146,7 +150,7 @@ export default function LeadsPage() {
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-4 mb-8">
-              {benefits.map((benefit, index) => (
+              {benefits?.map((benefit, index) => (
                 <div key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
                   <benefit.icon className="h-4 w-4 text-green-500" />
                   {benefit.text}
@@ -300,7 +304,7 @@ export default function LeadsPage() {
                       {language === 'en' ? 'What services are you interested in? *' : '¿Qué servicios te interesan? *'}
                     </Label>
                     <div className="grid grid-cols-2 gap-3 mt-3">
-                      {services.map((service) => {
+                      {services?.map((service) => {
                         const Icon = service.icon
                         return (
                           <div key={service.id} className="flex items-center space-x-2">
@@ -333,7 +337,7 @@ export default function LeadsPage() {
                       <option value="">
                         {language === 'en' ? 'Select budget range...' : 'Seleccionar rango de presupuesto...'}
                       </option>
-                      {budgetOptions.map((option) => (
+                      {budgetOptions?.map((option) => (
                         <option key={option.value} value={option.value}>
                           {option.label}
                         </option>
@@ -347,7 +351,7 @@ export default function LeadsPage() {
                       {language === 'en' ? 'Project Timeline' : 'Cronograma del Proyecto'}
                     </Label>
                     <div className="grid grid-cols-2 gap-2 mt-2">
-                      {urgencyOptions.map((option) => (
+                      {urgencyOptions?.map((option) => (
                         <label key={option.value} className="flex items-center space-x-2 cursor-pointer">
                           <input
                             type="radio"
@@ -403,6 +407,15 @@ export default function LeadsPage() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </ClientOnly>
+  )
+}
+
+export default function LeadsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
+      <LeadsPageContent />
+    </Suspense>
   )
 }

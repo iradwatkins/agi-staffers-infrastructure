@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -21,6 +23,7 @@ import {
   MessageSquare
 } from 'lucide-react'
 import { useLanguage } from '@/hooks/useLanguage'
+import ClientOnly from '@/components/ClientOnly'
 
 export default function PromptEngineeringPage() {
   const { language, t } = useLanguage()
@@ -31,8 +34,8 @@ export default function PromptEngineeringPage() {
     message: ''
   })
   
-  if (!t || !t.promptEngineeringExtended) {
-    return null // Wait for translations to load
+  if (!t || !t.promptEngineeringExtended || !t.promptEngineeringExtended.hero || !t.promptEngineeringExtended.services) {
+    return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,33 +44,34 @@ export default function PromptEngineeringPage() {
     console.log('Form submitted:', formData)
   }
 
-  const services = [
+  const services = t.promptEngineeringExtended?.services ? [
     {
       icon: Target,
-      title: t.promptEngineeringExtended.services.customTraining.title,
-      description: t.promptEngineeringExtended.services.customTraining.description
+      title: t.promptEngineeringExtended.services.customTraining?.title || '',
+      description: t.promptEngineeringExtended.services.customTraining?.description || ''
     },
     {
       icon: Code,
-      title: t.promptEngineeringExtended.services.promptOptimization.title,
-      description: t.promptEngineeringExtended.services.promptOptimization.description
+      title: t.promptEngineeringExtended.services.promptOptimization?.title || '',
+      description: t.promptEngineeringExtended.services.promptOptimization?.description || ''
     },
     {
       icon: Wand2,
-      title: t.promptEngineeringExtended.services.workflowIntegration.title,
-      description: t.promptEngineeringExtended.services.workflowIntegration.description
+      title: t.promptEngineeringExtended.services.workflowIntegration?.title || '',
+      description: t.promptEngineeringExtended.services.workflowIntegration?.description || ''
     },
     {
       icon: MessageSquare,
-      title: t.promptEngineeringExtended.services.responseFineTuning.title,
-      description: t.promptEngineeringExtended.services.responseFineTuning.description
+      title: t.promptEngineeringExtended.services.responseFineTuning?.title || '',
+      description: t.promptEngineeringExtended.services.responseFineTuning?.description || ''
     }
-  ]
+  ] : []
 
-  const useCases = t.promptEngineeringExtended.useCases
+  const useCases = t.promptEngineeringExtended?.useCases || []
 
   return (
-    <div className="min-h-screen bg-background">
+    <ClientOnly fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
+      <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4">
         <div className="absolute inset-0">
@@ -83,15 +87,15 @@ export default function PromptEngineeringPage() {
             className="text-center max-w-4xl mx-auto"
           >
             <Badge className="mb-4 bg-orange-500/10 text-orange-700 border-orange-500/20">
-              {t.promptEngineeringExtended.hero.badge}
+              {t.promptEngineeringExtended?.hero?.badge || ''}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
-              {t.promptEngineeringExtended.hero.title}
+              {t.promptEngineeringExtended?.hero?.title || ''}
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-              {t.promptEngineeringExtended.hero.description}
+              {t.promptEngineeringExtended?.hero?.description || ''}
             </p>
           </motion.div>
         </div>
@@ -314,6 +318,7 @@ export default function PromptEngineeringPage() {
           </motion.div>
         </div>
       </section>
-    </div>
+      </div>
+    </ClientOnly>
   )
 }

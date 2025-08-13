@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -24,85 +26,86 @@ import {
   Users
 } from 'lucide-react'
 import { useLanguage } from '@/hooks/useLanguage'
+import ClientOnly from '@/components/ClientOnly'
 
 export default function WorkflowAutomationPage() {
   const { language, t } = useLanguage()
   
-  if (!t || !t.workflowAutomationExtended) {
-    return null // Wait for translations to load
+  if (!t || !t.workflowAutomationExtended || !t.workflowAutomationExtended.hero || !t.workflowAutomationExtended.automationTypes) {
+    return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>
   }
-  const automations = [
+  const automations = t.workflowAutomationExtended?.automationTypes ? [
     {
       icon: Mail,
-      title: t.workflowAutomationExtended.automationTypes.email.title,
-      description: t.workflowAutomationExtended.automationTypes.email.description,
-      examples: t.workflowAutomationExtended.automationTypes.email.examples
+      title: t.workflowAutomationExtended.automationTypes.email?.title || '',
+      description: t.workflowAutomationExtended.automationTypes.email?.description || '',
+      examples: t.workflowAutomationExtended.automationTypes.email?.examples || []
     },
     {
       icon: Calendar,
-      title: t.workflowAutomationExtended.automationTypes.scheduling.title,
-      description: t.workflowAutomationExtended.automationTypes.scheduling.description,
-      examples: t.workflowAutomationExtended.automationTypes.scheduling.examples
+      title: t.workflowAutomationExtended.automationTypes.scheduling?.title || '',
+      description: t.workflowAutomationExtended.automationTypes.scheduling?.description || '',
+      examples: t.workflowAutomationExtended.automationTypes.scheduling?.examples || []
     },
     {
       icon: FileText,
-      title: t.workflowAutomationExtended.automationTypes.documents.title,
-      description: t.workflowAutomationExtended.automationTypes.documents.description,
-      examples: t.workflowAutomationExtended.automationTypes.documents.examples
+      title: t.workflowAutomationExtended.automationTypes.documents?.title || '',
+      description: t.workflowAutomationExtended.automationTypes.documents?.description || '',
+      examples: t.workflowAutomationExtended.automationTypes.documents?.examples || []
     },
     {
       icon: Database,
-      title: t.workflowAutomationExtended.automationTypes.data.title,
-      description: t.workflowAutomationExtended.automationTypes.data.description,
-      examples: t.workflowAutomationExtended.automationTypes.data.examples
+      title: t.workflowAutomationExtended.automationTypes.data?.title || '',
+      description: t.workflowAutomationExtended.automationTypes.data?.description || '',
+      examples: t.workflowAutomationExtended.automationTypes.data?.examples || []
     }
-  ]
+  ] : []
 
-  const benefits = [
+  const benefits = t.workflowAutomationExtended?.benefits ? [
     {
-      metric: t.workflowAutomationExtended.benefits.timeSaved.metric,
-      value: t.workflowAutomationExtended.benefits.timeSaved.value,
-      description: t.workflowAutomationExtended.benefits.timeSaved.description
+      metric: t.workflowAutomationExtended.benefits.timeSaved?.metric || '',
+      value: t.workflowAutomationExtended.benefits.timeSaved?.value || '',
+      description: t.workflowAutomationExtended.benefits.timeSaved?.description || ''
     },
     {
-      metric: t.workflowAutomationExtended.benefits.errorReduction.metric,
-      value: t.workflowAutomationExtended.benefits.errorReduction.value,
-      description: t.workflowAutomationExtended.benefits.errorReduction.description
+      metric: t.workflowAutomationExtended.benefits.errorReduction?.metric || '',
+      value: t.workflowAutomationExtended.benefits.errorReduction?.value || '',
+      description: t.workflowAutomationExtended.benefits.errorReduction?.description || ''
     },
     {
-      metric: t.workflowAutomationExtended.benefits.costSavings.metric,
-      value: t.workflowAutomationExtended.benefits.costSavings.value,
-      description: t.workflowAutomationExtended.benefits.costSavings.description
+      metric: t.workflowAutomationExtended.benefits.costSavings?.metric || '',
+      value: t.workflowAutomationExtended.benefits.costSavings?.value || '',
+      description: t.workflowAutomationExtended.benefits.costSavings?.description || ''
     },
     {
-      metric: t.workflowAutomationExtended.benefits.processingSpeed.metric,
-      value: t.workflowAutomationExtended.benefits.processingSpeed.value,
-      description: t.workflowAutomationExtended.benefits.processingSpeed.description
+      metric: t.workflowAutomationExtended.benefits.processingSpeed?.metric || '',
+      value: t.workflowAutomationExtended.benefits.processingSpeed?.value || '',
+      description: t.workflowAutomationExtended.benefits.processingSpeed?.description || ''
     }
-  ]
+  ] : []
 
-  const process = [
+  const process = t.workflowAutomationExtended?.process ? [
     {
       number: "01",
-      title: t.workflowAutomationExtended.process.step1.title,
-      description: t.workflowAutomationExtended.process.step1.description
+      title: t.workflowAutomationExtended.process.step1?.title || '',
+      description: t.workflowAutomationExtended.process.step1?.description || ''
     },
     {
       number: "02",
-      title: t.workflowAutomationExtended.process.step2.title,
-      description: t.workflowAutomationExtended.process.step2.description
+      title: t.workflowAutomationExtended.process.step2?.title || '',
+      description: t.workflowAutomationExtended.process.step2?.description || ''
     },
     {
       number: "03",
-      title: t.workflowAutomationExtended.process.step3.title,
-      description: t.workflowAutomationExtended.process.step3.description
+      title: t.workflowAutomationExtended.process.step3?.title || '',
+      description: t.workflowAutomationExtended.process.step3?.description || ''
     },
     {
       number: "04",
-      title: t.workflowAutomationExtended.process.step4.title,
-      description: t.workflowAutomationExtended.process.step4.description
+      title: t.workflowAutomationExtended.process.step4?.title || '',
+      description: t.workflowAutomationExtended.process.step4?.description || ''
     }
-  ]
+  ] : []
 
   const integrations = [
     "Slack", "Gmail", "Salesforce", "HubSpot", "Stripe", 
@@ -110,7 +113,8 @@ export default function WorkflowAutomationPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
+    <ClientOnly fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
+      <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4">
         <div className="absolute inset-0">
@@ -126,15 +130,15 @@ export default function WorkflowAutomationPage() {
             className="text-center max-w-4xl mx-auto"
           >
             <Badge className="mb-4 bg-purple-500/10 text-purple-700 border-purple-500/20">
-              {t.workflowAutomationExtended.hero.badge}
+              {t.workflowAutomationExtended?.hero?.badge || ''}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
-              {t.workflowAutomationExtended.hero.title}
+              {t.workflowAutomationExtended?.hero?.title || ''}
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-              {t.workflowAutomationExtended.hero.description}
+              {t.workflowAutomationExtended?.hero?.description || ''}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -412,6 +416,7 @@ export default function WorkflowAutomationPage() {
           </motion.div>
         </div>
       </section>
-    </div>
+      </div>
+    </ClientOnly>
   )
 }

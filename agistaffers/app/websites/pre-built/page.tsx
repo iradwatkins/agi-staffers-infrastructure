@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -20,12 +22,13 @@ import {
   Clock
 } from 'lucide-react'
 import { useLanguage } from '@/hooks/useLanguage'
+import ClientOnly from '@/components/ClientOnly'
 
 export default function PreBuiltStoresPage() {
   const { language, t } = useLanguage()
   
-  if (!t || !t.prebuiltStoresExtended) {
-    return null // Wait for translations to load
+  if (!t || !t.prebuiltStoresExtended || !t.prebuiltStoresExtended.hero || !t.prebuiltStoresExtended.features) {
+    return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>
   }
   const plans = [
     {
@@ -91,40 +94,41 @@ export default function PreBuiltStoresPage() {
     }
   ]
 
-  const features = [
+  const features = t.prebuiltStoresExtended?.features ? [
     {
       icon: Rocket,
-      title: t.prebuiltStoresExtended.features.launch.title,
-      description: t.prebuiltStoresExtended.features.launch.description
+      title: t.prebuiltStoresExtended.features.launch?.title || '',
+      description: t.prebuiltStoresExtended.features.launch?.description || ''
     },
     {
       icon: Shield,
-      title: t.prebuiltStoresExtended.features.secure.title,
-      description: t.prebuiltStoresExtended.features.secure.description
+      title: t.prebuiltStoresExtended.features.secure?.title || '',
+      description: t.prebuiltStoresExtended.features.secure?.description || ''
     },
     {
       icon: TrendingUp,
-      title: t.prebuiltStoresExtended.features.convert.title,
-      description: t.prebuiltStoresExtended.features.convert.description
+      title: t.prebuiltStoresExtended.features.convert?.title || '',
+      description: t.prebuiltStoresExtended.features.convert?.description || ''
     },
     {
       icon: Clock,
-      title: t.prebuiltStoresExtended.features.support.title,
-      description: t.prebuiltStoresExtended.features.support.description
+      title: t.prebuiltStoresExtended.features.support?.title || '',
+      description: t.prebuiltStoresExtended.features.support?.description || ''
     }
-  ]
+  ] : []
 
-  const templates = [
-    { name: t.prebuiltStoresExtended.templates.fashion.name, products: t.prebuiltStoresExtended.templates.fashion.products },
-    { name: t.prebuiltStoresExtended.templates.health.name, products: t.prebuiltStoresExtended.templates.health.products },
-    { name: t.prebuiltStoresExtended.templates.electronics.name, products: t.prebuiltStoresExtended.templates.electronics.products },
-    { name: t.prebuiltStoresExtended.templates.home.name, products: t.prebuiltStoresExtended.templates.home.products },
-    { name: t.prebuiltStoresExtended.templates.food.name, products: t.prebuiltStoresExtended.templates.food.products },
-    { name: t.prebuiltStoresExtended.templates.digital.name, products: t.prebuiltStoresExtended.templates.digital.products }
-  ]
+  const templates = t.prebuiltStoresExtended?.templates ? [
+    { name: t.prebuiltStoresExtended.templates.fashion?.name || '', products: t.prebuiltStoresExtended.templates.fashion?.products || '' },
+    { name: t.prebuiltStoresExtended.templates.health?.name || '', products: t.prebuiltStoresExtended.templates.health?.products || '' },
+    { name: t.prebuiltStoresExtended.templates.electronics?.name || '', products: t.prebuiltStoresExtended.templates.electronics?.products || '' },
+    { name: t.prebuiltStoresExtended.templates.home?.name || '', products: t.prebuiltStoresExtended.templates.home?.products || '' },
+    { name: t.prebuiltStoresExtended.templates.food?.name || '', products: t.prebuiltStoresExtended.templates.food?.products || '' },
+    { name: t.prebuiltStoresExtended.templates.digital?.name || '', products: t.prebuiltStoresExtended.templates.digital?.products || '' }
+  ] : []
 
   return (
-    <div className="min-h-screen bg-background">
+    <ClientOnly fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
+      <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4">
         <div className="absolute inset-0">
@@ -140,15 +144,15 @@ export default function PreBuiltStoresPage() {
             className="text-center max-w-4xl mx-auto"
           >
             <Badge className="mb-4 bg-indigo-500/10 text-indigo-700 border-indigo-500/20">
-              {t.prebuiltStoresExtended.hero.badge}
+              {t.prebuiltStoresExtended?.hero?.badge || ''}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
-              {t.prebuiltStoresExtended.hero.title}
+              {t.prebuiltStoresExtended?.hero?.title || ''}
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-              {t.prebuiltStoresExtended.hero.description}
+              {t.prebuiltStoresExtended?.hero?.description || ''}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -353,6 +357,7 @@ export default function PreBuiltStoresPage() {
           </motion.div>
         </div>
       </section>
-    </div>
+      </div>
+    </ClientOnly>
   )
 }
