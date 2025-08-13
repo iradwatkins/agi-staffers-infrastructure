@@ -1,6 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
+// Remove force-dynamic as we want static generation to work
 
 import { useState, useEffect, Suspense } from 'react'
 import { motion } from 'framer-motion'

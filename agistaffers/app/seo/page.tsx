@@ -58,32 +58,48 @@ export default function SEOPage() {
   ]
 
   const results = [
-    { metric: "Average Traffic Increase", value: "+312%", timeframe: "in 6 months" },
-    { metric: "AI Search Citations", value: "4.5x", timeframe: "more mentions" },
-    { metric: "First Page Rankings", value: "87%", timeframe: "of keywords" },
-    { metric: "ROI Average", value: "8:1", timeframe: "return on investment" }
+    { 
+      metric: t?.seoPageExtended?.results?.traffic?.metric || "Average Traffic Increase", 
+      value: "+312%", 
+      timeframe: t?.seoPageExtended?.results?.traffic?.timeframe || "in 6 months" 
+    },
+    { 
+      metric: t?.seoPageExtended?.results?.citations?.metric || "AI Search Citations", 
+      value: "4.5x", 
+      timeframe: t?.seoPageExtended?.results?.citations?.timeframe || "more mentions" 
+    },
+    { 
+      metric: t?.seoPageExtended?.results?.rankings?.metric || "First Page Rankings", 
+      value: "87%", 
+      timeframe: t?.seoPageExtended?.results?.rankings?.timeframe || "of keywords" 
+    },
+    { 
+      metric: t?.seoPageExtended?.results?.roi?.metric || "ROI Average", 
+      value: "8:1", 
+      timeframe: t?.seoPageExtended?.results?.roi?.timeframe || "return on investment" 
+    }
   ]
 
   const process = [
     {
       step: "1",
-      title: "Deep Dive Audit",
-      description: "We analyze your current presence across traditional and AI search platforms."
+      title: t?.seoPageExtended?.process?.audit?.title || "Deep Dive Audit",
+      description: t?.seoPageExtended?.process?.audit?.description || "We analyze your current presence across traditional and AI search platforms."
     },
     {
       step: "2",
-      title: "Strategy Blueprint",
-      description: "Custom roadmap targeting both Google rankings and AI model citations."
+      title: t?.seoPageExtended?.process?.strategy?.title || "Strategy Blueprint",
+      description: t?.seoPageExtended?.process?.strategy?.description || "Custom roadmap targeting both Google rankings and AI model citations."
     },
     {
       step: "3",
-      title: "Content Domination",
-      description: "Create and optimize content that search engines and AI models can't ignore."
+      title: t?.seoPageExtended?.process?.content?.title || "Content Domination",
+      description: t?.seoPageExtended?.process?.content?.description || "Create and optimize content that search engines and AI models can't ignore."
     },
     {
       step: "4",
-      title: "Scale & Optimize",
-      description: "Continuously improve rankings while expanding your digital footprint."
+      title: t?.seoPageExtended?.process?.optimize?.title || "Scale & Optimize",
+      description: t?.seoPageExtended?.process?.optimize?.description || "Continuously improve rankings while expanding your digital footprint."
     }
   ]
 
@@ -161,18 +177,10 @@ export default function SEOPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              {language === 'en' ? (
-                <>SEO Services That <span className="text-green-500">Deliver Results</span></>
-              ) : (
-                <>Servicios SEO Que <span className="text-green-500">Entregan Resultados</span></>
-              )}
+              {t?.seoPageExtended?.servicesTitle || (language === 'en' ? 'SEO Services That Deliver Results' : 'Servicios SEO Que Entregan Resultados')}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {language === 'en' ? (
-                <>We combine traditional SEO mastery with cutting-edge AI optimization. Your competition is still figuring out ChatGPT while you're already ranking in it.</>
-              ) : (
-                <>Combinamos maestría en SEO tradicional con optimización de IA de vanguardia. Tu competencia aún está descubriendo ChatGPT mientras tú ya estás posicionándote en él.</>
-              )}
+              {t?.seoPageExtended?.servicesDescription || (language === 'en' ? 'We combine traditional SEO mastery with cutting-edge AI optimization. Your competition is still figuring out ChatGPT while you\'re already ranking in it.' : 'Combinamos maestría en SEO tradicional con optimización de IA de vanguardia. Tu competencia aún está descubriendo ChatGPT mientras tú ya estás posicionándote en él.')}
             </p>
           </motion.div>
 
@@ -222,10 +230,10 @@ export default function SEOPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              Our <span className="text-green-500">Battle-Tested</span> Process
+              {t?.seoPageExtended?.processTitle || (language === 'en' ? 'Our Battle-Tested Process' : 'Nuestro Proceso Probado en Batalla')}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Four steps to search domination. No fluff, just results.
+              {t?.seoPageExtended?.processDescription || (language === 'en' ? 'Four steps to search domination. No fluff, just results.' : 'Cuatro pasos hacia la dominación en búsquedas. Sin relleno, solo resultados.')}
             </p>
           </motion.div>
 
@@ -263,7 +271,7 @@ export default function SEOPage() {
               whileInView={{ opacity: 1, x: 0 }}
             >
               <h2 className="text-4xl md:text-5xl font-black mb-6">
-                {t.seoPageExtended.whyDifferentTitle.split(' Different')[0]} <span className="text-green-500">{language === 'en' ? 'Different' : 'Diferentes'}</span>
+                {t.seoPageExtended.whyDifferentTitle}
               </h2>
               
               <div className="space-y-6">
@@ -368,9 +376,7 @@ export default function SEOPage() {
           >
             <Sparkles className="h-12 w-12 text-green-500 mx-auto mb-6" />
             <h2 className="text-4xl md:text-5xl font-black mb-6">
-              {t.seoPageExtended.ctaTitle.split('?')[0]}? <span className="bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">
-                {language === 'en' ? 'Dominate Search' : 'Dominar las Búsquedas'}?
-              </span>
+              {t.seoPageExtended.ctaTitle}
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               {t.seoPageExtended.ctaDescription}

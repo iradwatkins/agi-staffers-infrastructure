@@ -40,7 +40,7 @@ const heroBanners = [
     gradient: "from-purple-500 to-pink-500",
   },
   {
-    title: "Content & SEO AI",
+    title: "AI SEO",
     subtitle: "Don't Just Be Found. Be the First Thing They Talk About.",
     description: "The internet is a noisy, crowded place. We make sure your voice is the one that cuts through the noise. Our AI content strategists don't just help you rank on 'Old Man Google,' we make sure new AI engines like Gemini and ChatGPT are quoting your stuff like it's the gospel. You won't just get traffic; you'll get authority.",
     cta: "I Want to Be a Digital God",

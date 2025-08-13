@@ -19,13 +19,10 @@ import {
   ChevronDown,
   ArrowRight,
   Globe,
-  ShoppingBag,
-  Building,
-  Users,
-  Mail
+  ShoppingBag
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import LanguageToggle from '@/components/LanguageToggle'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 export default function MainNav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -33,10 +30,10 @@ export default function MainNav() {
   const { language, setLanguage, t } = useLanguage()
 
   const navItems = [
-    { label: t.nav.services || 'AI Assistants', href: '/ai-assistants' },
-    { label: t.nav.features || 'Workflow Automation', href: '/workflow-automation' },
-    { label: 'SEO', href: '/seo' },
-    { label: t.nav.pricing || 'Prompt Engineering', href: '/prompt-engineering' },
+    { label: t?.nav?.aiAssistants || 'AI Assistants', href: '/ai-assistants' },
+    { label: t?.nav?.workflowAutomation || 'AI Automation', href: '/workflow-automation' },
+    { label: t?.nav?.contentSeo || 'AI SEO', href: '/seo' },
+    { label: t?.nav?.promptEngineering || 'Custom Prompts', href: '/prompt-engineering' }
   ]
 
   const isActive = (href: string) => pathname === href
@@ -53,8 +50,8 @@ export default function MainNav() {
             >
               <Bot className="h-6 w-6 text-primary" />
             </motion.div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
-              AGI Staffers
+            <span className="text-2xl font-bold text-foreground">
+              AGI STAFFERS
             </span>
           </Link>
 
@@ -79,59 +76,52 @@ export default function MainNav() {
                 "flex items-center text-sm font-medium transition-colors hover:text-primary",
                 pathname?.startsWith('/websites') ? "text-primary" : "text-muted-foreground"
               )}>
-                Need a Website? <ChevronDown className="ml-1 h-3 w-3" />
+                {t?.nav?.needWebsite || 'Need a Website?'} <ChevronDown className="ml-1 h-3 w-3" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-48">
                 <DropdownMenuItem asChild>
                   <Link href="/websites/pre-built" className="flex items-center">
                     <ShoppingBag className="mr-2 h-4 w-4" />
-                    Pre-built Stores
+                    {t?.nav?.prebuiltStores || 'Pre-built Stores'}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/websites/custom" className="flex items-center">
                     <Globe className="mr-2 h-4 w-4" />
-                    Custom Websites
+                    {t?.nav?.customWebsites || 'Custom Websites'}
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Company Dropdown */}
+            {/* About Us Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger className={cn(
                 "flex items-center text-sm font-medium transition-colors hover:text-primary",
-                pathname?.startsWith('/about') || pathname?.startsWith('/contact') || pathname?.startsWith('/careers') ? "text-primary" : "text-muted-foreground"
+                (pathname === '/about' || pathname === '/contact') ? "text-primary" : "text-muted-foreground"
               )}>
-                Company <ChevronDown className="ml-1 h-3 w-3" />
+                {t?.nav?.about || 'About Us'} <ChevronDown className="ml-1 h-3 w-3" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-48">
                 <DropdownMenuItem asChild>
                   <Link href="/about" className="flex items-center">
-                    <Building className="mr-2 h-4 w-4" />
-                    Our Story
+                    {t?.nav?.about || 'About Us'}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/contact" className="flex items-center">
-                    <Mail className="mr-2 h-4 w-4" />
-                    Contact
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/careers" className="flex items-center">
-                    <Users className="mr-2 h-4 w-4" />
-                    Careers
+                    {t?.nav?.contact || 'Contact Us'}
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
           </nav>
         </div>
 
         {/* Right side buttons */}
         <div className="flex items-center space-x-4">
-          <LanguageToggle />
+          <ThemeToggle />
           <Button 
             asChild
             className={cn(
@@ -141,8 +131,8 @@ export default function MainNav() {
               "shadow-lg shadow-primary/25"
             )}
           >
-            <Link href="/(auth)/login">
-              Customer Login <ArrowRight className="ml-2 h-4 w-4" />
+            <Link href="/login">
+              {t?.nav?.customerLogin || 'Login'} <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
 
@@ -185,7 +175,7 @@ export default function MainNav() {
 
               {/* Mobile Website Options */}
               <div className="space-y-2 pl-4 border-l-2 border-border">
-                <p className="text-sm font-medium text-muted-foreground">Need a Website?</p>
+                <p className="text-sm font-medium text-muted-foreground">{t?.nav?.needWebsite || 'Need a Website?'}</p>
                 <Link
                   href="/websites/pre-built"
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -194,7 +184,7 @@ export default function MainNav() {
                     isActive('/websites/pre-built') ? "text-primary" : "text-muted-foreground"
                   )}
                 >
-                  Pre-built Stores
+                  {t?.nav?.prebuiltStores || 'Pre-built Stores'}
                 </Link>
                 <Link
                   href="/websites/custom"
@@ -204,48 +194,14 @@ export default function MainNav() {
                     isActive('/websites/custom') ? "text-primary" : "text-muted-foreground"
                   )}
                 >
-                  Custom Websites
+                  {t?.nav?.customWebsites || 'Custom Websites'}
                 </Link>
               </div>
 
-              {/* Mobile Company Options */}
-              <div className="space-y-2 pl-4 border-l-2 border-border">
-                <p className="text-sm font-medium text-muted-foreground">Company</p>
-                <Link
-                  href="/about"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "block py-1 text-sm transition-colors hover:text-primary",
-                    isActive('/about') ? "text-primary" : "text-muted-foreground"
-                  )}
-                >
-                  Our Story
-                </Link>
-                <Link
-                  href="/contact"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "block py-1 text-sm transition-colors hover:text-primary",
-                    isActive('/contact') ? "text-primary" : "text-muted-foreground"
-                  )}
-                >
-                  Contact
-                </Link>
-                <Link
-                  href="/careers"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "block py-1 text-sm transition-colors hover:text-primary",
-                    isActive('/careers') ? "text-primary" : "text-muted-foreground"
-                  )}
-                >
-                  Careers
-                </Link>
-              </div>
 
               <Button asChild className="w-full bg-gradient-to-r from-primary to-purple-500">
-                <Link href="/(auth)/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  Customer Login <ArrowRight className="ml-2 h-4 w-4" />
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                  {t?.nav?.customerLogin || 'Login'} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>

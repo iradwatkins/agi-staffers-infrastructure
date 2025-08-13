@@ -100,9 +100,9 @@ export default function AboutPage() {
             </Badge>
             <h1 className="text-4xl md:text-6xl font-black mb-6">
               {language === 'en' ? (
-                <>From <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">Airmen</span> to AGI Staffers</>
+                <>From <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">Airmen</span> to AGI STAFFERS</>
               ) : (
-                <>De <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">Aviadores</span> a AGI Staffers</>
+                <>De <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">Aviadores</span> a AGI STAFFERS</>
               )}
             </h1>
           </motion.div>
@@ -129,9 +129,9 @@ export default function AboutPage() {
               
               <p className="text-lg leading-relaxed mb-6">
                 {language === 'en' ? (
-                  <>It's a perfect example of a system with way more people than it needs. When we started AGI Staffers, that joke was our unofficial motto. We saw the world was full of businesses doing things the "hard way," with too many people and too much busywork. We decided to do something about it.</>
+                  <>It's a perfect example of a system with way more people than it needs. When we started AGI STAFFERS, that joke was our unofficial motto. We saw the world was full of businesses doing things the "hard way," with too many people and too much busywork. We decided to do something about it.</>
                 ) : (
-                  <>Es un ejemplo perfecto de un sistema con muchas más personas de las que necesita. Cuando comenzamos AGI Staffers, esa broma era nuestro lema no oficial. Vimos que el mundo estaba lleno de empresas haciendo las cosas de "la manera difícil", con demasiadas personas y demasiado trabajo innecesario. Decidimos hacer algo al respecto.</>
+                  <>Es un ejemplo perfecto de un sistema con muchas más personas de las que necesita. Cuando comenzamos AGI STAFFERS, esa broma era nuestro lema no oficial. Vimos que el mundo estaba lleno de empresas haciendo las cosas de "la manera difícil", con demasiadas personas y demasiado trabajo innecesario. Decidimos hacer algo al respecto.</>
                 )}
               </p>
 
@@ -151,9 +151,9 @@ export default function AboutPage() {
 
               <p className="text-lg leading-relaxed mb-6">
                 {language === 'en' ? (
-                  <>We created AGI Staffers to bring this agentic AI to the common person. To give you the tools, the websites, and the "staffers" you need to build your business from scratch, all on your own terms.</>
+                  <>We created AGI STAFFERS to bring this agentic AI to the common person. To give you the tools, the websites, and the "staffers" you need to build your business from scratch, all on your own terms.</>
                 ) : (
-                  <>Creamos AGI Staffers para llevar esta IA agéntica a la persona común. Para darte las herramientas, los sitios web y los "empleados" que necesitas para construir tu negocio desde cero, todo en tus propios términos.</>
+                  <>Creamos AGI STAFFERS para llevar esta IA agéntica a la persona común. Para darte las herramientas, los sitios web y los "empleados" que necesitas para construir tu negocio desde cero, todo en tus propios términos.</>
                 )}
               </p>
 

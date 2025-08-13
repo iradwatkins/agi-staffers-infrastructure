@@ -53,58 +53,58 @@ export default function ContactPage() {
   }
 
   const services = [
-    { id: 'seo', label: 'SEO & AI Search' },
-    { id: 'ai-assistants', label: 'AI Assistants' },
-    { id: 'workflow', label: 'Workflow Automation' },
-    { id: 'prompt', label: 'Prompt Engineering' },
-    { id: 'prebuilt', label: 'Pre-built Store' },
-    { id: 'custom', label: 'Custom Website' }
+    { id: 'seo', label: t?.contactExtended?.form?.services?.seo },
+    { id: 'ai-assistants', label: t?.contactExtended?.form?.services?.aiAssistants },
+    { id: 'workflow', label: t?.contactExtended?.form?.services?.workflow },
+    { id: 'prompt', label: t?.contactExtended?.form?.services?.prompt },
+    { id: 'prebuilt', label: t?.contactExtended?.form?.services?.prebuilt },
+    { id: 'custom', label: t?.contactExtended?.form?.services?.custom }
   ]
 
   const contactInfo = [
     {
       icon: MapPin,
-      title: language === 'en' ? "Address" : "Dirección",
-      content: "251 Little Falls Drive",
-      description: "Wilmington, DE 19808"
+      title: t?.contactExtended?.contactInfo?.address?.title,
+      content: t?.contactExtended?.contactInfo?.address?.content,
+      description: t?.contactExtended?.contactInfo?.address?.description
     },
     {
       icon: Mail,
-      title: language === 'en' ? "Email Us" : "Correo Electrónico",
-      content: "support@agistaffers.com",
-      description: language === 'en' ? "We'll respond within 24 hours" : "Responderemos en 24 horas"
+      title: t?.contactExtended?.contactInfo?.email?.title,
+      content: t?.contactExtended?.contactInfo?.email?.content,
+      description: t?.contactExtended?.contactInfo?.email?.description
     },
     {
       icon: Phone,
-      title: language === 'en' ? "Call Us" : "Llámanos",
-      content: "404-668-2401",
-      description: language === 'en' ? "Mon-Fri 9am-6pm EST" : "Lun-Vie 9am-6pm EST"
+      title: t?.contactExtended?.contactInfo?.phone?.title,
+      content: t?.contactExtended?.contactInfo?.phone?.content,
+      description: t?.contactExtended?.contactInfo?.phone?.description
     },
     {
       icon: MessageSquare,
-      title: language === 'en' ? "WhatsApp (DR)" : "WhatsApp (RD)",
-      content: "404-668-2401",
-      description: language === 'en' ? "Dominican Republic" : "República Dominicana",
+      title: t?.contactExtended?.contactInfo?.whatsapp?.title,
+      content: t?.contactExtended?.contactInfo?.whatsapp?.content,
+      description: t?.contactExtended?.contactInfo?.whatsapp?.description,
       isWhatsApp: true
     }
   ]
 
   const faqs = [
     {
-      question: "How quickly can you start?",
-      answer: "We can typically start within 48 hours for most projects. Pre-built stores launch in 2 days, custom projects begin within a week."
+      question: t?.contactExtended?.faqs?.questions?.howQuickly?.question,
+      answer: t?.contactExtended?.faqs?.questions?.howQuickly?.answer
     },
     {
-      question: "Do you offer payment plans?",
-      answer: "Yes! We offer flexible payment options including monthly plans for larger projects."
+      question: t?.contactExtended?.faqs?.questions?.paymentPlans?.question,
+      answer: t?.contactExtended?.faqs?.questions?.paymentPlans?.answer
     },
     {
-      question: "What if I'm not satisfied?",
-      answer: "We offer a 30-day money-back guarantee on all pre-built stores and milestone-based approvals for custom projects."
+      question: t?.contactExtended?.faqs?.questions?.satisfaction?.question,
+      answer: t?.contactExtended?.faqs?.questions?.satisfaction?.answer
     },
     {
-      question: "Do you provide ongoing support?",
-      answer: "Absolutely! All our services include support, with options for ongoing maintenance and updates."
+      question: t?.contactExtended?.faqs?.questions?.support?.question,
+      answer: t?.contactExtended?.faqs?.questions?.support?.answer
     }
   ]
 
@@ -125,26 +125,17 @@ export default function ContactPage() {
             className="text-center max-w-4xl mx-auto"
           >
             <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-              {language === 'en' ? 'GET IN TOUCH' : 'CONTÁCTANOS'}
+              {t?.contactExtended?.badge}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
-              {language === 'en' ? (
-                <>Let's Build Your <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
-                  Digital Empire
-                </span></>
-              ) : (
-                <>Construyamos Tu <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
-                  Imperio Digital
-                </span></>
-              )}
+              {t?.contactExtended?.mainTitle?.split(' ').slice(0, -2).join(' ')} <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
+                {t?.contactExtended?.mainTitle?.split(' ').slice(-2).join(' ')}
+              </span>
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-              {language === 'en' 
-                ? "Ready to escape the mundane and build something extraordinary? We're here to make it happen."
-                : "¿Listo para escapar de lo mundano y construir algo extraordinario? Estamos aquí para hacerlo realidad."
-              }
+              {t?.contactExtended?.mainDescription}
             </p>
           </motion.div>
         </div>
@@ -183,7 +174,7 @@ export default function ContactPage() {
                         className="mt-3 bg-green-500 hover:bg-green-600"
                         onClick={() => window.open(`https://wa.me/14046682401`, '_blank')}
                       >
-                        {language === 'en' ? 'Chat Now' : 'Chatear Ahora'}
+                        {t?.contactExtended?.contactInfo?.whatsapp?.chatNow}
                       </Button>
                     )}
                   </Card>
@@ -206,67 +197,64 @@ export default function ContactPage() {
               <Card className="p-8">
                 <div className="mb-8">
                   <h2 className="text-3xl font-black mb-2">
-                    {language === 'en' ? 'Start Your Project' : 'Inicia Tu Proyecto'}
+                    {t?.contactExtended?.form?.title}
                   </h2>
                   <p className="text-muted-foreground">
-                    {language === 'en' 
-                      ? "Fill out the form and we'll get back to you within 24 hours with a custom strategy."
-                      : "Completa el formulario y te responderemos en 24 horas con una estrategia personalizada."
-                    }
+                    {t?.contactExtended?.form?.description}
                   </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">{language === 'en' ? 'Your Name *' : 'Tu Nombre *'}</Label>
+                      <Label htmlFor="name">{t?.contactExtended?.form?.labels?.name}</Label>
                       <Input
                         id="name"
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        placeholder={language === 'en' ? 'John Doe' : 'Juan Pérez'}
+                        placeholder={t?.contactExtended?.form?.labels?.placeholders?.name}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="email">{language === 'en' ? 'Email Address *' : 'Correo Electrónico *'}</Label>
+                      <Label htmlFor="email">{t?.contactExtended?.form?.labels?.email}</Label>
                       <Input
                         id="email"
                         type="email"
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        placeholder={language === 'en' ? 'john@company.com' : 'juan@empresa.com'}
+                        placeholder={t?.contactExtended?.form?.labels?.placeholders?.email}
                       />
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
+                      <Label htmlFor="phone">{t?.contactExtended?.form?.labels?.phone}</Label>
                       <Input
                         id="phone"
                         type="tel"
                         value={formData.phone}
                         onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        placeholder="(555) 123-4567"
+                        placeholder={t?.contactExtended?.form?.labels?.placeholders?.phone}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="company">Company Name</Label>
+                      <Label htmlFor="company">{t?.contactExtended?.form?.labels?.company}</Label>
                       <Input
                         id="company"
                         value={formData.company}
                         onChange={(e) => setFormData({...formData, company: e.target.value})}
-                        placeholder="Acme Corp"
+                        placeholder={t?.contactExtended?.form?.labels?.placeholders?.company}
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Services You're Interested In</Label>
+                    <Label>{t?.contactExtended?.form?.labels?.services}</Label>
                     <div className="grid grid-cols-2 gap-3">
                       {services.map((service) => (
                         <div key={service.id} className="flex items-center space-x-2">
@@ -287,31 +275,31 @@ export default function ContactPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="budget">Budget Range</Label>
+                    <Label htmlFor="budget">{t?.contactExtended?.form?.labels?.budget}</Label>
                     <select
                       id="budget"
                       className="w-full h-10 px-3 rounded-md border border-input bg-background"
                       value={formData.budget}
                       onChange={(e) => setFormData({...formData, budget: e.target.value})}
                     >
-                      <option value="">Select your budget</option>
-                      <option value="under-1k">Under $1,000</option>
-                      <option value="1-5k">$1,000 - $5,000</option>
-                      <option value="5-10k">$5,000 - $10,000</option>
-                      <option value="10-25k">$10,000 - $25,000</option>
-                      <option value="25k+">$25,000+</option>
+                      <option value="">{t?.contactExtended?.form?.labels?.budgetPlaceholder}</option>
+                      <option value="under-1k">{t?.contactExtended?.form?.labels?.budgetOptions?.under1k}</option>
+                      <option value="1-5k">{t?.contactExtended?.form?.labels?.budgetOptions?.range1to5k}</option>
+                      <option value="5-10k">{t?.contactExtended?.form?.labels?.budgetOptions?.range5to10k}</option>
+                      <option value="10-25k">{t?.contactExtended?.form?.labels?.budgetOptions?.range10to25k}</option>
+                      <option value="25k+">{t?.contactExtended?.form?.labels?.budgetOptions?.range25kplus}</option>
                     </select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="message">Project Details *</Label>
+                    <Label htmlFor="message">{t?.contactExtended?.form?.labels?.message}</Label>
                     <Textarea
                       id="message"
                       required
                       rows={4}
                       value={formData.message}
                       onChange={(e) => setFormData({...formData, message: e.target.value})}
-                      placeholder="Tell us about your project, goals, timeline, and any specific requirements..."
+                      placeholder={t?.contactExtended?.form?.labels?.placeholders?.message}
                     />
                   </div>
 
@@ -320,13 +308,12 @@ export default function ContactPage() {
                     size="lg" 
                     className="w-full bg-gradient-to-r from-primary to-purple-500 hover:opacity-90"
                   >
-                    {language === 'en' ? 'Send Message' : 'Enviar Mensaje'}
+                    {t?.contactExtended?.form?.button}
                     <Send className="ml-2 h-5 w-5" />
                   </Button>
 
                   <p className="text-xs text-center text-muted-foreground">
-                    By submitting this form, you agree to our terms and privacy policy. 
-                    We promise not to spam you.
+                    {t?.contactExtended?.form?.privacyNote}
                   </p>
                 </form>
               </Card>
@@ -339,9 +326,9 @@ export default function ContactPage() {
               className="space-y-6"
             >
               <div className="mb-8">
-                <h2 className="text-3xl font-black mb-2">Frequently Asked Questions</h2>
+                <h2 className="text-3xl font-black mb-2">{t?.contactExtended?.faqs?.title}</h2>
                 <p className="text-muted-foreground">
-                  Quick answers to common questions. Still need help? Just ask!
+                  {t?.contactExtended?.faqs?.description}
                 </p>
               </div>
 
@@ -362,12 +349,12 @@ export default function ContactPage() {
               <Card className="p-8 bg-gradient-to-br from-primary/5 to-purple-500/5 border-primary/20">
                 <div className="text-center">
                   <Sparkles className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
+                  <h3 className="text-2xl font-bold mb-2">{t?.contactExtended?.faqs?.readyToStart?.title}</h3>
                   <p className="text-muted-foreground mb-4">
-                    Most projects begin with a free consultation to understand your needs.
+                    {t?.contactExtended?.faqs?.readyToStart?.description}
                   </p>
                   <Button size="lg" variant="outline">
-                    Book Free Consultation
+                    {t?.contactExtended?.faqs?.readyToStart?.button}
                     <Calendar className="ml-2 h-5 w-5" />
                   </Button>
                 </div>
@@ -386,13 +373,12 @@ export default function ContactPage() {
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-4xl md:text-5xl font-black mb-6">
-              No More <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
-                Waiting
-              </span>. Let's Build.
+              {t?.contactExtended?.finalCta?.title?.split('. ')[0]}. <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
+                {t?.contactExtended?.finalCta?.title?.split('.')[1]?.trim()?.split(' ')[0]}
+              </span>. {t?.contactExtended?.finalCta?.title?.split('. ')[2]}.
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Every minute you wait is a minute your competition gets ahead. 
-              Let's change that today.
+              {t?.contactExtended?.finalCta?.description}
             </p>
             <div className="flex items-center justify-center gap-4">
               <Users className="h-8 w-8 text-primary animate-pulse" />

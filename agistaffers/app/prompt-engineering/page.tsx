@@ -1,6 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
+// Remove force-dynamic as we want static generation to work
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
@@ -23,7 +23,6 @@ import {
   MessageSquare
 } from 'lucide-react'
 import { useLanguage } from '@/hooks/useLanguage'
-import ClientOnly from '@/components/ClientOnly'
 
 export default function PromptEngineeringPage() {
   const { language, t } = useLanguage()
@@ -34,9 +33,7 @@ export default function PromptEngineeringPage() {
     message: ''
   })
   
-  if (!t || !t.promptEngineeringExtended || !t.promptEngineeringExtended.hero || !t.promptEngineeringExtended.services) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>
-  }
+  // Remove dependency on complex translation structure for now
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,34 +41,33 @@ export default function PromptEngineeringPage() {
     console.log('Form submitted:', formData)
   }
 
-  const services = t.promptEngineeringExtended?.services ? [
+  const services = [
     {
       icon: Target,
-      title: t.promptEngineeringExtended.services.customTraining?.title || '',
-      description: t.promptEngineeringExtended.services.customTraining?.description || ''
+      title: t?.promptEngineeringExtended?.services?.customTraining?.title,
+      description: t?.promptEngineeringExtended?.services?.customTraining?.description
     },
     {
       icon: Code,
-      title: t.promptEngineeringExtended.services.promptOptimization?.title || '',
-      description: t.promptEngineeringExtended.services.promptOptimization?.description || ''
+      title: t?.promptEngineeringExtended?.services?.promptOptimization?.title,
+      description: t?.promptEngineeringExtended?.services?.promptOptimization?.description
     },
     {
       icon: Wand2,
-      title: t.promptEngineeringExtended.services.workflowIntegration?.title || '',
-      description: t.promptEngineeringExtended.services.workflowIntegration?.description || ''
+      title: t?.promptEngineeringExtended?.services?.workflowIntegration?.title,
+      description: t?.promptEngineeringExtended?.services?.workflowIntegration?.description
     },
     {
       icon: MessageSquare,
-      title: t.promptEngineeringExtended.services.responseFineTuning?.title || '',
-      description: t.promptEngineeringExtended.services.responseFineTuning?.description || ''
+      title: t?.promptEngineeringExtended?.services?.responseFineTuning?.title,
+      description: t?.promptEngineeringExtended?.services?.responseFineTuning?.description
     }
-  ] : []
+  ]
 
-  const useCases = t.promptEngineeringExtended?.useCases || []
+  const useCases = t?.promptEngineeringExtended?.useCases || []
 
   return (
-    <ClientOnly fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
-      <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4">
         <div className="absolute inset-0">
@@ -87,15 +83,15 @@ export default function PromptEngineeringPage() {
             className="text-center max-w-4xl mx-auto"
           >
             <Badge className="mb-4 bg-orange-500/10 text-orange-700 border-orange-500/20">
-              {t.promptEngineeringExtended?.hero?.badge || ''}
+              {t?.promptEngineeringExtended?.badge}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
-              {t.promptEngineeringExtended?.hero?.title || ''}
+              {t?.promptEngineeringExtended?.mainTitle?.split('. ')[0]}. <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">{t?.promptEngineeringExtended?.mainTitle?.split('. ')[1]}.</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-              {t.promptEngineeringExtended?.hero?.description || ''}
+              {t?.promptEngineeringExtended?.mainDescription}
             </p>
           </motion.div>
         </div>
@@ -110,10 +106,10 @@ export default function PromptEngineeringPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              {t.promptEngineeringExtended.servicesSection.title}
+              {t?.promptEngineeringExtended?.servicesTitle}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t.promptEngineeringExtended.servicesSection.description}
+              {t?.promptEngineeringExtended?.servicesSubtitle}
             </p>
           </motion.div>
 
@@ -155,11 +151,11 @@ export default function PromptEngineeringPage() {
               whileInView={{ opacity: 1, x: 0 }}
             >
               <h2 className="text-4xl md:text-5xl font-black mb-6">
-                {t.promptEngineeringExtended.useCasesSection.title}
+                {t?.promptEngineeringExtended?.useCasesTitle}
               </h2>
               
               <p className="text-xl text-muted-foreground mb-8">
-                {t.promptEngineeringExtended.useCasesSection.description}
+                {t?.promptEngineeringExtended?.useCasesDescription}
               </p>
 
               <div className="grid grid-cols-2 gap-4">
@@ -186,13 +182,13 @@ export default function PromptEngineeringPage() {
                 <div className="space-y-6">
                   <div className="text-center">
                     <Brain className="h-16 w-16 text-orange-500 mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold mb-2">{t.promptEngineeringExtended.comparison.title}</h3>
+                    <h3 className="text-2xl font-bold mb-2">{t?.promptEngineeringExtended?.beforeAfterTitle}</h3>
                   </div>
 
                   <div className="space-y-4">
                     <div className="p-4 bg-background/50 rounded-lg">
-                      <p className="text-sm text-muted-foreground mb-2">{t.promptEngineeringExtended.comparison.before.label}</p>
-                      <p className="text-sm italic">{t.promptEngineeringExtended.comparison.before.text}</p>
+                      <p className="text-sm text-muted-foreground mb-2">Típico Prompt:</p>
+                      <p className="text-sm italic">"{t?.promptEngineeringExtended?.genericResponse}"</p>
                     </div>
 
                     <div className="flex justify-center">
@@ -200,8 +196,8 @@ export default function PromptEngineeringPage() {
                     </div>
 
                     <div className="p-4 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-lg border border-orange-500/20">
-                      <p className="text-sm text-muted-foreground mb-2">{t.promptEngineeringExtended.comparison.after.label}</p>
-                      <p className="text-sm font-semibold">{t.promptEngineeringExtended.comparison.after.text}</p>
+                      <p className="text-sm text-muted-foreground mb-2">Prompt Personalizado:</p>
+                      <p className="text-sm font-semibold">"{t?.promptEngineeringExtended?.customResponse}"</p>
                     </div>
                   </div>
                 </div>
@@ -223,58 +219,58 @@ export default function PromptEngineeringPage() {
               <div className="text-center mb-8">
                 <Sparkles className="h-12 w-12 text-orange-500 mx-auto mb-4" />
                 <h2 className="text-3xl font-black mb-2">
-                  {t.promptEngineeringExtended.leadForm.title}
+                  {t?.promptEngineeringExtended?.formTitle}
                 </h2>
                 <p className="text-muted-foreground">
-                  {t.promptEngineeringExtended.leadForm.description}
+                  {t?.promptEngineeringExtended?.formDescription}
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">{t.promptEngineeringExtended.leadForm.nameLabel}</Label>
+                    <Label htmlFor="name">{t?.promptEngineeringExtended?.formLabels?.name}</Label>
                     <Input
                       id="name"
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      placeholder={t.promptEngineeringExtended.leadForm.namePlaceholder}
+                      placeholder={t?.promptEngineeringExtended?.formLabels?.name?.includes('Juan') ? 'Juan Pérez' : 'John Doe'}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">{t.promptEngineeringExtended.leadForm.emailLabel}</Label>
+                    <Label htmlFor="email">{t?.promptEngineeringExtended?.formLabels?.email}</Label>
                     <Input
                       id="email"
                       type="email"
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      placeholder={t.promptEngineeringExtended.leadForm.emailPlaceholder}
+                      placeholder={t?.promptEngineeringExtended?.formLabels?.email?.includes('Dirección') ? 'juan@empresa.com' : 'john@company.com'}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="company">{t.promptEngineeringExtended.leadForm.companyLabel}</Label>
+                  <Label htmlFor="company">{t?.promptEngineeringExtended?.formLabels?.company}</Label>
                   <Input
                     id="company"
                     value={formData.company}
                     onChange={(e) => setFormData({...formData, company: e.target.value})}
-                    placeholder={t.promptEngineeringExtended.leadForm.companyPlaceholder}
+                    placeholder={t?.promptEngineeringExtended?.formLabels?.company?.includes('Empresa') ? 'Empresa Ejemplo' : 'Acme Corp'}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="message">{t.promptEngineeringExtended.leadForm.messageLabel}</Label>
+                  <Label htmlFor="message">{t?.promptEngineeringExtended?.formLabels?.message}</Label>
                   <Textarea
                     id="message"
                     required
                     rows={4}
                     value={formData.message}
                     onChange={(e) => setFormData({...formData, message: e.target.value})}
-                    placeholder={t.promptEngineeringExtended.leadForm.messagePlaceholder}
+                    placeholder={t?.promptEngineeringExtended?.formLabels?.messagePlaceholder}
                   />
                 </div>
 
@@ -283,12 +279,12 @@ export default function PromptEngineeringPage() {
                   size="lg" 
                   className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90"
                 >
-                  {t.promptEngineeringExtended.leadForm.submitButton}
+                  {t?.promptEngineeringExtended?.formButton}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
-                  {t.promptEngineeringExtended.leadForm.responseTime}
+                  {t?.promptEngineeringExtended?.formNote}
                 </p>
               </form>
             </Card>
@@ -305,10 +301,10 @@ export default function PromptEngineeringPage() {
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-4xl md:text-5xl font-black mb-6">
-              {t.promptEngineeringExtended.finalCta.title}
+              {t?.promptEngineeringExtended?.finalCtaTitle}
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {t.promptEngineeringExtended.finalCta.description}
+              {t?.promptEngineeringExtended?.finalCtaDescription}
             </p>
             <div className="flex items-center justify-center gap-4">
               <Cpu className="h-8 w-8 text-orange-500 animate-pulse" />
@@ -318,7 +314,6 @@ export default function PromptEngineeringPage() {
           </motion.div>
         </div>
       </section>
-      </div>
-    </ClientOnly>
+    </div>
   )
 }

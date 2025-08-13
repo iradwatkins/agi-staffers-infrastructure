@@ -217,7 +217,7 @@ export default function AGIStaffersHomepage() {
                   >
                     <Link href="/contact">
                       <Play className="mr-2 h-5 w-5" />
-                      Watch Demo
+                      {t?.hero?.secondaryButton || 'Watch Demo'}
                     </Link>
                   </Button>
                 </motion.div>
@@ -294,9 +294,9 @@ export default function AGIStaffersHomepage() {
             className="text-center mb-20"
           >
             <h2 className="text-5xl md:text-6xl font-black mb-6">
-              {t.features.title.split('AGI Staffers')[0]}
-              <span className="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent"> AGI Staffers</span>
-              {t.features.title.split('AGI Staffers')[1] || '?'}
+              {t.features.title.split('AGI STAFFERS')[0]}
+              <span className="text-foreground font-black"> AGI STAFFERS</span>
+              {t.features.title.split('AGI STAFFERS')[1] || '?'}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               {t.features.subtitle}
@@ -619,7 +619,7 @@ export default function AGIStaffersHomepage() {
               >
                 <Bot className="h-10 w-10 text-primary" />
               </motion.div>
-              <h3 className="text-3xl font-bold">AGI Staffers</h3>
+              <h3 className="text-3xl font-bold">AGI STAFFERS</h3>
             </div>
             <p className="text-muted-foreground mb-6 text-lg">
               {t.footer.tagline}

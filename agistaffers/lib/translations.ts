@@ -5,6 +5,19 @@ export interface Translation {
     features: string;
     pricing: string;
     dashboard: string;
+    needWebsite: string;
+    prebuiltStores: string;
+    customWebsites: string;
+    company: string;
+    ourStory: string;
+    about: string;
+    contact: string;
+    careers: string;
+    customerLogin: string;
+    aiAssistants: string;
+    workflowAutomation: string;
+    contentSeo: string;
+    promptEngineering: string;
   };
   
   // SEO Page
@@ -440,6 +453,88 @@ export interface Translation {
     };
   };
   
+  customWebsitesExtended: {
+    badge: string;
+    mainTitle: string;
+    mainDescription: string;
+    capabilitiesTitle: string;
+    capabilitiesDescription: string;
+    capabilities: {
+      customDesign: {
+        title: string;
+        description: string;
+      };
+      advancedDev: {
+        title: string;
+        description: string;
+      };
+      mobileFirst: {
+        title: string;
+        description: string;
+      };
+      analytics: {
+        title: string;
+        description: string;
+      };
+    };
+    projectTypesTitle: string;
+    projectTypesDescription: string;
+    projectTypes: string[];
+    processTitle: string;
+    process: {
+      discovery: {
+        step: string;
+        description: string;
+      };
+      design: {
+        step: string;
+        description: string;
+      };
+      development: {
+        step: string;
+        description: string;
+      };
+      launch: {
+        step: string;
+        description: string;
+      };
+    };
+    formTitle: string;
+    formDescription: string;
+    formLabels: {
+      name: string;
+      email: string;
+      company: string;
+      budget: string;
+      timeline: string;
+      description: string;
+      budgetPlaceholder: string;
+      timelinePlaceholder: string;
+      budgetOptions: {
+        range1: string;
+        range2: string;
+        range3: string;
+        range4: string;
+      };
+      timelineOptions: {
+        asap: string;
+        month1: string;
+        months2to3: string;
+        months3to6: string;
+      };
+      placeholders: {
+        name: string;
+        email: string;
+        company: string;
+        description: string;
+      };
+    };
+    formButton: string;
+    formNote: string;
+    finalCtaTitle: string;
+    finalCtaDescription: string;
+  };
+  
   customWebsites: {
     title: string;
     subtitle: string;
@@ -464,6 +559,104 @@ export interface Translation {
         title: string;
         description: string;
       };
+    };
+  };
+  
+  contactExtended: {
+    badge: string;
+    mainTitle: string;
+    mainDescription: string;
+    contactInfo: {
+      address: {
+        title: string;
+        content: string;
+        description: string;
+      };
+      email: {
+        title: string;
+        content: string;
+        description: string;
+      };
+      phone: {
+        title: string;
+        content: string;
+        description: string;
+      };
+      whatsapp: {
+        title: string;
+        content: string;
+        description: string;
+        chatNow: string;
+      };
+    };
+    form: {
+      title: string;
+      description: string;
+      labels: {
+        name: string;
+        email: string;
+        phone: string;
+        company: string;
+        services: string;
+        budget: string;
+        message: string;
+        budgetPlaceholder: string;
+        budgetOptions: {
+          under1k: string;
+          range1to5k: string;
+          range5to10k: string;
+          range10to25k: string;
+          range25kplus: string;
+        };
+        placeholders: {
+          name: string;
+          email: string;
+          phone: string;
+          company: string;
+          message: string;
+        };
+      };
+      services: {
+        seo: string;
+        aiAssistants: string;
+        workflow: string;
+        prompt: string;
+        prebuilt: string;
+        custom: string;
+      };
+      button: string;
+      privacyNote: string;
+    };
+    faqs: {
+      title: string;
+      description: string;
+      questions: {
+        howQuickly: {
+          question: string;
+          answer: string;
+        };
+        paymentPlans: {
+          question: string;
+          answer: string;
+        };
+        satisfaction: {
+          question: string;
+          answer: string;
+        };
+        support: {
+          question: string;
+          answer: string;
+        };
+      };
+      readyToStart: {
+        title: string;
+        description: string;
+        button: string;
+      };
+    };
+    finalCta: {
+      title: string;
+      description: string;
     };
   };
   
@@ -661,6 +854,46 @@ export interface Translation {
     running: string;
     live: string;
   };
+
+  // Login Pages
+  loginPage?: {
+    welcomeBack: string;
+    signInDescription: string;
+    signInWithGoogle: string;
+    signingInWithGoogle: string;
+    orContinueWithEmail: string;
+    emailAddress: string;
+    emailPlaceholder: string;
+    passwordlessSignIn: string;
+    passwordlessDescription: string;
+    sendMagicLink: string;
+    sendingMagicLink: string;
+    checkYourEmail: string;
+    magicLinkSent: string;
+    clickLinkInEmail: string;
+    didntReceiveEmail: string;
+    tryAgain: string;
+    invalidEmail: string;
+    unexpectedError: string;
+  };
+
+  adminLoginPage?: {
+    adminPortal: string;
+    adminSignInDescription: string;
+    email: string;
+    emailPlaceholder: string;
+    password: string;
+    passwordPlaceholder: string;
+    rememberMe: string;
+    twoFactorCode: string;
+    twoFactorPlaceholder: string;
+    signIn: string;
+    signingIn: string;
+    adminAccessOnly: string;
+    customerLoginAt: string;
+    invalidCredentials: string;
+  };
+
 }
 
 export const translations: Record<string, Translation> = {
@@ -669,12 +902,69 @@ export const translations: Record<string, Translation> = {
       services: "Services",
       features: "Features", 
       pricing: "Pricing",
-      dashboard: "Dashboard"
+      dashboard: "Dashboard",
+      needWebsite: "Need a Website?",
+      prebuiltStores: "Pre-built Stores",
+      customWebsites: "Custom Websites",
+      company: "Company",
+      ourStory: "Our Story",
+      about: "About Us",
+      contact: "Contact Us",
+      careers: "Careers",
+      customerLogin: "Login",
+      aiAssistants: "AI Assistants",
+      workflowAutomation: "AI Automation",
+      contentSeo: "AI SEO",
+      promptEngineering: "Custom Prompts"
     },
     seoPageExtended: {
       badge: "SEO THAT ACTUALLY WORKS",
       mainTitle: "Don't Just Be Found. Be the First Thing They Talk About.",
       mainDescription: "We make sure your voice cuts through the noise. Our AI doesn't just help you rank on Google, we make sure ChatGPT and Perplexity are quoting you like gospel.",
+      servicesTitle: "SEO Services That Deliver Results", 
+      servicesDescription: "We combine traditional SEO mastery with cutting-edge AI optimization. Your competition is still figuring out ChatGPT while you're already ranking in it.",
+      processTitle: "Our Battle-Tested Process",
+      processDescription: "Four steps to search domination. No fluff, just results.",
+      process: {
+        audit: {
+          title: "Deep Dive Audit",
+          description: "We analyze your current presence across traditional and AI search platforms."
+        },
+        strategy: {
+          title: "Strategy Blueprint", 
+          description: "Custom roadmap targeting both Google rankings and AI model citations."
+        },
+        content: {
+          title: "Content Domination",
+          description: "Create and optimize content that search engines and AI models can't ignore."
+        },
+        optimize: {
+          title: "Scale & Optimize",
+          description: "Continuously improve rankings while expanding your digital footprint."
+        }
+      },
+      results: {
+        traffic: {
+          metric: "Average Traffic Increase",
+          timeframe: "in 6 months"
+        },
+        citations: {
+          metric: "AI Search Citations", 
+          timeframe: "more mentions"
+        },
+        rankings: {
+          metric: "First Page Rankings",
+          timeframe: "of keywords"
+        },
+        roi: {
+          metric: "ROI Average",
+          timeframe: "return on investment"
+        }
+      },
+      guaranteeText: "All plans include free domain for 1 year • SSL certificate • 99.9% uptime guarantee",
+      securePayment: "Secure payment", 
+      moneyBack: "30-day money back",
+      instantSetup: "Instant setup",
       viewCaseStudies: "View Case Studies",
       services: {
         aiSearch: {
@@ -1136,6 +1426,191 @@ export const translations: Record<string, Translation> = {
         }
       }
     },
+    contactExtended: {
+      badge: "GET IN TOUCH",
+      mainTitle: "Let's Build Your Digital Empire",
+      mainDescription: "Ready to escape the mundane and build something extraordinary? We're here to make it happen.",
+      contactInfo: {
+        address: {
+          title: "Address",
+          content: "251 Little Falls Drive",
+          description: "Wilmington, DE 19808"
+        },
+        email: {
+          title: "Email Us",
+          content: "support@agistaffers.com",
+          description: "We'll respond within 24 hours"
+        },
+        phone: {
+          title: "Call Us",
+          content: "404-668-2401",
+          description: "Mon-Fri 9am-6pm EST"
+        },
+        whatsapp: {
+          title: "WhatsApp (DR)",
+          content: "404-668-2401",
+          description: "Dominican Republic",
+          chatNow: "Chat Now"
+        }
+      },
+      form: {
+        title: "Start Your Project",
+        description: "Fill out the form and we'll get back to you within 24 hours with a custom strategy.",
+        labels: {
+          name: "Your Name *",
+          email: "Email Address *",
+          phone: "Phone Number",
+          company: "Company Name",
+          services: "Services You're Interested In",
+          budget: "Budget Range",
+          message: "Project Details *",
+          budgetPlaceholder: "Select your budget",
+          budgetOptions: {
+            under1k: "Under $1,000",
+            range1to5k: "$1,000 - $5,000",
+            range5to10k: "$5,000 - $10,000",
+            range10to25k: "$10,000 - $25,000",
+            range25kplus: "$25,000+"
+          },
+          placeholders: {
+            name: "John Doe",
+            email: "john@company.com",
+            phone: "(555) 123-4567",
+            company: "Acme Corp",
+            message: "Tell us about your project, goals, timeline, and any specific requirements..."
+          }
+        },
+        services: {
+          seo: "SEO & AI Search",
+          aiAssistants: "AI Assistants",
+          workflow: "Workflow Automation",
+          prompt: "Prompt Engineering",
+          prebuilt: "Pre-built Store",
+          custom: "Custom Website"
+        },
+        button: "Send Message",
+        privacyNote: "By submitting this form, you agree to our terms and privacy policy. We promise not to spam you."
+      },
+      faqs: {
+        title: "Frequently Asked Questions",
+        description: "Quick answers to common questions. Still need help? Just ask!",
+        questions: {
+          howQuickly: {
+            question: "How quickly can you start?",
+            answer: "We can typically start within 48 hours for most projects. Pre-built stores launch in 2 days, custom projects begin within a week."
+          },
+          paymentPlans: {
+            question: "Do you offer payment plans?",
+            answer: "Yes! We offer flexible payment options including monthly plans for larger projects."
+          },
+          satisfaction: {
+            question: "What if I'm not satisfied?",
+            answer: "We offer a 30-day money-back guarantee on all pre-built stores and milestone-based approvals for custom projects."
+          },
+          support: {
+            question: "Do you provide ongoing support?",
+            answer: "Absolutely! All our services include support, with options for ongoing maintenance and updates."
+          }
+        },
+        readyToStart: {
+          title: "Ready to Start?",
+          description: "Most projects begin with a free consultation to understand your needs.",
+          button: "Book Free Consultation"
+        }
+      },
+      finalCta: {
+        title: "No More Waiting. Let's Build.",
+        description: "Every minute you wait is a minute your competition gets ahead. Let's change that today."
+      }
+    },
+    customWebsitesExtended: {
+      badge: "CUSTOM WEB DEVELOPMENT",
+      mainTitle: "Your Vision. Pixel Perfect.",
+      mainDescription: "When templates won't cut it, we build digital masterpieces from scratch. Custom websites that tell your story and drive real results.",
+      capabilitiesTitle: "Beyond Templates",
+      capabilitiesDescription: "Every line of code written specifically for you. Every pixel designed with purpose.",
+      capabilities: {
+        customDesign: {
+          title: "Custom Design",
+          description: "Unique designs that capture your brand essence. No templates, no compromises."
+        },
+        advancedDev: {
+          title: "Advanced Development",
+          description: "Complex functionality, custom features, and integrations tailored to your needs."
+        },
+        mobileFirst: {
+          title: "Mobile-First",
+          description: "Responsive designs that look stunning on every device, optimized for performance."
+        },
+        analytics: {
+          title: "Analytics & Tracking",
+          description: "Built-in analytics to track performance and make data-driven decisions."
+        }
+      },
+      projectTypesTitle: "We Build Everything",
+      projectTypesDescription: "From simple portfolio sites to complex web applications, we have the expertise to bring your vision to life.",
+      projectTypes: [
+        "Corporate Websites",
+        "SaaS Platforms", 
+        "Marketplace Solutions",
+        "Portfolio Sites",
+        "Web Applications",
+        "Custom Portals"
+      ],
+      processTitle: "Our Process",
+      process: {
+        discovery: {
+          step: "Discovery",
+          description: "We dive deep into your business, goals, and vision"
+        },
+        design: {
+          step: "Design", 
+          description: "Create stunning mockups and prototypes for your approval"
+        },
+        development: {
+          step: "Development",
+          description: "Build your site with clean, scalable code"
+        },
+        launch: {
+          step: "Launch",
+          description: "Deploy, optimize, and celebrate your new digital presence"
+        }
+      },
+      formTitle: "Let's Build Something Amazing",
+      formDescription: "Tell us about your project and we'll get back to you with a custom proposal.",
+      formLabels: {
+        name: "Your Name *",
+        email: "Email Address *",
+        company: "Company Name",
+        budget: "Estimated Budget",
+        timeline: "Timeline",
+        description: "Project Description *",
+        budgetPlaceholder: "Select budget range",
+        timelinePlaceholder: "Select timeline",
+        budgetOptions: {
+          range1: "$5,000 - $10,000",
+          range2: "$10,000 - $25,000", 
+          range3: "$25,000 - $50,000",
+          range4: "$50,000+"
+        },
+        timelineOptions: {
+          asap: "ASAP",
+          month1: "Within 1 month",
+          months2to3: "2-3 months",
+          months3to6: "3-6 months"
+        },
+        placeholders: {
+          name: "John Doe",
+          email: "john@company.com",
+          company: "Acme Corp",
+          description: "Tell us about your project, goals, and any specific features you need..."
+        }
+      },
+      formButton: "Get Your Custom Quote",
+      formNote: "We'll review your project and send you a detailed proposal within 24 hours.",
+      finalCtaTitle: "No Cookie-Cutter. Just Custom.",
+      finalCtaDescription: "Your business is unique. Your website should be too. Let's create something that stands out from the crowd."
+    },
     customWebsites: {
       title: "Custom Websites",
       subtitle: "Unique design that reflects your brand",
@@ -1233,7 +1708,7 @@ export const translations: Record<string, Translation> = {
       }
     },
     features: {
-      title: "Why Choose AGI Staffers?",
+      title: "Why Choose AGI STAFFERS?",
       subtitle: "We combine cutting-edge AI technology with proven web development practices",
       items: {
         aiIntegration: {
@@ -1291,7 +1766,7 @@ export const translations: Record<string, Translation> = {
     },
     footer: {
       tagline: "AI-powered website development and automation specialists",
-      copyright: "© 2025 AGI Staffers. Building the future of intelligent websites.",
+      copyright: "© 2025 AGI STAFFERS. Building the future of intelligent websites.",
       description: "Your 24/7 AI workforce that never quits. We build digital empires with automation, AI, and a touch of magic.",
       location: "USA • Remote Worldwide",
       servicesTitle: "Services",
@@ -1316,7 +1791,7 @@ export const translations: Record<string, Translation> = {
       },
       company: {
         about: "About",
-        contact: "Contact",
+        contact: "Contact Us",
         blog: "Blog",
         careers: "Careers"
       },
@@ -1339,6 +1814,42 @@ export const translations: Record<string, Translation> = {
       active: "Active",
       running: "Running",
       live: "Live"
+    },
+    loginPage: {
+      welcomeBack: "Welcome back",
+      signInDescription: "Sign in to AGI STAFFERS with your email",
+      signInWithGoogle: "Sign in with Google",
+      signingInWithGoogle: "Signing in with Google...",
+      orContinueWithEmail: "Or continue with email",
+      emailAddress: "Email address",
+      emailPlaceholder: "you@example.com",
+      passwordlessSignIn: "Passwordless sign in",
+      passwordlessDescription: "We'll send you a magic link to sign in. No password needed!",
+      sendMagicLink: "Send magic link",
+      sendingMagicLink: "Sending magic link...",
+      checkYourEmail: "Check your email!",
+      magicLinkSent: "We've sent a magic link to",
+      clickLinkInEmail: "Click the link in your email to sign in. The link will expire in 10 minutes.",
+      didntReceiveEmail: "Didn't receive the email?",
+      tryAgain: "Try again",
+      invalidEmail: "Please enter a valid email address.",
+      unexpectedError: "An unexpected error occurred. Please try again."
+    },
+    adminLoginPage: {
+      adminPortal: "Admin Portal",
+      adminSignInDescription: "Sign in to access the admin dashboard",
+      email: "Email",
+      emailPlaceholder: "admin@example.com",
+      password: "Password",
+      passwordPlaceholder: "Enter your password",
+      rememberMe: "Remember me for 30 days",
+      twoFactorCode: "Two-Factor Authentication Code",
+      twoFactorPlaceholder: "Enter 6-digit code",
+      signIn: "Sign In",
+      signingIn: "Signing in...",
+      adminAccessOnly: "Admin access only. Customer login at",
+      customerLoginAt: "agistaffers.com",
+      invalidCredentials: "Invalid credentials. Use admin@agistaffers.com / admin123"
     }
   },
   es: {
@@ -1346,12 +1857,69 @@ export const translations: Record<string, Translation> = {
       services: "Servicios",
       features: "Características",
       pricing: "Precios", 
-      dashboard: "Panel"
+      dashboard: "Panel",
+      needWebsite: "Diseño Web",
+      prebuiltStores: "Tiendas Pre-construidas",
+      customWebsites: "Sitios Web Personalizados",
+      company: "Empresa",
+      ourStory: "Nuestra Historia",
+      about: "Nosotros",
+      contact: "Contáctanos",
+      careers: "Carreras",
+      customerLogin: "Iniciar",
+      aiAssistants: "Asistentes IA",
+      workflowAutomation: "Automatización IA",
+      contentSeo: "SEO IA",
+      promptEngineering: "Prompts a Medida"
     },
     seoPageExtended: {
       badge: "SEO QUE REALMENTE FUNCIONA",
       mainTitle: "No Solo Ser Encontrado. Ser Lo Primero De Lo Que Hablan.",
       mainDescription: "Nos aseguramos de que tu voz atraviese el ruido. Nuestra IA no solo te ayuda a posicionarte en Google, nos aseguramos de que ChatGPT y Perplexity te citen como si fueras un evangelio.",
+      servicesTitle: "Servicios SEO Que Entregan Resultados",
+      servicesDescription: "Combinamos maestría en SEO tradicional con optimización de IA de vanguardia. Tu competencia aún está descubriendo ChatGPT mientras tú ya estás posicionándote en él.",
+      processTitle: "Nuestro Proceso Probado en Batalla", 
+      processDescription: "Cuatro pasos hacia la dominación en búsquedas. Sin relleno, solo resultados.",
+      process: {
+        audit: {
+          title: "Auditoría Profunda",
+          description: "Analizamos tu presencia actual en plataformas de búsqueda tradicionales y de IA."
+        },
+        strategy: {
+          title: "Plan Estratégico",
+          description: "Hoja de ruta personalizada dirigida tanto a rankings de Google como a citas de modelos de IA."
+        },
+        content: {
+          title: "Dominación de Contenido",
+          description: "Crear y optimizar contenido que los motores de búsqueda y modelos de IA no puedan ignorar."
+        },
+        optimize: {
+          title: "Escalar y Optimizar",
+          description: "Mejorar continuamente los rankings mientras expandes tu huella digital."
+        }
+      },
+      results: {
+        traffic: {
+          metric: "Aumento Promedio de Tráfico",
+          timeframe: "en 6 meses"
+        },
+        citations: {
+          metric: "Citas en Búsqueda IA",
+          timeframe: "más menciones"
+        },
+        rankings: {
+          metric: "Rankings Primera Página",
+          timeframe: "de keywords"
+        },
+        roi: {
+          metric: "ROI Promedio",
+          timeframe: "retorno de inversión"
+        }
+      },
+      guaranteeText: "Todos los planes incluyen dominio gratis por 1 año • Certificado SSL • Garantía de 99.9% de tiempo activo",
+      securePayment: "Pago seguro",
+      moneyBack: "Garantía de 30 días",
+      instantSetup: "Configuración instantánea",
       viewCaseStudies: "Ver Casos de Éxito",
       services: {
         aiSearch: {
@@ -1813,6 +2381,191 @@ export const translations: Record<string, Translation> = {
         }
       }
     },
+    contactExtended: {
+      badge: "CONTÁCTANOS",
+      mainTitle: "Construyamos Tu Imperio Digital",
+      mainDescription: "¿Listo para escapar de lo mundano y construir algo extraordinario? Estamos aquí para hacerlo realidad.",
+      contactInfo: {
+        address: {
+          title: "Dirección",
+          content: "251 Little Falls Drive",
+          description: "Wilmington, DE 19808"
+        },
+        email: {
+          title: "Contáctanos por Email",
+          content: "support@agistaffers.com",
+          description: "Responderemos en 24 horas"
+        },
+        phone: {
+          title: "Llámanos",
+          content: "404-668-2401",
+          description: "Lun-Vie 9am-6pm EST"
+        },
+        whatsapp: {
+          title: "WhatsApp (RD)",
+          content: "404-668-2401",
+          description: "República Dominicana",
+          chatNow: "Chatear Ahora"
+        }
+      },
+      form: {
+        title: "Inicia Tu Proyecto",
+        description: "Completa el formulario y te responderemos en 24 horas con una estrategia personalizada.",
+        labels: {
+          name: "Tu Nombre *",
+          email: "Correo Electrónico *",
+          phone: "Número de Teléfono",
+          company: "Nombre de la Empresa",
+          services: "Servicios que te Interesan",
+          budget: "Rango de Presupuesto",
+          message: "Detalles del Proyecto *",
+          budgetPlaceholder: "Selecciona tu presupuesto",
+          budgetOptions: {
+            under1k: "Menos de $1,000",
+            range1to5k: "$1,000 - $5,000",
+            range5to10k: "$5,000 - $10,000",
+            range10to25k: "$10,000 - $25,000",
+            range25kplus: "$25,000+"
+          },
+          placeholders: {
+            name: "Juan Pérez",
+            email: "juan@empresa.com",
+            phone: "(555) 123-4567",
+            company: "Empresa Ejemplo",
+            message: "Cuéntanos sobre tu proyecto, objetivos, cronograma y cualquier requisito específico..."
+          }
+        },
+        services: {
+          seo: "SEO y Búsqueda IA",
+          aiAssistants: "Asistentes de IA",
+          workflow: "Automatización de Flujos",
+          prompt: "Ingeniería de Prompts",
+          prebuilt: "Tienda Pre-construida",
+          custom: "Sitio Web Personalizado"
+        },
+        button: "Enviar Mensaje",
+        privacyNote: "Al enviar este formulario, aceptas nuestros términos y política de privacidad. Prometemos no enviarte spam."
+      },
+      faqs: {
+        title: "Preguntas Frecuentes",
+        description: "Respuestas rápidas a preguntas comunes. ¿Aún necesitas ayuda? ¡Solo pregunta!",
+        questions: {
+          howQuickly: {
+            question: "¿Qué tan rápido pueden comenzar?",
+            answer: "Típicamente podemos comenzar en 48 horas para la mayoría de proyectos. Las tiendas pre-construidas se lanzan en 2 días, los proyectos personalizados comienzan en una semana."
+          },
+          paymentPlans: {
+            question: "¿Ofrecen planes de pago?",
+            answer: "¡Sí! Ofrecemos opciones de pago flexibles incluyendo planes mensuales para proyectos más grandes."
+          },
+          satisfaction: {
+            question: "¿Qué pasa si no estoy satisfecho?",
+            answer: "Ofrecemos una garantía de devolución de dinero de 30 días en todas las tiendas pre-construidas y aprobaciones basadas en hitos para proyectos personalizados."
+          },
+          support: {
+            question: "¿Proporcionan soporte continuo?",
+            answer: "¡Absolutamente! Todos nuestros servicios incluyen soporte, con opciones para mantenimiento y actualizaciones continuas."
+          }
+        },
+        readyToStart: {
+          title: "¿Listo para Comenzar?",
+          description: "La mayoría de proyectos comienzan con una consulta gratuita para entender tus necesidades.",
+          button: "Reservar Consulta Gratuita"
+        }
+      },
+      finalCta: {
+        title: "Se Acabó la Espera. Construyamos.",
+        description: "Cada minuto que esperas es un minuto en que tu competencia se adelanta. Cambiemos eso hoy."
+      }
+    },
+    customWebsitesExtended: {
+      badge: "DESARROLLO WEB PERSONALIZADO",
+      mainTitle: "Tu Visión. Pixel Perfecto.",
+      mainDescription: "Cuando las plantillas no son suficientes, construimos obras maestras digitales desde cero. Sitios web personalizados que cuentan tu historia y generan resultados reales.",
+      capabilitiesTitle: "Más Allá de las Plantillas",
+      capabilitiesDescription: "Cada línea de código escrita específicamente para ti. Cada pixel diseñado con propósito.",
+      capabilities: {
+        customDesign: {
+          title: "Diseño Personalizado",
+          description: "Diseños únicos que capturan la esencia de tu marca. Sin plantillas, sin compromisos."
+        },
+        advancedDev: {
+          title: "Desarrollo Avanzado",
+          description: "Funcionalidad compleja, características personalizadas e integraciones adaptadas a tus necesidades."
+        },
+        mobileFirst: {
+          title: "Mobile-First",
+          description: "Diseños responsivos que se ven increíbles en cada dispositivo, optimizados para rendimiento."
+        },
+        analytics: {
+          title: "Análisis y Seguimiento",
+          description: "Análisis integrados para rastrear el rendimiento y tomar decisiones basadas en datos."
+        }
+      },
+      projectTypesTitle: "Construimos Todo",
+      projectTypesDescription: "Desde sitios de portafolio simples hasta aplicaciones web complejas, tenemos la experiencia para dar vida a tu visión.",
+      projectTypes: [
+        "Sitios Web Corporativos",
+        "Plataformas SaaS",
+        "Soluciones de Marketplace",
+        "Sitios de Portafolio",
+        "Aplicaciones Web",
+        "Portales Personalizados"
+      ],
+      processTitle: "Nuestro Proceso",
+      process: {
+        discovery: {
+          step: "Descubrimiento",
+          description: "Profundizamos en tu negocio, objetivos y visión"
+        },
+        design: {
+          step: "Diseño",
+          description: "Creamos mockups impresionantes y prototipos para tu aprobación"
+        },
+        development: {
+          step: "Desarrollo",
+          description: "Construimos tu sitio con código limpio y escalable"
+        },
+        launch: {
+          step: "Lanzamiento",
+          description: "Desplegamos, optimizamos y celebramos tu nueva presencia digital"
+        }
+      },
+      formTitle: "Construyamos Algo Increíble",
+      formDescription: "Cuéntanos sobre tu proyecto y te responderemos con una propuesta personalizada.",
+      formLabels: {
+        name: "Tu Nombre *",
+        email: "Dirección de Email *",
+        company: "Nombre de la Empresa",
+        budget: "Presupuesto Estimado",
+        timeline: "Cronograma",
+        description: "Descripción del Proyecto *",
+        budgetPlaceholder: "Seleccionar rango de presupuesto",
+        timelinePlaceholder: "Seleccionar cronograma",
+        budgetOptions: {
+          range1: "$5,000 - $10,000",
+          range2: "$10,000 - $25,000",
+          range3: "$25,000 - $50,000",
+          range4: "$50,000+"
+        },
+        timelineOptions: {
+          asap: "Lo Antes Posible",
+          month1: "Dentro de 1 mes",
+          months2to3: "2-3 meses",
+          months3to6: "3-6 meses"
+        },
+        placeholders: {
+          name: "Juan Pérez",
+          email: "juan@empresa.com",
+          company: "Empresa Ejemplo",
+          description: "Cuéntanos sobre tu proyecto, objetivos y cualquier característica específica que necesites..."
+        }
+      },
+      formButton: "Obtener Tu Cotización Personalizada",
+      formNote: "Revisaremos tu proyecto y te enviaremos una propuesta detallada dentro de 24 horas.",
+      finalCtaTitle: "Sin Plantillas. Solo Personalizado.",
+      finalCtaDescription: "Tu negocio es único. Tu sitio web también debería serlo. Creemos algo que se destaque entre la multitud."
+    },
     customWebsites: {
       title: "Sitios Web Personalizados",
       subtitle: "Diseño único que refleja tu marca",
@@ -1910,7 +2663,7 @@ export const translations: Record<string, Translation> = {
       }
     },
     features: {
-      title: "¿Por Qué Elegir AGI Staffers?",
+      title: "¿Por Qué Elegir AGI STAFFERS?",
       subtitle: "Combinamos tecnología de IA de vanguardia con prácticas probadas de desarrollo web",
       items: {
         aiIntegration: {
@@ -1968,7 +2721,7 @@ export const translations: Record<string, Translation> = {
     },
     footer: {
       tagline: "Especialistas en desarrollo web y automatización impulsada por IA",
-      copyright: "© 2025 AGI Staffers. Construyendo el futuro de los sitios web inteligentes.",
+      copyright: "© 2025 AGI STAFFERS. Construyendo el futuro de los sitios web inteligentes.",
       description: "Tu fuerza laboral de IA 24/7 que nunca se rinde. Construimos imperios digitales con automatización, IA y un toque de magia.",
       location: "EE.UU. • Remoto Mundial",
       servicesTitle: "Servicios",
@@ -1993,7 +2746,7 @@ export const translations: Record<string, Translation> = {
       },
       company: {
         about: "Acerca de",
-        contact: "Contacto",
+        contact: "Contáctanos",
         blog: "Blog",
         careers: "Carreras"
       },
@@ -2016,6 +2769,42 @@ export const translations: Record<string, Translation> = {
       active: "Activo",
       running: "Ejecutándose",
       live: "En Vivo"
+    },
+    loginPage: {
+      welcomeBack: "Bienvenido de nuevo",
+      signInDescription: "Inicia sesión en AGI STAFFERS con tu correo",
+      signInWithGoogle: "Iniciar sesión con Google",
+      signingInWithGoogle: "Iniciando sesión con Google...",
+      orContinueWithEmail: "O continúa con correo",
+      emailAddress: "Dirección de correo",
+      emailPlaceholder: "tu@ejemplo.com",
+      passwordlessSignIn: "Inicio de sesión sin contraseña",
+      passwordlessDescription: "Te enviaremos un enlace mágico para iniciar sesión. ¡No necesitas contraseña!",
+      sendMagicLink: "Enviar enlace mágico",
+      sendingMagicLink: "Enviando enlace mágico...",
+      checkYourEmail: "¡Revisa tu correo!",
+      magicLinkSent: "Hemos enviado un enlace mágico a",
+      clickLinkInEmail: "Haz clic en el enlace de tu correo para iniciar sesión. El enlace expirará en 10 minutos.",
+      didntReceiveEmail: "¿No recibiste el correo?",
+      tryAgain: "Intentar de nuevo",
+      invalidEmail: "Por favor ingresa una dirección de correo válida.",
+      unexpectedError: "Ocurrió un error inesperado. Por favor intenta de nuevo."
+    },
+    adminLoginPage: {
+      adminPortal: "Portal de Administración",
+      adminSignInDescription: "Inicia sesión para acceder al panel de administración",
+      email: "Correo",
+      emailPlaceholder: "admin@ejemplo.com",
+      password: "Contraseña",
+      passwordPlaceholder: "Ingresa tu contraseña",
+      rememberMe: "Recordarme por 30 días",
+      twoFactorCode: "Código de Autenticación de Dos Factores",
+      twoFactorPlaceholder: "Ingresa código de 6 dígitos",
+      signIn: "Iniciar Sesión",
+      signingIn: "Iniciando sesión...",
+      adminAccessOnly: "Solo acceso de administrador. Inicio de sesión de clientes en",
+      customerLoginAt: "agistaffers.com",
+      invalidCredentials: "Credenciales inválidas. Usa admin@agistaffers.com / admin123"
     }
   }
 };

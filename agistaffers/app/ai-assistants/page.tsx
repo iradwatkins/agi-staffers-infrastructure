@@ -1,6 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
+// Remove force-dynamic as we want static generation to work
 
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -24,65 +24,62 @@ import {
   Cpu
 } from 'lucide-react'
 import { useLanguage } from '@/hooks/useLanguage'
-import ClientOnly from '@/components/ClientOnly'
 
 export default function AIAssistantsPage() {
   const { language, t } = useLanguage()
   
-  if (!t || !t.aiAssistantsExtended || !t.aiAssistantsExtended.hero) {
-    return null // Wait for translations to load
-  }
+  // Now t will always be available thanks to the updated useLanguage hook
   const assistantTypes = [
     {
       icon: HeadphonesIcon,
-      title: t.aiAssistantsExtended.assistantTypes.customerSupport.title,
-      description: t.aiAssistantsExtended.assistantTypes.customerSupport.description,
-      features: t.aiAssistantsExtended.assistantTypes.customerSupport.features
+      title: t?.aiAssistantsExtended?.assistantTypes?.customerSupport?.title || 'Customer Support',
+      description: t?.aiAssistantsExtended?.assistantTypes?.customerSupport?.description || 'AI-powered customer support',
+      features: t?.aiAssistantsExtended?.assistantTypes?.customerSupport?.features || []
     },
     {
       icon: TrendingUp,
-      title: t.aiAssistantsExtended.assistantTypes.salesAssistant.title,
-      description: t.aiAssistantsExtended.assistantTypes.salesAssistant.description,
-      features: t.aiAssistantsExtended.assistantTypes.salesAssistant.features
+      title: t?.aiAssistantsExtended?.assistantTypes?.salesAssistant?.title || 'Sales Assistant',
+      description: t?.aiAssistantsExtended?.assistantTypes?.salesAssistant?.description || 'AI sales automation',
+      features: t?.aiAssistantsExtended?.assistantTypes?.salesAssistant?.features || []
     },
     {
       icon: Brain,
-      title: t.aiAssistantsExtended.assistantTypes.knowledgeBase.title,
-      description: t.aiAssistantsExtended.assistantTypes.knowledgeBase.description,
-      features: t.aiAssistantsExtended.assistantTypes.knowledgeBase.features
+      title: t?.aiAssistantsExtended?.assistantTypes?.knowledgeBase?.title || 'Knowledge Base',
+      description: t?.aiAssistantsExtended?.assistantTypes?.knowledgeBase?.description || 'AI knowledge management',
+      features: t?.aiAssistantsExtended?.assistantTypes?.knowledgeBase?.features || []
     },
     {
       icon: MessageSquare,
-      title: t.aiAssistantsExtended.assistantTypes.socialMedia.title,
-      description: t.aiAssistantsExtended.assistantTypes.socialMedia.description,
-      features: t.aiAssistantsExtended.assistantTypes.socialMedia.features
+      title: t?.aiAssistantsExtended?.assistantTypes?.socialMedia?.title || 'Social Media',
+      description: t?.aiAssistantsExtended?.assistantTypes?.socialMedia?.description || 'AI social media management',
+      features: t?.aiAssistantsExtended?.assistantTypes?.socialMedia?.features || []
     }
   ]
 
   const benefits = [
     {
       icon: Clock,
-      title: t.aiAssistantsExtended.benefits.available247.title,
-      description: t.aiAssistantsExtended.benefits.available247.description
+      title: t?.aiAssistantsExtended?.benefits?.available247?.title || '24/7 Available',
+      description: t?.aiAssistantsExtended?.benefits?.available247?.description || 'Always online and ready to help'
     },
     {
       icon: Zap,
-      title: t.aiAssistantsExtended.benefits.instantResponse.title,
-      description: t.aiAssistantsExtended.benefits.instantResponse.description
+      title: t?.aiAssistantsExtended?.benefits?.instantResponse?.title || 'Instant Response',
+      description: t?.aiAssistantsExtended?.benefits?.instantResponse?.description || 'Get immediate answers and support'
     },
     {
       icon: Globe,
-      title: t.aiAssistantsExtended.benefits.unlimitedScale.title,
-      description: t.aiAssistantsExtended.benefits.unlimitedScale.description
+      title: t?.aiAssistantsExtended?.benefits?.unlimitedScale?.title || 'Unlimited Scale',
+      description: t?.aiAssistantsExtended?.benefits?.unlimitedScale?.description || 'Handle thousands of conversations simultaneously'
     },
     {
       icon: Shield,
-      title: t.aiAssistantsExtended.benefits.alwaysConsistent.title,
-      description: t.aiAssistantsExtended.benefits.alwaysConsistent.description
+      title: t?.aiAssistantsExtended?.benefits?.alwaysConsistent?.title || 'Always Consistent',
+      description: t?.aiAssistantsExtended?.benefits?.alwaysConsistent?.description || 'Reliable and consistent responses every time'
     }
   ]
 
-  const stats = t.aiAssistantsExtended?.stats ? [
+  const stats = t?.aiAssistantsExtended?.stats ? [
     { label: t.aiAssistantsExtended.stats.responseTime?.label || '', value: t.aiAssistantsExtended.stats.responseTime?.value || '', description: t.aiAssistantsExtended.stats.responseTime?.description || '' },
     { label: t.aiAssistantsExtended.stats.satisfaction?.label || '', value: t.aiAssistantsExtended.stats.satisfaction?.value || '', description: t.aiAssistantsExtended.stats.satisfaction?.description || '' },
     { label: t.aiAssistantsExtended.stats.costReduction?.label || '', value: t.aiAssistantsExtended.stats.costReduction?.value || '', description: t.aiAssistantsExtended.stats.costReduction?.description || '' },
@@ -90,8 +87,7 @@ export default function AIAssistantsPage() {
   ] : []
 
   return (
-    <ClientOnly fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
-      <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4">
         <div className="absolute inset-0">
@@ -107,24 +103,24 @@ export default function AIAssistantsPage() {
             className="text-center max-w-4xl mx-auto"
           >
             <Badge className="mb-4 bg-blue-500/10 text-blue-700 border-blue-500/20">
-              {t.aiAssistantsExtended.hero.badge}
+              {t?.aiAssistantsExtended?.badge || 'AI Assistants'}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
-              {t.aiAssistantsExtended.hero.title}
+              {t?.aiAssistantsExtended?.mainTitle || 'AI-Powered Virtual Assistants'}
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-              {t.aiAssistantsExtended.hero.description}
+              {t?.aiAssistantsExtended?.mainDescription || 'Transform your business with intelligent AI assistants'}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:opacity-90">
-                {t.aiAssistantsExtended.hero.deployButton}
+                {t?.aiAssistantsExtended?.deployTeam || 'Deploy Now'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button size="lg" variant="outline">
-                {t.aiAssistantsExtended.hero.demoButton}
+                {t?.aiAssistantsExtended?.seeAction || 'See Demo'}
                 <Bot className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -164,10 +160,10 @@ export default function AIAssistantsPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              {t.aiAssistantsExtended.assistantTypesSection.title}
+              {t?.aiAssistantsExtended?.typesTitle || 'Types of AI Assistants'}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t.aiAssistantsExtended.assistantTypesSection.description}
+              {t?.aiAssistantsExtended?.typesDescription || 'Choose the perfect AI assistant for your business needs'}
             </p>
           </motion.div>
 
@@ -217,10 +213,10 @@ export default function AIAssistantsPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              {t.aiAssistantsExtended.benefitsSection.title}
+              {t?.aiAssistantsExtended?.benefitsTitle || 'Benefits of AI Assistants'}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t.aiAssistantsExtended.benefitsSection.description}
+              {t?.aiAssistantsExtended?.benefitsSubtitle || 'Discover how AI assistants can transform your business operations'}
             </p>
           </motion.div>
 
@@ -256,7 +252,7 @@ export default function AIAssistantsPage() {
               whileInView={{ opacity: 1, x: 0 }}
             >
               <h2 className="text-4xl md:text-5xl font-black mb-6">
-                {t.aiAssistantsExtended.howItWorks.title}
+                {t?.aiAssistantsExtended?.howItWorksTitle || 'How It Works'}
               </h2>
               
               <div className="space-y-6">
@@ -265,9 +261,9 @@ export default function AIAssistantsPage() {
                     1
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">{t.aiAssistantsExtended.howItWorks.step1.title}</h3>
+                    <h3 className="text-xl font-bold mb-2">{t?.aiAssistantsExtended?.process?.shareKnowledge?.title || 'Share Your Knowledge'}</h3>
                     <p className="text-muted-foreground">
-                      {t.aiAssistantsExtended.howItWorks.step1.description}
+                      {t?.aiAssistantsExtended?.process?.shareKnowledge?.description || 'Configure your AI assistant'}
                     </p>
                   </div>
                 </div>
@@ -277,9 +273,9 @@ export default function AIAssistantsPage() {
                     2
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">{t.aiAssistantsExtended.howItWorks.step2.title}</h3>
+                    <h3 className="text-xl font-bold mb-2">{t?.aiAssistantsExtended?.process?.customizeTrain?.title || 'Customize & Train'}</h3>
                     <p className="text-muted-foreground">
-                      {t.aiAssistantsExtended.howItWorks.step2.description}
+                      {t?.aiAssistantsExtended?.process?.customizeTrain?.description || 'Deploy and integrate'}
                     </p>
                   </div>
                 </div>
@@ -289,9 +285,9 @@ export default function AIAssistantsPage() {
                     3
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">{t.aiAssistantsExtended.howItWorks.step3.title}</h3>
+                    <h3 className="text-xl font-bold mb-2">{t?.aiAssistantsExtended?.process?.deployScale?.title || 'Deploy & Scale'}</h3>
                     <p className="text-muted-foreground">
-                      {t.aiAssistantsExtended.howItWorks.step3.description}
+                      {t?.aiAssistantsExtended?.process?.deployScale?.description || 'Monitor and optimize'}
                     </p>
                   </div>
                 </div>
@@ -310,8 +306,8 @@ export default function AIAssistantsPage() {
                         <Users className="h-5 w-5 text-blue-500" />
                       </div>
                       <div>
-                        <p className="font-semibold">{t.aiAssistantsExtended.liveStats.activeConversations.label}</p>
-                        <p className="text-sm text-muted-foreground">{t.aiAssistantsExtended.liveStats.activeConversations.description}</p>
+                        <p className="font-semibold">{'Active Conversations'}</p>
+                        <p className="text-sm text-muted-foreground">{'Currently in progress'}</p>
                       </div>
                     </div>
                     <Badge className="bg-blue-500/10 text-blue-700">342</Badge>
@@ -323,8 +319,8 @@ export default function AIAssistantsPage() {
                         <TrendingUp className="h-5 w-5 text-green-500" />
                       </div>
                       <div>
-                        <p className="font-semibold">{t.aiAssistantsExtended.liveStats.resolutionRate.label}</p>
-                        <p className="text-sm text-muted-foreground">{t.aiAssistantsExtended.liveStats.resolutionRate.description}</p>
+                        <p className="font-semibold">{'Resolution Rate'}</p>
+                        <p className="text-sm text-muted-foreground">{'Successfully resolved'}</p>
                       </div>
                     </div>
                     <Badge className="bg-green-500/10 text-green-700">87%</Badge>
@@ -336,8 +332,8 @@ export default function AIAssistantsPage() {
                         <Cpu className="h-5 w-5 text-purple-500" />
                       </div>
                       <div>
-                        <p className="font-semibold">{t.aiAssistantsExtended.liveStats.aiProcessing.label}</p>
-                        <p className="text-sm text-muted-foreground">{t.aiAssistantsExtended.liveStats.aiProcessing.description}</p>
+                        <p className="font-semibold">{'AI Processing'}</p>
+                        <p className="text-sm text-muted-foreground">{'Real-time processing'}</p>
                       </div>
                     </div>
                     <Badge className="bg-purple-500/10 text-purple-700">Active</Badge>
@@ -360,21 +356,21 @@ export default function AIAssistantsPage() {
           >
             <Sparkles className="h-12 w-12 text-blue-500 mx-auto mb-6" />
             <h2 className="text-4xl md:text-5xl font-black mb-6">
-              {t.aiAssistantsExtended.cta.title}
+              {t?.aiAssistantsExtended?.ctaTitle || 'Ready to Get Started?'}
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {t.aiAssistantsExtended.cta.description}
+              {t?.aiAssistantsExtended?.ctaDescription || 'Transform your business with AI assistants today'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:opacity-90 text-lg px-8 py-6" asChild>
                 <Link href="/leads?service=ai-assistants">
-                  {t.aiAssistantsExtended.cta.startButton}
+                  {t?.aiAssistantsExtended?.startProject || 'Start Now'}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="text-lg px-8 py-6" asChild>
                 <Link href="/contact">
-                  {t.aiAssistantsExtended.cta.expertButton}
+                  {t?.aiAssistantsExtended?.talkExpert || 'Talk to Expert'}
                   <MessageSquare className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -382,7 +378,6 @@ export default function AIAssistantsPage() {
           </motion.div>
         </div>
       </section>
-      </div>
-    </ClientOnly>
+    </div>
   )
 }

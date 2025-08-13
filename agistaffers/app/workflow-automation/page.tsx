@@ -1,6 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
+// Remove force-dynamic as we want static generation to work
 
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -26,86 +26,82 @@ import {
   Users
 } from 'lucide-react'
 import { useLanguage } from '@/hooks/useLanguage'
-import ClientOnly from '@/components/ClientOnly'
 
 export default function WorkflowAutomationPage() {
   const { language, t } = useLanguage()
   
-  if (!t || !t.workflowAutomationExtended || !t.workflowAutomationExtended.hero || !t.workflowAutomationExtended.automationTypes) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>
-  }
-  const automations = t.workflowAutomationExtended?.automationTypes ? [
+  const automations = [
     {
       icon: Mail,
-      title: t.workflowAutomationExtended.automationTypes.email?.title || '',
-      description: t.workflowAutomationExtended.automationTypes.email?.description || '',
-      examples: t.workflowAutomationExtended.automationTypes.email?.examples || []
+      title: t?.workflowAutomationExtended?.automationTypes?.emailCommunication?.title || "Email Automation",
+      description: t?.workflowAutomationExtended?.automationTypes?.emailCommunication?.description || "Streamline your email campaigns and responses",
+      examples: t?.workflowAutomationExtended?.automationTypes?.emailCommunication?.examples || ["Automated welcome sequences", "Lead nurturing campaigns", "Customer support responses", "Newsletter automation"]
     },
     {
       icon: Calendar,
-      title: t.workflowAutomationExtended.automationTypes.scheduling?.title || '',
-      description: t.workflowAutomationExtended.automationTypes.scheduling?.description || '',
-      examples: t.workflowAutomationExtended.automationTypes.scheduling?.examples || []
+      title: t?.workflowAutomationExtended?.automationTypes?.schedulingCalendar?.title || "Scheduling Automation",
+      description: t?.workflowAutomationExtended?.automationTypes?.schedulingCalendar?.description || "Never miss an appointment or deadline again",
+      examples: t?.workflowAutomationExtended?.automationTypes?.schedulingCalendar?.examples || ["Automatic booking confirmations", "Meeting reminders", "Calendar synchronization", "Task scheduling"]
     },
     {
       icon: FileText,
-      title: t.workflowAutomationExtended.automationTypes.documents?.title || '',
-      description: t.workflowAutomationExtended.automationTypes.documents?.description || '',
-      examples: t.workflowAutomationExtended.automationTypes.documents?.examples || []
+      title: t?.workflowAutomationExtended?.automationTypes?.documentProcessing?.title || "Document Processing",
+      description: t?.workflowAutomationExtended?.automationTypes?.documentProcessing?.description || "Automate document creation and management",
+      examples: t?.workflowAutomationExtended?.automationTypes?.documentProcessing?.examples || ["Invoice generation", "Report compilation", "Contract processing", "Data extraction"]
     },
     {
       icon: Database,
-      title: t.workflowAutomationExtended.automationTypes.data?.title || '',
-      description: t.workflowAutomationExtended.automationTypes.data?.description || '',
-      examples: t.workflowAutomationExtended.automationTypes.data?.examples || []
+      title: t?.workflowAutomationExtended?.automationTypes?.dataManagement?.title || "Data Management",
+      description: t?.workflowAutomationExtended?.automationTypes?.dataManagement?.description || "Keep your data organized and accessible",
+      examples: t?.workflowAutomationExtended?.automationTypes?.dataManagement?.examples || ["CRM updates", "Inventory tracking", "Customer data sync", "Analytics reporting"]
     }
-  ] : []
+  ]
 
-  const benefits = t.workflowAutomationExtended?.benefits ? [
+  const benefits = [
     {
-      metric: t.workflowAutomationExtended.benefits.timeSaved?.metric || '',
-      value: t.workflowAutomationExtended.benefits.timeSaved?.value || '',
-      description: t.workflowAutomationExtended.benefits.timeSaved?.description || ''
+      metric: "Time Saved",
+      value: "73%",
+      description: "Average time reduction on repetitive tasks"
     },
     {
-      metric: t.workflowAutomationExtended.benefits.errorReduction?.metric || '',
-      value: t.workflowAutomationExtended.benefits.errorReduction?.value || '',
-      description: t.workflowAutomationExtended.benefits.errorReduction?.description || ''
+      metric: "Error Reduction",
+      value: "95%",
+      description: "Fewer mistakes with automated processes"
     },
     {
-      metric: t.workflowAutomationExtended.benefits.costSavings?.metric || '',
-      value: t.workflowAutomationExtended.benefits.costSavings?.value || '',
-      description: t.workflowAutomationExtended.benefits.costSavings?.description || ''
+      metric: "Cost Savings",
+      value: "$50K+",
+      description: "Annual savings from automation"
     },
     {
-      metric: t.workflowAutomationExtended.benefits.processingSpeed?.metric || '',
-      value: t.workflowAutomationExtended.benefits.processingSpeed?.value || '',
-      description: t.workflowAutomationExtended.benefits.processingSpeed?.description || ''
+      metric: "Processing Speed",
+      value: "10x",
+      description: "Faster task completion"
     }
-  ] : []
+  ]
 
-  const process = t.workflowAutomationExtended?.process ? [
+  const process = [
     {
       number: "01",
-      title: t.workflowAutomationExtended.process.step1?.title || '',
-      description: t.workflowAutomationExtended.process.step1?.description || ''
+      title: t?.workflowAutomationExtended?.process?.mapWorkflows?.title || "Analysis & Planning",
+      description: t?.workflowAutomationExtended?.process?.mapWorkflows?.description || "We analyze your current workflows and identify automation opportunities"
     },
     {
       number: "02",
-      title: t.workflowAutomationExtended.process.step2?.title || '',
-      description: t.workflowAutomationExtended.process.step2?.description || ''
+      title: t?.workflowAutomationExtended?.process?.designBuild?.title || "Design & Strategy",
+      description: t?.workflowAutomationExtended?.process?.designBuild?.description || "Create a custom automation strategy tailored to your business needs"
     },
     {
       number: "03",
-      title: t.workflowAutomationExtended.process.step3?.title || '',
-      description: t.workflowAutomationExtended.process.step3?.description || ''
+      title: t?.workflowAutomationExtended?.process?.testOptimize?.title || "Implementation",
+      description: t?.workflowAutomationExtended?.process?.testOptimize?.description || "Build and deploy your automated workflows with testing and optimization"
     },
     {
       number: "04",
-      title: t.workflowAutomationExtended.process.step4?.title || '',
-      description: t.workflowAutomationExtended.process.step4?.description || ''
+      title: t?.workflowAutomationExtended?.process?.deployMonitor?.title || "Monitor & Optimize",
+      description: t?.workflowAutomationExtended?.process?.deployMonitor?.description || "Continuously monitor performance and optimize for maximum efficiency"
     }
-  ] : []
+  ]
 
   const integrations = [
     "Slack", "Gmail", "Salesforce", "HubSpot", "Stripe", 
@@ -113,8 +109,7 @@ export default function WorkflowAutomationPage() {
   ]
 
   return (
-    <ClientOnly fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
-      <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4">
         <div className="absolute inset-0">
@@ -130,24 +125,24 @@ export default function WorkflowAutomationPage() {
             className="text-center max-w-4xl mx-auto"
           >
             <Badge className="mb-4 bg-purple-500/10 text-purple-700 border-purple-500/20">
-              {t.workflowAutomationExtended?.hero?.badge || ''}
+              {t?.workflowAutomationExtended?.badge || "WORKFLOW AUTOMATION"}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
-              {t.workflowAutomationExtended?.hero?.title || ''}
+              {t?.workflowAutomationExtended?.mainTitle || "What if Your Busywork Just... Vanished? Poof. Gone."}
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-              {t.workflowAutomationExtended?.hero?.description || ''}
+              {t?.workflowAutomationExtended?.mainDescription || "We eliminate the mind-numbing, soul-crushing tasks that eat your time. Let our AI handle the busywork while you focus on building your empire."}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90">
-                {t.workflowAutomationExtended.hero.automateButton}
+                {t?.workflowAutomationExtended?.automateWorkflow || "Automate My Workflow"}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button size="lg" variant="outline">
-                {t.workflowAutomationExtended.hero.examplesButton}
+                {t?.workflowAutomationExtended?.seeExamples || "See Examples"}
                 <Workflow className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -187,10 +182,10 @@ export default function WorkflowAutomationPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              {t.workflowAutomationExtended.automationTypesSection.title}
+              Types of Automation We Master
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t.workflowAutomationExtended.automationTypesSection.description}
+              From email sequences that run themselves to data that organizes automatically. We turn your repetitive tasks into set-it-and-forget-it systems.
             </p>
           </motion.div>
 
@@ -240,10 +235,10 @@ export default function WorkflowAutomationPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              {t.workflowAutomationExtended.processSection.title}
+              {t?.workflowAutomationExtended?.processTitle || "How We Eliminate Your Busywork"}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t.workflowAutomationExtended.processSection.description}
+              {t?.workflowAutomationExtended?.processSubtitle || "Four steps to freedom. We identify what's stealing your time, design the perfect automation, and watch your productivity soar."}
             </p>
           </motion.div>
 
@@ -276,11 +271,11 @@ export default function WorkflowAutomationPage() {
               whileInView={{ opacity: 1, x: 0 }}
             >
               <h2 className="text-4xl md:text-5xl font-black mb-6">
-                {t.workflowAutomationExtended.integrationsSection.title}
+                {t?.workflowAutomationExtended?.integrationsTitle || "Seamless Integrations"}
               </h2>
               
               <p className="text-xl text-muted-foreground mb-8">
-                {t.workflowAutomationExtended.integrationsSection.description}
+                {t?.workflowAutomationExtended?.integrationsDescription || "We connect with the tools you already use. No forced migrations, no learning new systems. Just seamless automation."}
               </p>
 
               <div className="space-y-6">
@@ -289,9 +284,9 @@ export default function WorkflowAutomationPage() {
                     <GitBranch className="h-6 w-6 text-purple-500" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">{t.workflowAutomationExtended.integrationsSection.feature1.title}</h3>
+                    <h3 className="text-xl font-bold mb-2">Universal Compatibility</h3>
                     <p className="text-muted-foreground">
-                      {t.workflowAutomationExtended.integrationsSection.feature1.description}
+                      Works with 500+ popular business tools. If you use it, we can automate it.
                     </p>
                   </div>
                 </div>
@@ -301,9 +296,9 @@ export default function WorkflowAutomationPage() {
                     <Settings className="h-6 w-6 text-purple-500" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">{t.workflowAutomationExtended.integrationsSection.feature2.title}</h3>
+                    <h3 className="text-xl font-bold mb-2">Smart Configuration</h3>
                     <p className="text-muted-foreground">
-                      {t.workflowAutomationExtended.integrationsSection.feature2.description}
+                      AI-powered setup that learns your workflow and suggests optimal automations.
                     </p>
                   </div>
                 </div>
@@ -344,39 +339,39 @@ export default function WorkflowAutomationPage() {
           >
             <Card className="p-8 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/20">
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-black mb-2">{t.workflowAutomationExtended.roiCalculator.title}</h2>
-                <p className="text-muted-foreground">{t.workflowAutomationExtended.roiCalculator.subtitle}</p>
+                <h2 className="text-3xl font-black mb-2">Your Time Back. Calculated.</h2>
+                <p className="text-muted-foreground">See what automation could save you every month</p>
               </div>
 
               <div className="space-y-6">
                 <div className="flex items-center justify-between p-4 bg-background/50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <Clock className="h-6 w-6 text-purple-500" />
-                    <span className="font-semibold">{t.workflowAutomationExtended.roiCalculator.hoursSaved.label}</span>
+                    <span className="font-semibold">Hours Saved Weekly</span>
                   </div>
-                  <Badge className="bg-purple-500/10 text-purple-700 text-lg px-4 py-2">{t.workflowAutomationExtended.roiCalculator.hoursSaved.value}</Badge>
+                  <Badge className="bg-purple-500/10 text-purple-700 text-lg px-4 py-2">25+</Badge>
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-background/50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <DollarSign className="h-6 w-6 text-green-500" />
-                    <span className="font-semibold">{t.workflowAutomationExtended.roiCalculator.costSavings.label}</span>
+                    <span className="font-semibold">Monthly Cost Savings</span>
                   </div>
-                  <Badge className="bg-green-500/10 text-green-700 text-lg px-4 py-2">{t.workflowAutomationExtended.roiCalculator.costSavings.value}</Badge>
+                  <Badge className="bg-green-500/10 text-green-700 text-lg px-4 py-2">$8,500</Badge>
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-background/50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <Zap className="h-6 w-6 text-yellow-500" />
-                    <span className="font-semibold">{t.workflowAutomationExtended.roiCalculator.tasksAutomated.label}</span>
+                    <span className="font-semibold">Tasks Automated</span>
                   </div>
-                  <Badge className="bg-yellow-500/10 text-yellow-700 text-lg px-4 py-2">{t.workflowAutomationExtended.roiCalculator.tasksAutomated.value}</Badge>
+                  <Badge className="bg-yellow-500/10 text-yellow-700 text-lg px-4 py-2">150+</Badge>
                 </div>
               </div>
 
               <div className="mt-8 text-center">
                 <Button size="lg" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90">
-                  {t.workflowAutomationExtended.roiCalculator.calculateButton}
+                  Calculate My Savings
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
@@ -396,19 +391,21 @@ export default function WorkflowAutomationPage() {
           >
             <Sparkles className="h-12 w-12 text-purple-500 mx-auto mb-6" />
             <h2 className="text-4xl md:text-5xl font-black mb-6">
-              {t.workflowAutomationExtended.cta.title}
+              Ready to Get Your Time Back?
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {t.workflowAutomationExtended.cta.description}
+              Stop doing what software can do better. Start automation today and watch your productivity skyrocket.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-lg px-8 py-6">
-                {t.workflowAutomationExtended.cta.startButton}
-                <ArrowRight className="ml-2 h-5 w-5" />
+              <Button size="lg" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-lg px-8 py-6" asChild>
+                <Link href="/leads?service=workflow-automation">
+                  Start My Automation
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
               <Button size="lg" variant="outline" className="text-lg px-8 py-6" asChild>
                 <Link href="/contact">
-                  {t.workflowAutomationExtended.cta.demoButton}
+                  See Demo
                   <RefreshCw className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -416,7 +413,6 @@ export default function WorkflowAutomationPage() {
           </motion.div>
         </div>
       </section>
-      </div>
-    </ClientOnly>
+    </div>
   )
 }

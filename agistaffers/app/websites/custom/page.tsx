@@ -22,8 +22,11 @@ import {
   BarChart3,
   CheckCircle
 } from 'lucide-react'
+import { useLanguage } from '@/hooks/useLanguage'
 
 export default function CustomWebsitesPage() {
+  const { language, t } = useLanguage()
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -42,51 +45,44 @@ export default function CustomWebsitesPage() {
   const capabilities = [
     {
       icon: Palette,
-      title: "Custom Design",
-      description: "Unique designs that capture your brand essence. No templates, no compromises."
+      title: t?.customWebsitesExtended?.capabilities?.customDesign?.title,
+      description: t?.customWebsitesExtended?.capabilities?.customDesign?.description
     },
     {
       icon: Code,
-      title: "Advanced Development",
-      description: "Complex functionality, custom features, and integrations tailored to your needs."
+      title: t?.customWebsitesExtended?.capabilities?.advancedDev?.title,
+      description: t?.customWebsitesExtended?.capabilities?.advancedDev?.description
     },
     {
       icon: Smartphone,
-      title: "Mobile-First",
-      description: "Responsive designs that look stunning on every device, optimized for performance."
+      title: t?.customWebsitesExtended?.capabilities?.mobileFirst?.title,
+      description: t?.customWebsitesExtended?.capabilities?.mobileFirst?.description
     },
     {
       icon: BarChart3,
-      title: "Analytics & Tracking",
-      description: "Built-in analytics to track performance and make data-driven decisions."
+      title: t?.customWebsitesExtended?.capabilities?.analytics?.title,
+      description: t?.customWebsitesExtended?.capabilities?.analytics?.description
     }
   ]
 
-  const projectTypes = [
-    "Corporate Websites",
-    "SaaS Platforms",
-    "Marketplace Solutions",
-    "Portfolio Sites",
-    "Web Applications",
-    "Custom Portals"
-  ]
+  const projectTypes = t?.customWebsitesExtended?.projectTypes || []
 
   const process = [
     {
-      step: "Discovery",
-      description: "We dive deep into your business, goals, and vision"
+      step: t?.customWebsitesExtended?.process?.discovery?.step,
+      description: t?.customWebsitesExtended?.process?.discovery?.description
     },
     {
-      step: "Design",
-      description: "Create stunning mockups and prototypes for your approval"
+      step: t?.customWebsitesExtended?.process?.design?.step,
+      description: t?.customWebsitesExtended?.process?.design?.description
     },
     {
-      step: "Development",
-      description: "Build your site with clean, scalable code"
+      step: t?.customWebsitesExtended?.process?.development?.step,
+      description: t?.customWebsitesExtended?.process?.development?.description
     },
     {
-      step: "Launch",
-      description: "Deploy, optimize, and celebrate your new digital presence"
+      step: t?.customWebsitesExtended?.process?.launch?.step,
+      description: t?.customWebsitesExtended?.process?.launch?.description
     }
   ]
 
@@ -107,18 +103,17 @@ export default function CustomWebsitesPage() {
             className="text-center max-w-4xl mx-auto"
           >
             <Badge className="mb-4 bg-indigo-500/10 text-indigo-700 border-indigo-500/20">
-              CUSTOM WEB DEVELOPMENT
+              {t?.customWebsitesExtended?.badge}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
-              Your Vision. <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-                Pixel Perfect.
+              {t?.customWebsitesExtended?.mainTitle?.split('. ')[0]}. <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+                {t?.customWebsitesExtended?.mainTitle?.split('. ')[1]}.
               </span>
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-              When templates won't cut it, we build digital masterpieces from scratch. 
-              Custom websites that tell your story and drive real results.
+              {t?.customWebsitesExtended?.mainDescription}
             </p>
           </motion.div>
         </div>
@@ -133,10 +128,10 @@ export default function CustomWebsitesPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              Beyond <span className="text-indigo-500">Templates</span>
+              {t?.customWebsitesExtended?.capabilitiesTitle?.split(' ')[0]} <span className="text-indigo-500">{t?.customWebsitesExtended?.capabilitiesTitle?.split(' ')[1]}</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Every line of code written specifically for you. Every pixel designed with purpose.
+              {t?.customWebsitesExtended?.capabilitiesDescription}
             </p>
           </motion.div>
 
@@ -178,12 +173,11 @@ export default function CustomWebsitesPage() {
               whileInView={{ opacity: 1, x: 0 }}
             >
               <h2 className="text-4xl md:text-5xl font-black mb-6">
-                We Build <span className="text-indigo-500">Everything</span>
+                {t?.customWebsitesExtended?.projectTypesTitle?.split(' ')[0]} {t?.customWebsitesExtended?.projectTypesTitle?.split(' ')[1]} <span className="text-indigo-500">{t?.customWebsitesExtended?.projectTypesTitle?.split(' ')[2]}</span>
               </h2>
               
               <p className="text-xl text-muted-foreground mb-8">
-                From simple portfolio sites to complex web applications, we have the expertise 
-                to bring your vision to life.
+                {t?.customWebsitesExtended?.projectTypesDescription}
               </p>
 
               <div className="grid grid-cols-2 gap-4">
@@ -209,7 +203,7 @@ export default function CustomWebsitesPage() {
               <Card className="p-8 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 border-indigo-500/20">
                 <div className="text-center mb-6">
                   <Layers className="h-16 w-16 text-indigo-500 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold mb-2">Our Process</h3>
+                  <h3 className="text-2xl font-bold mb-2">{t?.customWebsitesExtended?.processTitle}</h3>
                 </div>
 
                 <div className="space-y-4">
@@ -243,92 +237,92 @@ export default function CustomWebsitesPage() {
               <div className="text-center mb-8">
                 <Sparkles className="h-12 w-12 text-indigo-500 mx-auto mb-4" />
                 <h2 className="text-3xl font-black mb-2">
-                  Let's Build Something <span className="text-indigo-500">Amazing</span>
+                  {t?.customWebsitesExtended?.formTitle?.split(' ')[0]} {t?.customWebsitesExtended?.formTitle?.split(' ')[1]} {t?.customWebsitesExtended?.formTitle?.split(' ')[2]} <span className="text-indigo-500">{t?.customWebsitesExtended?.formTitle?.split(' ')[3]}</span>
                 </h2>
                 <p className="text-muted-foreground">
-                  Tell us about your project and we'll get back to you with a custom proposal.
+                  {t?.customWebsitesExtended?.formDescription}
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Your Name *</Label>
+                    <Label htmlFor="name">{t?.customWebsitesExtended?.formLabels?.name}</Label>
                     <Input
                       id="name"
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      placeholder="John Doe"
+                      placeholder={t?.customWebsitesExtended?.formLabels?.placeholders?.name}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address *</Label>
+                    <Label htmlFor="email">{t?.customWebsitesExtended?.formLabels?.email}</Label>
                     <Input
                       id="email"
                       type="email"
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      placeholder="john@company.com"
+                      placeholder={t?.customWebsitesExtended?.formLabels?.placeholders?.email}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="company">Company Name</Label>
+                  <Label htmlFor="company">{t?.customWebsitesExtended?.formLabels?.company}</Label>
                   <Input
                     id="company"
                     value={formData.company}
                     onChange={(e) => setFormData({...formData, company: e.target.value})}
-                    placeholder="Acme Corp"
+                    placeholder={t?.customWebsitesExtended?.formLabels?.placeholders?.company}
                   />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="budget">Estimated Budget</Label>
+                    <Label htmlFor="budget">{t?.customWebsitesExtended?.formLabels?.budget}</Label>
                     <select
                       id="budget"
                       className="w-full h-10 px-3 rounded-md border border-input bg-background"
                       value={formData.budget}
                       onChange={(e) => setFormData({...formData, budget: e.target.value})}
                     >
-                      <option value="">Select budget range</option>
-                      <option value="5-10k">$5,000 - $10,000</option>
-                      <option value="10-25k">$10,000 - $25,000</option>
-                      <option value="25-50k">$25,000 - $50,000</option>
-                      <option value="50k+">$50,000+</option>
+                      <option value="">{t?.customWebsitesExtended?.formLabels?.budgetPlaceholder}</option>
+                      <option value="5-10k">{t?.customWebsitesExtended?.formLabels?.budgetOptions?.range1}</option>
+                      <option value="10-25k">{t?.customWebsitesExtended?.formLabels?.budgetOptions?.range2}</option>
+                      <option value="25-50k">{t?.customWebsitesExtended?.formLabels?.budgetOptions?.range3}</option>
+                      <option value="50k+">{t?.customWebsitesExtended?.formLabels?.budgetOptions?.range4}</option>
                     </select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="timeline">Timeline</Label>
+                    <Label htmlFor="timeline">{t?.customWebsitesExtended?.formLabels?.timeline}</Label>
                     <select
                       id="timeline"
                       className="w-full h-10 px-3 rounded-md border border-input bg-background"
                       value={formData.timeline}
                       onChange={(e) => setFormData({...formData, timeline: e.target.value})}
                     >
-                      <option value="">Select timeline</option>
-                      <option value="asap">ASAP</option>
-                      <option value="1-month">Within 1 month</option>
-                      <option value="2-3-months">2-3 months</option>
-                      <option value="3-6-months">3-6 months</option>
+                      <option value="">{t?.customWebsitesExtended?.formLabels?.timelinePlaceholder}</option>
+                      <option value="asap">{t?.customWebsitesExtended?.formLabels?.timelineOptions?.asap}</option>
+                      <option value="1-month">{t?.customWebsitesExtended?.formLabels?.timelineOptions?.month1}</option>
+                      <option value="2-3-months">{t?.customWebsitesExtended?.formLabels?.timelineOptions?.months2to3}</option>
+                      <option value="3-6-months">{t?.customWebsitesExtended?.formLabels?.timelineOptions?.months3to6}</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Project Description *</Label>
+                  <Label htmlFor="description">{t?.customWebsitesExtended?.formLabels?.description}</Label>
                   <Textarea
                     id="description"
                     required
                     rows={4}
                     value={formData.description}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
-                    placeholder="Tell us about your project, goals, and any specific features you need..."
+                    placeholder={t?.customWebsitesExtended?.formLabels?.placeholders?.description}
                   />
                 </div>
 
@@ -337,12 +331,12 @@ export default function CustomWebsitesPage() {
                   size="lg" 
                   className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90"
                 >
-                  Get Your Custom Quote
+                  {t?.customWebsitesExtended?.formButton}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
-                  We'll review your project and send you a detailed proposal within 24 hours.
+                  {t?.customWebsitesExtended?.formNote}
                 </p>
               </form>
             </Card>
@@ -359,13 +353,12 @@ export default function CustomWebsitesPage() {
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-4xl md:text-5xl font-black mb-6">
-              No Cookie-Cutter. <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-                Just Custom.
+              {t?.customWebsitesExtended?.finalCtaTitle?.split('. ')[0]}. <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+                {t?.customWebsitesExtended?.finalCtaTitle?.split('. ')[1]}.
               </span>
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Your business is unique. Your website should be too. 
-              Let's create something that stands out from the crowd.
+              {t?.customWebsitesExtended?.finalCtaDescription}
             </p>
             <div className="flex items-center justify-center gap-4">
               <Globe className="h-8 w-8 text-indigo-500 animate-pulse" />

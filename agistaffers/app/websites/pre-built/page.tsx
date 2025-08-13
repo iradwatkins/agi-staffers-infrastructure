@@ -1,6 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
+// Remove force-dynamic as we want static generation to work
 
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -22,20 +22,17 @@ import {
   Clock
 } from 'lucide-react'
 import { useLanguage } from '@/hooks/useLanguage'
-import ClientOnly from '@/components/ClientOnly'
 
 export default function PreBuiltStoresPage() {
   const { language, t } = useLanguage()
   
-  if (!t || !t.prebuiltStoresExtended || !t.prebuiltStoresExtended.hero || !t.prebuiltStoresExtended.features) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>
-  }
+  // Remove dependency on complex translation structure for now
   const plans = [
     {
-      name: "Starter Store",
+      name: t?.prebuiltStoresExtended?.plans?.starter?.name || "Starter Store",
       price: "$497",
-      setup: "One-time setup",
-      description: "Perfect for launching your first online business",
+      setup: t?.prebuiltStoresExtended?.plans?.starter?.setup || "One-time setup",
+      description: t?.prebuiltStoresExtended?.plans?.starter?.description || "Perfect for launching your first online business",
       features: [
         "Professional e-commerce template",
         "Up to 100 products",
@@ -50,10 +47,10 @@ export default function PreBuiltStoresPage() {
       gradient: "from-blue-500 to-cyan-500"
     },
     {
-      name: "Growth Store",
+      name: t?.prebuiltStoresExtended?.plans?.growth?.name || "Growth Store",
       price: "$997",
-      setup: "One-time setup",
-      description: "For businesses ready to scale and grow",
+      setup: t?.prebuiltStoresExtended?.plans?.growth?.setup || "One-time setup",
+      description: t?.prebuiltStoresExtended?.plans?.growth?.description || "For businesses ready to scale and grow",
       features: [
         "Premium e-commerce template",
         "Unlimited products",
@@ -71,10 +68,10 @@ export default function PreBuiltStoresPage() {
       gradient: "from-purple-500 to-pink-500"
     },
     {
-      name: "Enterprise Store",
+      name: t?.prebuiltStoresExtended?.plans?.enterprise?.name || "Enterprise Store",
       price: "$2,497",
-      setup: "One-time setup + customization",
-      description: "Full-featured store with premium support",
+      setup: t?.prebuiltStoresExtended?.plans?.enterprise?.setup || "One-time setup + customization",
+      description: t?.prebuiltStoresExtended?.plans?.enterprise?.description || "Full-featured store with premium support",
       features: [
         "Custom-designed store",
         "Unlimited everything",
@@ -94,41 +91,58 @@ export default function PreBuiltStoresPage() {
     }
   ]
 
-  const features = t.prebuiltStoresExtended?.features ? [
+  const features = [
     {
       icon: Rocket,
-      title: t.prebuiltStoresExtended.features.launch?.title || '',
-      description: t.prebuiltStoresExtended.features.launch?.description || ''
+      title: t?.prebuiltStoresExtended?.features?.launch48?.title || "Launch Fast",
+      description: t?.prebuiltStoresExtended?.features?.launch48?.description || "Get online in 24-48 hours with a fully functional store"
     },
     {
       icon: Shield,
-      title: t.prebuiltStoresExtended.features.secure?.title || '',
-      description: t.prebuiltStoresExtended.features.secure?.description || ''
+      title: t?.prebuiltStoresExtended?.features?.secureReliable?.title || "Secure & Reliable",
+      description: t?.prebuiltStoresExtended?.features?.secureReliable?.description || "SSL certificates, secure payments, and 99.9% uptime guaranteed"
     },
     {
       icon: TrendingUp,
-      title: t.prebuiltStoresExtended.features.convert?.title || '',
-      description: t.prebuiltStoresExtended.features.convert?.description || ''
+      title: t?.prebuiltStoresExtended?.features?.builtConvert?.title || "Conversion Optimized",
+      description: t?.prebuiltStoresExtended?.features?.builtConvert?.description || "Designed with proven sales psychology and user experience principles"
     },
     {
       icon: Clock,
-      title: t.prebuiltStoresExtended.features.support?.title || '',
-      description: t.prebuiltStoresExtended.features.support?.description || ''
+      title: t?.prebuiltStoresExtended?.features?.support247?.title || "24/7 Support",
+      description: t?.prebuiltStoresExtended?.features?.support247?.description || "Round-the-clock technical support and business guidance"
     }
-  ] : []
+  ]
 
-  const templates = t.prebuiltStoresExtended?.templates ? [
-    { name: t.prebuiltStoresExtended.templates.fashion?.name || '', products: t.prebuiltStoresExtended.templates.fashion?.products || '' },
-    { name: t.prebuiltStoresExtended.templates.health?.name || '', products: t.prebuiltStoresExtended.templates.health?.products || '' },
-    { name: t.prebuiltStoresExtended.templates.electronics?.name || '', products: t.prebuiltStoresExtended.templates.electronics?.products || '' },
-    { name: t.prebuiltStoresExtended.templates.home?.name || '', products: t.prebuiltStoresExtended.templates.home?.products || '' },
-    { name: t.prebuiltStoresExtended.templates.food?.name || '', products: t.prebuiltStoresExtended.templates.food?.products || '' },
-    { name: t.prebuiltStoresExtended.templates.digital?.name || '', products: t.prebuiltStoresExtended.templates.digital?.products || '' }
-  ] : []
+  const templates = [
+    { 
+      name: t?.prebuiltStoresExtended?.templates?.fashion?.name || "Fashion & Apparel", 
+      products: t?.prebuiltStoresExtended?.templates?.fashion?.products || "Clothing, accessories, jewelry, footwear" 
+    },
+    { 
+      name: t?.prebuiltStoresExtended?.templates?.healthBeauty?.name || "Health & Wellness", 
+      products: t?.prebuiltStoresExtended?.templates?.healthBeauty?.products || "Supplements, fitness gear, beauty products" 
+    },
+    { 
+      name: t?.prebuiltStoresExtended?.templates?.electronics?.name || "Electronics", 
+      products: t?.prebuiltStoresExtended?.templates?.electronics?.products || "Gadgets, accessories, smart home devices" 
+    },
+    { 
+      name: t?.prebuiltStoresExtended?.templates?.homeLiving?.name || "Home & Garden", 
+      products: t?.prebuiltStoresExtended?.templates?.homeLiving?.products || "Furniture, decor, tools, outdoor equipment" 
+    },
+    { 
+      name: t?.prebuiltStoresExtended?.templates?.foodBeverage?.name || "Food & Beverage", 
+      products: t?.prebuiltStoresExtended?.templates?.foodBeverage?.products || "Gourmet foods, drinks, kitchen accessories" 
+    },
+    { 
+      name: t?.prebuiltStoresExtended?.templates?.digitalProducts?.name || "Digital Products", 
+      products: t?.prebuiltStoresExtended?.templates?.digitalProducts?.products || "Courses, software, templates, subscriptions" 
+    }
+  ]
 
   return (
-    <ClientOnly fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
-      <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4">
         <div className="absolute inset-0">
@@ -144,24 +158,24 @@ export default function PreBuiltStoresPage() {
             className="text-center max-w-4xl mx-auto"
           >
             <Badge className="mb-4 bg-indigo-500/10 text-indigo-700 border-indigo-500/20">
-              {t.prebuiltStoresExtended?.hero?.badge || ''}
+              {t?.prebuiltStoresExtended?.badge || "PRE-BUILT E-COMMERCE STORES"}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
-              {t.prebuiltStoresExtended?.hero?.title || ''}
+              {t?.prebuiltStoresExtended?.mainTitle || "Your Business Needs a Home. And We Don't Build Digital Sheds."}
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-              {t.prebuiltStoresExtended?.hero?.description || ''}
+              {t?.prebuiltStoresExtended?.mainDescription || "Forget generic templates. We build premium e-commerce stores that sell from day one. Complete with inventory, payments, and everything you need to start making money immediately."}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90">
-                {t.prebuiltStoresExtended.hero.pricingButton}
+                {t?.prebuiltStoresExtended?.seePricing || "View Pricing"}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button size="lg" variant="outline">
-                {t.prebuiltStoresExtended.hero.demoButton}
+                {t?.prebuiltStoresExtended?.viewDemo || "See Store Demos"}
                 <ShoppingBag className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -204,10 +218,10 @@ export default function PreBuiltStoresPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              {t.prebuiltStoresExtended.pricing.title}
+              {t?.prebuiltStoresExtended?.pricingTitle || "Simple, Transparent Pricing"}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t.prebuiltStoresExtended.pricing.description}
+              {t?.prebuiltStoresExtended?.pricingSubtitle || "Choose your perfect store package. No hidden fees, no monthly subscriptions. Just pay once and start selling."}
             </p>
           </motion.div>
 
@@ -224,7 +238,7 @@ export default function PreBuiltStoresPage() {
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
                     <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 px-4 py-1">
-                      MOST POPULAR
+                      {t?.prebuiltStoresExtended?.mostPopular || "MOST POPULAR"}
                     </Badge>
                   </div>
                 )}
@@ -260,7 +274,7 @@ export default function PreBuiltStoresPage() {
                       window.location.href = `/contact?plan=${encodeURIComponent(plan.name)}&price=${encodeURIComponent(plan.price)}`
                     }}
                   >
-                    Buy Now
+                    {t?.prebuiltStoresExtended?.buyNow || "Buy Now"}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Card>
@@ -270,20 +284,20 @@ export default function PreBuiltStoresPage() {
 
           <div className="mt-12 text-center">
             <p className="text-muted-foreground mb-4">
-              All plans include free domain for 1 year • SSL certificate • 99.9% uptime guarantee
+              {t?.prebuiltStoresExtended?.guaranteeText || "All plans include free domain for 1 year • SSL certificate • 99.9% uptime guarantee"}
             </p>
             <div className="flex items-center justify-center gap-8">
               <div className="flex items-center gap-2">
                 <CreditCard className="h-5 w-5 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Secure payment</span>
+                <span className="text-sm text-muted-foreground">{t?.prebuiltStoresExtended?.securePayment || "Secure payment"}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">30-day money back</span>
+                <span className="text-sm text-muted-foreground">{t?.prebuiltStoresExtended?.moneyBack || "30-day money back"}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Zap className="h-5 w-5 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Instant setup</span>
+                <span className="text-sm text-muted-foreground">{t?.prebuiltStoresExtended?.instantSetup || "Instant setup"}</span>
               </div>
             </div>
           </div>
@@ -299,10 +313,10 @@ export default function PreBuiltStoresPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              {t.prebuiltStoresExtended.templatesSection.title}
+              {t?.prebuiltStoresExtended?.templatesTitle || "Store Categories Available"}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t.prebuiltStoresExtended.templatesSection.description}
+              {t?.prebuiltStoresExtended?.templatesSubtitle || "We've got proven templates for every industry. Each one optimized for sales and pre-loaded with winning products."}
             </p>
           </motion.div>
 
@@ -337,19 +351,21 @@ export default function PreBuiltStoresPage() {
           >
             <Sparkles className="h-12 w-12 text-indigo-500 mx-auto mb-6" />
             <h2 className="text-4xl md:text-5xl font-black mb-6">
-              {t.prebuiltStoresExtended.cta.title}
+              {t?.prebuiltStoresExtended?.ctaTitle || "Ready to Start Selling Today?"}
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {t.prebuiltStoresExtended.cta.description}
+              {t?.prebuiltStoresExtended?.ctaDescription || "Skip months of development. Get a professional store that's ready to take orders and start generating revenue immediately."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 text-lg px-8 py-6">
-                {t.prebuiltStoresExtended.cta.startButton}
-                <ArrowRight className="ml-2 h-5 w-5" />
+              <Button size="lg" className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 text-lg px-8 py-6" asChild>
+                <Link href="/leads?service=pre-built-store">
+                  {t?.prebuiltStoresExtended?.startBuilding || "Get My Store Now"}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
               <Button size="lg" variant="outline" className="text-lg px-8 py-6" asChild>
                 <Link href="/contact">
-                  {t.prebuiltStoresExtended.cta.talkButton}
+                  {t?.prebuiltStoresExtended?.questionsLetstalk || "Talk to Sales"}
                   <Globe className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -357,7 +373,6 @@ export default function PreBuiltStoresPage() {
           </motion.div>
         </div>
       </section>
-      </div>
-    </ClientOnly>
+    </div>
   )
 }

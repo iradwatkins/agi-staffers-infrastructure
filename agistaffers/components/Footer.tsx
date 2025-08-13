@@ -22,7 +22,7 @@ export default function Footer() {
     return (
       <footer className="py-8 px-4 border-t bg-secondary/20">
         <div className="container mx-auto text-center">
-          <p className="text-muted-foreground">AGI Staffers - Loading...</p>
+          <p className="text-muted-foreground">AGI STAFFERS - Loading...</p>
         </div>
       </footer>
     )
