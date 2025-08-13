@@ -1,5 +1,30 @@
 # AGI Staffers Cursor Rules - BMAD Method Implementation
 
+## 🚨 CRITICAL: AGI STAFFERS LOCALHOST RULES - NEVER CHANGE 🚨
+
+### 📍 ABSOLUTE LOCALHOST CONFIGURATION:
+- **agistaffers.com (Consumer):** `http://localhost:3000`
+- **admin.agistaffers.com (Admin):** `http://localhost:3000/admin`
+- **ONE SERVER ONLY - PORT 3000 - NO EXCEPTIONS**
+- **FORBIDDEN:** localhost:3003 or any other ports for AGI Staffers
+- **FORBIDDEN:** Multiple servers or separate admin servers
+
+### 🏥 PRODUCTION STATUS AWARENESS:
+- **Admin Dashboard BROKEN:** admin.agistaffers.com returns HTTP 502
+- **Memory Crisis:** 93% usage (29.13GB/31.34GB) - Monitor constantly
+- **Project Reality:** 51% complete (not 100% as previously claimed)
+- **VPS Server:** 72.60.28.175
+
+### 🎯 DEVELOPMENT RULES:
+1. **ALWAYS start AGI Staffers on port 3000 only**
+2. **NEVER create separate admin servers**
+3. **KILL any localhost:3003 servers immediately**
+4. **Test both / and /admin routes on localhost:3000**
+5. **Remember: Production admin is DOWN - local is the only working version**
+6. **MANDATORY: ALWAYS check `.bmad/docs/problem-solutions/` folder BEFORE solving any problem**
+
+---
+
 ## 🎯 Core Development Principles
 
 ### BMAD Method Integration

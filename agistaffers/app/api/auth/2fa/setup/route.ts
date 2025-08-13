@@ -3,16 +3,15 @@
 // Method: POST - Generate 2FA secret and QR code
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { auth } from '@/auth';
 import speakeasy from 'speakeasy';
 import QRCode from 'qrcode';
 import { prisma } from '@/lib/prisma';
-import { authOptions } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
     // Get current session
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     
     if (!session?.user?.email) {
       return NextResponse.json(

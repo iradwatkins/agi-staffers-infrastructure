@@ -7,6 +7,7 @@ import Google from 'next-auth/providers/google'
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
+  trustHost: true, // Fix UntrustedHost error
   adapter: PrismaAdapter(prisma),
   providers: [
     Google({

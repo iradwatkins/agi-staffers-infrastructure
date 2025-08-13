@@ -141,8 +141,8 @@ export default function MainNav() {
               "shadow-lg shadow-primary/25"
             )}
           >
-            <Link href="/login">
-              Login Now <ArrowRight className="ml-2 h-4 w-4" />
+            <Link href="/(auth)/login">
+              Customer Login <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
 
@@ -244,8 +244,8 @@ export default function MainNav() {
               </div>
 
               <Button asChild className="w-full bg-gradient-to-r from-primary to-purple-500">
-                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  Login Now <ArrowRight className="ml-2 h-4 w-4" />
+                <Link href="/(auth)/login" onClick={() => setIsMobileMenuOpen(false)}>
+                  Customer Login <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>

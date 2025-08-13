@@ -3,15 +3,14 @@
 // Methods: POST - Verify TOTP token, DELETE - Disable 2FA
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { auth } from '@/auth';
 import speakeasy from 'speakeasy';
 import { prisma } from '@/lib/prisma';
-import { authOptions } from '@/lib/auth';
 
 // Verify TOTP token and enable 2FA
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     
     if (!session?.user?.email) {
       return NextResponse.json(
@@ -98,7 +97,7 @@ export async function POST(request: NextRequest) {
 // Disable 2FA
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     
     if (!session?.user?.email) {
       return NextResponse.json(

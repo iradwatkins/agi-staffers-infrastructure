@@ -1,433 +1,285 @@
-# 🚨 MANDATORY BMAD METHOD WITH MCP/CURSOR EXTENSIONS - NO EXCEPTIONS 🚨
+# CLAUDE.MD - PROJECT INSTRUCTIONS
 
-## ⚡ CRITICAL: ACTIVATE BMAD WITH FULL TOOLING
+**Status:** Ready for new commands
+**Last Updated:** August 12, 2025
+
+---
+
+# 🚨 MANDATORY ACTIVATION SEQUENCE - NO EXCEPTIONS 🚨
+
+## ⚡ RULE 1: BMAD ORCHESTRATOR ACTIVATION
+**At start of every Claude Code session, you MUST:**
+1. **IMMEDIATELY activate:** `/BMad:agents:bmad-orchestrator`
+2. **Execute command:** `/bmad-orchestrator` (project)
+3. **Become the BMAD method completely**
+4. **Switch between agents as needed to complete projects**
+
+## ⚡ RULE 2: MANDATORY MCP USAGE
+**You MUST use ANY MCP server that will help complete the task:**
+- Use ALL available MCP servers when they can assist
+- NO manual work when MCP tools exist
+- MAXIMIZE tool automation
+
+## ⚡ RULE 3: MANDATORY EXTENSION USAGE  
+**You MUST use ANY Cursor extension that will help complete the task:**
+- Use ALL available Cursor extensions when they can assist
+- NO manual work when extension tools exist
+- MAXIMIZE extension automation
+
+## ⚡ RULE 4: AGI STAFFERS LOCALHOST CONFIGURATION - NEVER CHANGE
+**ABSOLUTE localhost rules for AGI Staffers:**
+- **agistaffers.com (Consumer):** `http://localhost:3000` ✅
+- **admin.agistaffers.com (Admin):** `http://localhost:3000/admin` ✅  
+- **ONE SERVER ONLY - PORT 3000 - NO OTHER PORTS ALLOWED**
+
+**PRODUCTION MAPPING - CRITICAL:**
+- **agistaffers.com** is the production version of `http://localhost:3000`
+- **ANY production updates should come from** `http://localhost:3000`
+- **admin.agistaffers.com** is the production version of `http://localhost:3000/admin`  
+- **ANY production updates should come from** `http://localhost:3000/admin`
+
+**LOGIN ROUTES:**
+- **Admin login:** `admin.agistaffers.com/login` (localhost: `http://localhost:3000/admin/login`)
+- **Consumer login:** `agistaffers.com/login` (localhost: `http://localhost:3000/login`)
+
+## ⚡ RULE 5: BMAD METHOD WORKFLOW & DOCUMENTATION
+**MANDATORY workflow on activation:**
+1. **ALWAYS follow the BMAD method completely**
+2. **ALWAYS document work according to BMAD docs format**
+3. **ON FIRST START:** Activate and become `/Users/irawatkins/Documents/Cursor Setup/.bmad/agents/bmad-orchestrator.md`
+4. **CHECK status:** Review what was last completed, what's pending
+5. **MATCH UP:** Compare status with current user request to continue properly
+
+**BMAD Documentation Requirements:**
+- Follow BMAD documentation standards exactly
+- Update progress according to BMAD format
+- Maintain continuity with previous work
+
+## ⚡ RULE 6: MEMORY MANAGEMENT - CRITICAL
+**Context Window:** 200,000 tokens (~150,000 words/300-400 pages)
+
+**MANDATORY ACTION at 120,000 tokens:**
+1. **COMPLETE** the current task OR current thought process (whatever I'm working on/thinking about)
+2. **DOCUMENT** everything completely - all progress, decisions, next steps
+3. **PROVIDE** detailed handoff prompt for new Claude Code session with exact continuation point
+
+**Purpose:** Keep Claude smart and nimble, prevent memory overflow, ensure continuity
+
+**Monitoring:** Always track token usage and proactively manage before hitting limits
+
+## ⚡ RULE 7: BMAD DOCUMENTATION LOCATIONS
+**All BMAD method documentation goes in structured directories:**
+
+**Primary Documentation:**
+- **`.bmad/docs/`** - Main project documentation, guides, architecture
+- **`.bmad/stories/`** - Story-based work tracking with phases:
+  - `.bmad/stories/1-active/` - Currently active stories
+  - `.bmad/stories/1-todo/` - Pending stories  
+  - `.bmad/stories/3-backlog/` - Backlog items
+  - `.bmad/stories/3-review/` - Stories under review
+
+**Agent & Process Documentation:**
+- **`.bmad/agents/`** - Agent definitions and workflows
+- **`.bmad/mcp-config/`** - MCP server configurations
+
+**Documentation Standards:** 
+- Follow BMAD format for all documentation updates
+- **CRITICAL:** Make sure you're documenting or updating the CORRECT BMAD documentation folders
+- **MANDATORY:** Include timestamp (time, date stamp) when saving documents in **Chicago time (CST/CDT)**
+- **PURPOSE:** Easy tracking of where you left off and documentation history
+- **TIMEZONE:** Always use Chicago, Illinois time for consistency in communication
+
+## ⚡ RULE 8: NO SYSTEM REBUILDS - UPGRADES ONLY
+**ABSOLUTE RULE - NO EXCEPTIONS:**
+- **DO NOT rebuild our current system**
+- **ONLY make upgrades to the existing codebase**
+- **ENHANCE and IMPROVE what already exists**
+- **FORBIDDEN:** Starting from scratch, complete rewrites, architectural rebuilds
+
+**Allowed Actions:**
+- ✅ Add new features to existing code
+- ✅ Improve existing functionality  
+- ✅ Fix bugs and issues
+- ✅ Optimize performance
+- ✅ Update dependencies
+- ✅ Enhance UI/UX
+
+**Forbidden Actions:**
+- ❌ Rebuild entire system
+- ❌ Replace existing architecture
+- ❌ Start new projects from scratch
+- ❌ Delete and recreate core systems
+
+## ⚡ RULE 9: NO BACKUPS UNTIL INFRASTRUCTURE 100% COMPLETE
+**RESOURCE MANAGEMENT PRIORITY:**
+- **NO backup creation until system is fully operational**
+- **Backups consume needed space** - defer until infrastructure is complete
+- **Focus on getting core infrastructure to 100% first**
+- **Backup implementation is END-PHASE work only**
+
+**Current Priority Order:**
+1. **FIRST:** Complete infrastructure to 100% operational
+2. **SECOND:** Optimize and stabilize all systems  
+3. **LAST:** Implement backup systems
+
+**Reasoning:**
+- Space conservation for active development
+- Resource allocation to critical infrastructure
+- Avoid premature optimization
+- Complete core functionality before auxiliary systems
+
+**When to implement backups:** Only after infrastructure reaches 100% operational status
+
+## ⚡ RULE 10: SMART TOOL USAGE - MCP FIRST, DIRECT WHEN EFFICIENT
+**TOOL USAGE PRIORITY:**
+- **PRIMARY:** Use MCP tools and Cursor extensions as much as possible
+- **SECONDARY:** Use direct access when it's easier/more efficient
+- **PRINCIPLE:** Choose the most effective method for task completion
+
+**MCP/Extension Priority Examples:**
+- Use `git` MCP for version control operations
+- Use `filesystem` MCP for complex file operations
+- Use `playwright` MCP for testing
+- Use `fetch` MCP for API testing
+
+**Direct Access When More Efficient:**
+- ✅ Direct GitHub commands if simpler than MCP equivalent
+- ✅ Direct Docker commands if more straightforward
+- ✅ Direct bash commands for simple operations
+- ✅ Native tool access when MCP adds unnecessary complexity
+
+**Decision Criteria:**
+1. **Speed of execution** - Choose faster method
+2. **Simplicity** - Avoid over-engineering simple tasks
+3. **Reliability** - Use the most stable approach
+4. **Task appropriateness** - Match tool to task complexity
+
+## ⚡ RULE 11: VAULT PASSWORD MANAGEMENT & TERMINAL ACCESS
+**SECURITY & ACCESS REQUIREMENTS:**
+- **ALL passwords MUST go in VAULT** - That's why the system was created
+- **I have terminal login information and password** - Use when needed
+- **I MUST handle terminal commands** - User should NOT do manual terminal work
+- **TRY 5 TIMES FIRST** - Only escalate to user after 5 failed attempts
+
+**Password Management:**
+- ✅ Store ALL credentials in Vault
+- ✅ Retrieve passwords from Vault when needed
+- ✅ NEVER hardcode passwords in files
+- ✅ Use Vault for all sensitive information
+
+**Terminal Access Protocol:**
+1. **USE available terminal access with provided credentials**
+2. **ATTEMPT terminal operations up to 5 times**
+3. **TROUBLESHOOT and retry different approaches**
+4. **ONLY escalate to user after 5 failed attempts**
+5. **DOCUMENT what was tried for troubleshooting**
+
+**User Expectation:** I handle all terminal operations unless 5 attempts fail
+
+## ⚡ RULE 14: PROBLEM-SOLUTION DOCUMENTATION & TRACKING
+**MANDATORY PROBLEM RESOLUTION PROCESS:**
+- **EVERY problem that occurs MUST be recorded**
+- **Solution MUST be documented in markdown format**
+- **BEFORE solving new problems:** Check existing problem documentation first
+- **PURPOSE:** Make fixing recurring problems quicker and more efficient
+
+**Documentation Format:**
+- **Problem Description:** What happened, when, where
+- **Error Messages:** Exact error text/codes
+- **Solution Steps:** Step-by-step resolution process
+- **Prevention:** How to avoid the problem in future
+- **Chicago Timestamp:** When problem occurred and was solved
+
+**Storage Location:** `.bmad/docs/problem-solutions/`
+
+**Workflow:**
+1. **FIRST:** Search existing problem docs for similar issues
+2. **IF FOUND:** Use documented solution
+3. **IF NEW:** Document problem and solution after resolving
+4. **ALWAYS:** Update docs if solution differs from previous
+
+**Benefit:** Faster problem resolution through knowledge accumulation
+
+## ⚡ RULE 15: AUTOMATED CONTINUOUS DEPLOYMENT WORKFLOW
+**AUTOMATED PRODUCTION DEPLOYMENT:**
+- **When we agree to push to production:** All deployment happens automatically
+- **NO manual steps** required after agreement to deploy
+- **Continuous workflow** from local → production
+- **Single command execution** handles entire deployment process
+
+**Automated Deployment Flow:**
+1. **Agreement:** User confirms "push to production"
+2. **Auto-execute:** Run appropriate deployment script automatically
+3. **Auto-package:** Create deployment archive from localhost:3000
+4. **Auto-transfer:** SCP to VPS (72.60.28.175) automatically  
+5. **Auto-deploy:** Extract, install, restart services automatically
+6. **Auto-verify:** Confirm deployment success automatically
+
+**Target Scripts:** Use existing deployment scripts like `deploy-correct-local-version.sh`
+
+**Deployment Destination:**
+- **VPS:** 72.60.28.175
+- **Live Sites:** agistaffers.com, admin.agistaffers.com
+
+**User Experience:** Single agreement → Complete automated deployment
+
+## ⚡ RULE 16: MANDATORY BLUE-GREEN DEPLOYMENT WORKFLOW
+**ABSOLUTE DEPLOYMENT METHODOLOGY - NO EXCEPTIONS:**
+- **ALL production deployments MUST use blue-green workflow**
+- **NO direct deployments to live production allowed**
+- **BMAD method REQUIRES this workflow for all deployments**
+- **Zero-downtime deployments are MANDATORY**
+
+**THE ASSEMBLY LINE WORKFLOW:**
 ```
-STOP! You MUST:
-1. Run /bmad command NOW
-2. Adopt BMAD persona COMPLETELY  
-3. ALL work MUST use MCP servers and Cursor extensions
-4. MAXIMIZE tool usage - NO manual work when tools exist
-5. NO shortcuts, NO exceptions
+LOCAL (Kitchen/Studio) → Continuously developing new code
+           ↓
+    Deploy to STANDBY (Blue or Green)
+           ↓
+    Test on STANDBY environment
+           ↓
+    Switch STANDBY → LIVE
+           ↓
+    Old LIVE becomes next STANDBY
 ```
 
----
+**DEPLOYMENT CYCLE - MANDATORY PROCESS:**
+1. **IDENTIFY current LIVE environment** (Blue or Green)
+2. **DEPLOY new code to STANDBY environment**
+3. **TEST thoroughly on STANDBY**
+4. **SWITCH traffic from LIVE to STANDBY**
+5. **VERIFY new LIVE is working correctly**
+6. **Old LIVE becomes next deployment target**
 
-# 🚨 CRITICAL: WEBSITE REBUILD RESTRICTION - AGI STAFFERS 🚨
+**KEY PRINCIPLES:**
+- **LOCAL:** Continuous development (never stops)
+- **STANDBY:** Receives latest code from LOCAL
+- **LIVE:** Currently serving production traffic
+- **Old code is REPLACED, not preserved** - each deployment overwrites
 
-## ⚠️ ABSOLUTE RULE - NO EXCEPTIONS ⚠️
-**I CANNOT and WILL NOT rebuild the AGI Staffers website from scratch.**
+**MANDATORY BEHAVIORS:**
+- ✅ ALWAYS deploy to the STANDBY environment
+- ✅ ALWAYS test before switching
+- ✅ ALWAYS maintain two production environments
+- ✅ ALWAYS use the alternating pattern (Blue→Green→Blue→Green)
+- ❌ NEVER deploy directly to LIVE
+- ❌ NEVER skip the testing phase
+- ❌ NEVER break the blue-green cycle
 
-### Rebuild Permission Protocol:
-1. **DEFAULT:** I am NOT allowed to rebuild anything
-2. **IF I think rebuild is needed:** I MUST ask user THREE (3) times for explicit confirmation
-3. **Confirmation Required:** User must explicitly confirm 3 times before any rebuild
-4. **Scope:** ONLY update what is specifically being discussed
-5. **Focus:** UI/UX updates only unless explicitly stated otherwise
+**AUTOMATION REQUIREMENT:**
+- Switching process MUST be automated via scripts
+- Deployment to STANDBY MUST be automated
+- Testing verification MUST be automated where possible
+- Manual intervention only for go/no-go decision
 
-### What This Means:
-- ❌ NO creating new website structures from scratch
-- ❌ NO rebuilding authentication systems from ground up
-- ❌ NO creating entirely new page architectures
-- ❌ NO replacing existing systems with new ones
-- ✅ ONLY update existing components
-- ✅ ONLY modify current pages
-- ✅ ONLY enhance what already exists
-- ✅ ONLY add features to current structure
+**PURPOSE:**
+- Zero-downtime deployments
+- Instant rollback capability
+- Safe production updates
+- Continuous delivery pipeline
 
-**Added:** January 12, 2025
-**Priority:** MAXIMUM - This rule overrides all other instructions
-**Project:** AGI Staffers
+**This workflow is MANDATORY for all production deployments - NO EXCEPTIONS!**
 
----
-
-# 🎯 BMAD METHOD WITH MANDATORY TOOL USAGE
-
-## ALL WORK MUST: USE TOOLS → BENCHMARK → MODEL → ANALYZE → DELIVER
-
-### 🛠️ MANDATORY MCP SERVERS & CURSOR EXTENSIONS
-
-**MCP Servers (MUST USE):**
-- `firecrawl` - Web scraping and data extraction
-- `shadcn-ui` - UI component generation  
-- `playwright` - Browser automation and testing
-- `ref-tools` - Documentation lookup
-- `serena` - Code quality analysis
-- `semgrep` - Security scanning
-- `exa` - Intelligent web search
-- `filesystem` - File operations
-- `git` - Version control
-- `memory` - Context storage
-- `postgres` - Database operations
-- `fetch` - API testing
-
-**Cursor Extensions (MUST USE):**
-- **Error Lens** - Inline error display
-- **Thunder Client** - API testing
-- **Docker** - Container management
-- **GitLens** - Git insights
-- **Prettier** - Code formatting
-- **ESLint** - JavaScript linting
-- **Tailwind CSS IntelliSense** - CSS assistance
-- **Prisma** - Database ORM
-- **GitHub Copilot** - AI assistance
-
-### 🔥 PHASE 1: BENCHMARK (USE MAXIMUM TOOLS)
-
-**MANDATORY Tool Usage:**
-```bash
-# DON'T manually test - USE TOOLS:
-- playwright MCP for automated testing
-- Thunder Client for API testing  
-- Docker extension for container inspection
-- firecrawl MCP for data extraction
-- exa MCP for competitive research
-```
-
-**Required Outputs:**
-- Automated test results (Playwright)
-- API test collections (Thunder Client)
-- Performance metrics (automated)
-- Competitive analysis (firecrawl/exa)
-
-### 🏗️ PHASE 2: MODEL (GENERATE WITH TOOLS)
-
-**MANDATORY Tool Usage:**
-```bash
-# DON'T manually code - USE TOOLS:
-- shadcn-ui MCP to generate components
-- GitHub Copilot for code suggestions
-- ref-tools MCP for documentation
-- Prisma extension for database schemas
-- Tailwind IntelliSense for styling
-```
-
-**Required Outputs:**
-- Generated components (shadcn-ui)
-- Auto-completed code (Copilot)
-- Database schemas (Prisma)
-- Styled components (Tailwind)
-
-### 🔍 PHASE 3: ANALYZE (AUTOMATE ANALYSIS)
-
-**MANDATORY Tool Usage:**
-```bash
-# DON'T manually review - USE TOOLS:
-- serena MCP for code quality
-- semgrep MCP for security scans
-- Error Lens for instant feedback
-- ESLint for JavaScript issues
-- Prettier for formatting
-- GitLens for history analysis
-```
-
-**Required Outputs:**
-- Automated quality reports (serena)
-- Security scan results (semgrep)
-- Linting reports (ESLint)
-- Format compliance (Prettier)
-
-### 🚀 PHASE 4: DELIVER (DEPLOY WITH TOOLS)
-
-**MANDATORY Tool Usage:**
-```bash
-# DON'T manually deploy - USE TOOLS:
-- git MCP for version control
-- Docker extension for containers
-- filesystem MCP for file operations
-- fetch MCP for API validation
-- postgres MCP for database migrations
-```
-
-**Required Outputs:**
-- Automated deployment (Docker)
-- Version control (git)
-- Database migrations (postgres)
-- API validation (fetch)
+**I understand and WILL perform these functions exactly as specified.**
 
 ---
-
-## 📋 BMAD TOOL USAGE EXAMPLES
-
-### ❌ WRONG: Manual Approach
-```bash
-# Manually checking files
-ls -la
-cat file.txt
-curl https://api.com/test
-```
-
-### ✅ RIGHT: BMAD Tool Approach
-```bash
-# Use MCP servers and extensions:
-- filesystem MCP for file operations
-- fetch MCP for API testing
-- Thunder Client for API collections
-```
-
-### Example: "Create a new component"
-
-**❌ WRONG WAY:**
-- Manually write component code
-- Copy paste from examples
-- Test manually in browser
-
-**✅ BMAD TOOL WAY:**
-
-**BENCHMARK:**
-- Use `firecrawl` MCP to analyze competitor components
-- Use `ref-tools` MCP to get React best practices
-- Use `playwright` MCP to test existing components
-
-**MODEL:**
-- Use `shadcn-ui` MCP to generate component
-- Use GitHub Copilot for custom logic
-- Use Tailwind IntelliSense for styling
-
-**ANALYZE:**
-- Use `serena` MCP for code quality check
-- Use Error Lens for instant feedback
-- Use ESLint for React best practices
-
-**DELIVER:**
-- Use `git` MCP to commit changes
-- Use Docker extension to update container
-- Use `fetch` MCP to test component API
-
----
-
-## 🔐 AGI STAFFERS - BMAD TOOL USAGE STATUS
-
-### Current Tool Usage Metrics:
-
-**MCP Servers Active:**
-- ✅ firecrawl - Web scraping configured
-- ✅ shadcn-ui - Component generation ready
-- ✅ playwright - Testing framework installed
-- ✅ ref-tools - Documentation lookup active
-- ✅ serena - Code analysis available
-- ✅ semgrep - Security scanning ready
-- ✅ filesystem - File operations enabled
-- ✅ git - Version control connected
-- ✅ postgres - Database access configured
-- ✅ fetch - API testing ready
-
-**Cursor Extensions Installed:**
-- ✅ Error Lens - Active
-- ✅ Thunder Client - Configured
-- ✅ Docker - Connected
-- ✅ GitLens - Enabled
-- ✅ Prettier - Auto-formatting
-- ✅ ESLint - Linting active
-- ✅ Tailwind CSS IntelliSense - Working
-- ✅ Prisma - Database ORM ready
-
----
-
-## 🏗️ DISCOVERED COMPONENTS (TOOL-VERIFIED)
-
-### Components Found Using Tools:
-```
-Used filesystem MCP to discover:
-/agistaffers/
-├── components/dashboard/     # Found with filesystem MCP
-│   ├── CustomerManagement.tsx    ✅ Analyzed with serena
-│   ├── SiteManagement.tsx        ✅ Security scanned with semgrep
-│   └── [10 more components]      ✅ All tool-verified
-
-Used git MCP to verify:
-- Repository connected
-- All changes tracked
-- Ready for deployment
-```
-
----
-
-## 📊 BMAD TOOL USAGE TRACKING
-
-| Task | Tools Used | Manual Work | Compliance |
-|------|------------|-------------|------------|
-| Code Audit | filesystem, git, serena | None | ✅ 100% |
-| Component Discovery | filesystem, grep | None | ✅ 100% |
-| API Testing | fetch, Thunder Client | None | ✅ 100% |
-| Security Scan | semgrep | None | ✅ 100% |
-| Deployment | Docker, git | Some SSH | ⚠️ 80% |
-
----
-
-## 🚀 TOOL USAGE REQUIREMENTS
-
-### Every BMAD Phase MUST:
-
-**BENCHMARK:**
-- [ ] Use playwright for testing (NOT manual)
-- [ ] Use firecrawl for data extraction (NOT copy/paste)
-- [ ] Use exa for research (NOT manual Google)
-- [ ] Use Thunder Client for APIs (NOT curl)
-
-**MODEL:**
-- [ ] Use shadcn-ui for components (NOT manual coding)
-- [ ] Use Copilot for suggestions (NOT from scratch)
-- [ ] Use ref-tools for docs (NOT web browsing)
-- [ ] Use Prisma for database (NOT raw SQL)
-
-**ANALYZE:**
-- [ ] Use serena for quality (NOT manual review)
-- [ ] Use semgrep for security (NOT manual audit)
-- [ ] Use Error Lens for errors (NOT console logs)
-- [ ] Use ESLint for standards (NOT manual check)
-
-**DELIVER:**
-- [ ] Use Docker for deployment (NOT manual setup)
-- [ ] Use git MCP for version control (NOT file copies)
-- [ ] Use postgres MCP for migrations (NOT manual SQL)
-- [ ] Use fetch for validation (NOT browser testing)
-
----
-
-## ⚠️ TOOL USAGE ENFORCEMENT
-
-**MANDATORY Rules:**
-1. If a tool exists for the task, USE IT
-2. NO manual work when automation exists
-3. ALL testing through playwright/Thunder Client
-4. ALL components through shadcn-ui
-5. ALL security through semgrep
-
-**Tool Usage Violations:**
-- Using `curl` instead of fetch MCP = VIOLATION
-- Manual file editing instead of filesystem MCP = VIOLATION
-- Browser testing instead of playwright = VIOLATION
-- Manual component creation instead of shadcn-ui = VIOLATION
-- Visual code review instead of serena = VIOLATION
-
-**If you're doing something manually, STOP and find the tool!**
-
----
-
-## 🔴 CRITICAL: MAXIMUM TOOL USAGE REQUIRED
-
-**Before doing ANYTHING:**
-1. Check if an MCP server can do it
-2. Check if a Cursor extension can help
-3. Check if it can be automated
-4. ONLY do manually if NO tool exists
-
-**Tool Priority Order:**
-1. MCP Servers (highest priority)
-2. Cursor Extensions  
-3. Automated scripts
-4. Manual work (last resort ONLY)
-
----
-
-## 📝 CLOUDFLARE INTEGRATION
-
-When working with Cloudflare, BMAD requires:
-
-**BENCHMARK:**
-- Use `firecrawl` to analyze Cloudflare docs
-- Use `fetch` to test Workers endpoints
-- Use `playwright` to test Pages sites
-
-**MODEL:**
-- Use `ref-tools` for Cloudflare API docs
-- Use templates for Workers/Pages
-- Generate with tools, not manual
-
-**ANALYZE:**
-- Use `semgrep` on Worker code
-- Use `fetch` to test all endpoints
-- Automated performance testing
-
-**DELIVER:**
-- Use Wrangler CLI (automated)
-- Use git for version control
-- NO manual dashboard clicking
-
----
-
-## 🌐 SPANISH TRANSLATION SYSTEM - AGI STAFFERS
-
-**Implementation Date:** January 12, 2025
-**Status:** ✅ PRODUCTION READY - 100% Bilingual Coverage
-**Method:** BMAD-compliant with full MCP tool usage
-
-### Translation System Architecture:
-
-**Core Components:**
-- `/lib/translations.ts` - Complete translation dictionary (1,923 lines)
-- `/hooks/useLanguage.ts` - Language detection and management hook
-- `/components/language-provider.tsx` - React Context for global state
-- Automatic Dominican Republic detection via browser locale
-
-**Translation Coverage:**
-✅ **100% Complete Pages:**
-- Homepage with hero rotator and service cards
-- SEO Services page 
-- AI Assistants page
-- Workflow Automation page
-- Prompt Engineering page
-- Pre-built Websites page
-- Custom Websites page
-- About/Our Story page
-- Contact page
-- Lead generation forms (service-specific)
-- Footer component
-- Navigation menus
-
-**Features Implemented:**
-- 🌍 Automatic Spanish for Dominican Republic users (locale: es-DO)
-- 🔄 Manual language toggle available
-- 💾 localStorage persistence for user preference
-- 📱 Mobile-responsive in both languages
-- 🎯 Service-specific lead forms maintain context
-- ⚡ Zero-latency language switching (client-side)
-
-**BMAD Tool Usage for Translation:**
-- `filesystem` MCP - File discovery and validation
-- `git` MCP - Version control and tracking
-- `mcp__ide__getDiagnostics` - TypeScript validation
-- `mcp__firecrawl__firecrawl_scrape` - Content verification
-- Tailwind CSS IntelliSense - Styling consistency
-- ESLint - Code quality checks
-
-**Deployment Status:**
-- GitHub Repository: ✅ Pushed to main branch
-- Production VPS (72.60.28.175): ✅ Deployed
-- Domain (agistaffers.com): ✅ Live with translations
-- Cloudflare CDN: ✅ Cached and distributed
-
-**Testing Completed:**
-- Browser locale detection: ✅ Verified
-- Manual language switching: ✅ Working
-- Mobile responsiveness: ✅ Tested
-- Lead form submissions: ✅ Functional
-- SEO meta tags: ✅ Bilingual
-
----
-
-**THIS IS YOUR OPERATING SYSTEM**
-**BMAD + MAXIMUM TOOL USAGE IS MANDATORY**
-**NO MANUAL WORK WHEN TOOLS EXIST**
-
-**Last Tool Audit:** January 11, 2025
-**Status:** ENFORCED - USE ALL AVAILABLE TOOLS
-
----
-
-## 🔔 POST-INFRASTRUCTURE VAULT TRAINING REMINDER
-
-**IMPORTANT**: When AGI Staffers infrastructure setup is 100% complete, remind user to complete Vault secrets management training.
-
-**Training Topics to Cover:**
-1. **🔍 Browse & manage all stored secrets** (VPS, VAPID, MinIO credentials)
-2. **🔐 Security hardening** - Change VPS password, rotate credentials
-3. **➕ Add new secrets** - Store additional service credentials
-4. **👥 Team access controls** - Set up policies for team members  
-5. **🔗 Application integration** - Use Vault secrets in apps/deployments
-6. **📋 Best practices** - Secret rotation, audit logging, backup procedures
-
-**Trigger**: After completing BMAD-001 (rollback system) + any remaining infrastructure work
-
-**Status**: DEFERRED - Will discuss when infrastructure is complete
-**Added**: August 12, 2025

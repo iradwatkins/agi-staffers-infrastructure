@@ -17,8 +17,15 @@ import Link from 'next/link'
 export default function Footer() {
   const { language, setLanguage, t } = useLanguage()
 
+  // Provide fallback values if translations aren't loaded yet
   if (!t || !t.footer) {
-    return null // Return null if translations aren't loaded yet
+    return (
+      <footer className="py-8 px-4 border-t bg-secondary/20">
+        <div className="container mx-auto text-center">
+          <p className="text-muted-foreground">AGI Staffers - Loading...</p>
+        </div>
+      </footer>
+    )
   }
 
   const footerLinks = {

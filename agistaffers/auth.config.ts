@@ -5,6 +5,7 @@ export const authConfig = {
     signIn: '/login',
     error: '/login',
   },
+  trustHost: true, // Fix UntrustedHost error
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
