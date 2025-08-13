@@ -34,7 +34,7 @@ jobs:
     
     - name: Install dependencies
       working-directory: ./agistaffers
-      run: npm ci --production
+      run: npm ci
     
     - name: Build application
       working-directory: ./agistaffers
@@ -88,8 +88,14 @@ jobs:
           cd /var/www/agistaffers-$STANDBY
           tar -xzf /tmp/deploy-package.tar.gz
           
-          # Install production dependencies
-          npm ci --production
+          # Install dependencies (including dev for build)
+          npm ci
+          
+          # Build the app
+          npm run build
+          
+          # Then remove dev dependencies for production
+          npm prune --production
           
           # Set port
           echo "PORT=$STANDBY_PORT" > .env.local
