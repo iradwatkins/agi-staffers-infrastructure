@@ -1,0 +1,143 @@
+name: Blue-Green Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy to which environment?'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      auto_switch:
+        description: 'Automatically switch traffic after health check?'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    name: Blue-Green Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: agistaffers/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: ./agistaffers
+      run: npm ci --production
+    
+    - name: Build application
+      working-directory: ./agistaffers
+      run: npm run build
+    
+    - name: Create deployment package
+      run: |
+        cd agistaffers
+        tar -czf ../deploy-package.tar.gz \
+          --exclude='node_modules' \
+          --exclude='.next/cache' \
+          --exclude='.git' \
+          .
+    
+    - name: Deploy to VPS (Blue-Green)
+      env:
+        VPS_HOST: ${{ secrets.VPS_HOST }}
+        VPS_USER: ${{ secrets.VPS_USER }}
+        VPS_KEY: ${{ secrets.VPS_KEY }}
+      run: |
+        # Setup SSH
+        mkdir -p ~/.ssh
+        echo "$VPS_KEY" > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
+        
+        # Get current environment
+        CURRENT_ENV=$(ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+          $VPS_USER@$VPS_HOST "cat /var/www/current_env 2>/dev/null || echo 'blue'")
+        
+        # Determine standby
+        if [ "$CURRENT_ENV" = "blue" ]; then
+          STANDBY="green"
+          STANDBY_PORT="3001"
+        else
+          STANDBY="blue"
+          STANDBY_PORT="3000"
+        fi
+        
+        echo "Deploying to $STANDBY environment (port $STANDBY_PORT)"
+        
+        # Transfer package
+        scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+          deploy-package.tar.gz $VPS_USER@$VPS_HOST:/tmp/
+        
+        # Deploy to standby
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << EOF
+          # Create standby directory
+          mkdir -p /var/www/agistaffers-$STANDBY
+          
+          # Extract new version
+          cd /var/www/agistaffers-$STANDBY
+          tar -xzf /tmp/deploy-package.tar.gz
+          
+          # Install production dependencies
+          npm ci --production
+          
+          # Set port
+          echo "PORT=$STANDBY_PORT" > .env.local
+          
+          # Start with PM2
+          pm2 delete agistaffers-$STANDBY 2>/dev/null || true
+          pm2 start npm --name agistaffers-$STANDBY -- start
+          
+          # Wait for startup
+          sleep 10
+          
+          # Health check
+          curl -f http://localhost:$STANDBY_PORT || exit 1
+        EOF
+    
+    - name: Switch Traffic (if requested)
+      if: ${{ inputs.auto_switch }}
+      env:
+        VPS_HOST: ${{ secrets.VPS_HOST }}
+        VPS_USER: ${{ secrets.VPS_USER }}
+        VPS_KEY: ${{ secrets.VPS_KEY }}
+      run: |
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << EOF
+          # Get standby info
+          CURRENT_ENV=\$(cat /var/www/current_env 2>/dev/null || echo 'blue')
+          if [ "\$CURRENT_ENV" = "blue" ]; then
+            NEW_ENV="green"
+            NEW_PORT="3001"
+          else
+            NEW_ENV="blue"
+            NEW_PORT="3000"
+          fi
+          
+          # Update NGINX
+          sed -i "s/server localhost:[0-9]*/server localhost:\$NEW_PORT/" \
+            /etc/nginx/sites-available/agistaffers
+          
+          # Reload NGINX
+          nginx -s reload
+          
+          # Update marker
+          echo "\$NEW_ENV" > /var/www/current_env
+          
+          echo "Traffic switched to \$NEW_ENV environment"
+        EOF
+    
+    - name: Deployment Summary
+      run: |
+        echo "🎉 Blue-Green Deployment Complete!"
+        echo "Environment: ${{ inputs.environment }}"
+        echo "Auto-switch: ${{ inputs.auto_switch }}"
