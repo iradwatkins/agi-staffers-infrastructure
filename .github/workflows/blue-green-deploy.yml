@@ -30,21 +30,23 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: package-lock.json
+        cache-dependency-path: agistaffers/package-lock.json
     
     - name: Install dependencies
+      working-directory: ./agistaffers
       run: npm ci --production
     
     - name: Build application
+      working-directory: ./agistaffers
       run: npm run build
     
     - name: Create deployment package
       run: |
-        tar -czf deploy-package.tar.gz \
+        cd agistaffers
+        tar -czf ../deploy-package.tar.gz \
           --exclude='node_modules' \
           --exclude='.next/cache' \
           --exclude='.git' \
-          --exclude='ARCHIVE-2025-08-13' \
           .
     
     - name: Deploy to VPS (Blue-Green)
