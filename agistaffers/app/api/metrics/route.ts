@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { monitoringService } from '@/lib/monitoring-service'
 import { databaseService } from '@/lib/database-service'
 
+// Force dynamic rendering for routes that fetch from external APIs with no-store
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     // Use the actual metrics API URL
