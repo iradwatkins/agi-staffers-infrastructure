@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { backupService } from '@/lib/backup-service'
 
+// Force dynamic rendering for routes that fetch from external APIs
+export const dynamic = "force-dynamic"
+
 interface BackupStats {
   totalBackups: number
   totalSize: number

@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 
+// Force dynamic rendering for routes that fetch from external APIs
+export const dynamic = 'force-dynamic'
+
 const API_BASE_URL = process.env.BACKUP_API_URL || 'http://localhost:3010'
 
 export async function GET() {
